@@ -3,7 +3,7 @@
 
 ## 구현 
 - `Github Page` 로 호스팅
-- `구글 드라이브`에 음원 저장
+- `Google Drive` 에 음원 저장
 
 ## 추가 예정 믹스테입
 - E SENS - `New Blood Rapper, Vol.1`
