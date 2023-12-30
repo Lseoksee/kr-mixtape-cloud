@@ -17,7 +17,12 @@ const GetMetadata = async (): Promise<JSX.Element[]> => {
     const resArr: JSX.Element[] = [];
 
     resArr.push(
-        <h1>{metadata.common.artist}</h1>
+        <div>
+            <h1>{metadata.common.title}</h1>
+            <audio controls>
+                <source src={url}></source>
+            </audio>
+        </div>
     );
 
     return resArr;
@@ -25,14 +30,12 @@ const GetMetadata = async (): Promise<JSX.Element[]> => {
 
 function SetMusic(props: AppProps): JSX.Element {
     if (props.data === "avg") {
-        GetMetadata().then(data => {
+        GetMetadata().then((data) => {
             props.setState(data);
         });
     }
 
-    return <div>
-        {props.data}
-    </div>;
+    return <div>{props.data}</div>;
 }
 
 function App(): JSX.Element {
