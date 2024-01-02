@@ -4,11 +4,13 @@ import { getBlobToSize } from "../Utils/WebApi";
 import albumList from "../albumList.json";
 import { API_URL } from "../constants";
 
-const GetMetadata = async (url: string,list: JSX.Element[]): Promise<JSX.Element[]> => {
+const listArr: JSX.Element[] = [];
+
+const GetMetadata = async (url: string): Promise<JSX.Element> => {
     const blob = await getBlobToSize(url, 512);
     const metadata = await musicMetadata.parseBlob(blob);
 
-    list.push(
+    return (
         <div>
             <h1>{metadata.common.title}</h1>
             <audio controls>
@@ -16,25 +18,23 @@ const GetMetadata = async (url: string,list: JSX.Element[]): Promise<JSX.Element
             </audio>
         </div>
     );
-
-    return list;
 };
 
 function SetMusic(props: any): JSX.Element {
     const [data, setState] = useState<string | JSX.Element[]>("loading");
-    const musicList: JSX.Element[] = [];
 
     if (data === "loading") {
-        albumList[0].track.forEach(item => {
-            GetMetadata(`${API_URL}${item}`, musicList).then((data) => {
+        albumList[0].track.forEach((item) => {
+            GetMetadata(`${API_URL}${item}`).then((res) => {
+                listArr.push(res);
                 setState(data);
             });
-        })
+        });
 
         return <></>;
     }
 
-    return <div>{data}</div>;
+    return <div>{listArr}</div>;
 }
 
 function App(): JSX.Element {
