@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as musicMetadata from "music-metadata-browser";
+import { getBlobToSize } from "../Utils/WebApi";
 
 const mediaParms = "uc?export=download&id=1Y6IvAa_57y3i-184Nuf0h5NbZDyEQE6z";
 
@@ -9,18 +10,16 @@ type AppProps = {
 };
 
 const GetMetadata = async (): Promise<JSX.Element[]> => {
-    const res = await fetch(`media/${mediaParms}`);
-    const resblob = await res.blob();
+    const blob = await getBlobToSize(`media/${mediaParms}`, 512);
 
-    const url = window.URL.createObjectURL(resblob);
-    const metadata = await musicMetadata.parseBlob(resblob);
+    const metadata = await musicMetadata.parseBlob(blob);
     const resArr: JSX.Element[] = [];
 
     resArr.push(
         <div>
             <h1>{metadata.common.title}</h1>
             <audio controls>
-                <source src={url}></source>
+                <source src={`media/${mediaParms}`}></source>
             </audio>
         </div>
     );
