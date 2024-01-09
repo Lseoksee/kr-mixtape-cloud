@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./Component/App";
+import App from "./Pages/App";
 import { Buffer } from "buffer";
 import "./index.css";
 
