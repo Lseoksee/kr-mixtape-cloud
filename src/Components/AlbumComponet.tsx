@@ -12,6 +12,9 @@ class AlbumView extends Component {
         album: string;
     }> = this.props;
 
+    componentDidMount(): void {
+        this.setAlbumList();
+    }
 
     private async setAlbumList() {
         const list = await this.props.awsutill.getFilelist(this.props.album);
@@ -34,10 +37,7 @@ class AlbumView extends Component {
     }
 
     render(): React.ReactNode {
-        if (!this.state.song.length) {
-            this.setAlbumList();
-        }
-        return <>{this.state.song}</>;
+        return <div>{this.state.song}</div>;
     }
 }
 
