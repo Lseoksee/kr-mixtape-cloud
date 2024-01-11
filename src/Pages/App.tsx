@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import * as musicMetadata from "music-metadata-browser";
 import albumList from "../albumList.json";
 import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
