@@ -55,8 +55,6 @@ class AWSUtiil {
             return item.Key;
         });
 
-        console.log(result);
-
         return result!!;
     }
 
