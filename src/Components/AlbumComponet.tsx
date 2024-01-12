@@ -18,7 +18,10 @@ class AlbumView extends Component {
 
     // 페이지 첫 로딩시 실행
     componentDidMount(): void {
-        this.getAlbumList().then((item) => {
+        // 앨범 곡 리스트 불러오기
+        const getAlbumList = this.props.awsutill.getFilelist(this.props.album);
+
+        getAlbumList.then((item) => {
             item.forEach((filename) => {
                 this.state.playerElement?.push({ url: "", title: "" });
                 this.putUrls(
@@ -49,10 +52,6 @@ class AlbumView extends Component {
         temp[index].title = mataData.title;
 
         this.setState({ ...this.state, playerElement: temp });
-    }
-
-    private async getAlbumList() {
-        return await this.props.awsutill.getFilelist(this.props.album);
     }
 
     render(): React.ReactNode {
