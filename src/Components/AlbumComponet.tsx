@@ -1,38 +1,54 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import AWSUtiil from "../Utils/AWSUtill";
 
 class AlbumView extends Component {
     state: Readonly<{
-        playerElement: JSX.Element[];
+        playerElement?: Array<{
+            url?: string;
+            title?: string;
+        }>;
     }> = {
         playerElement: [],
     };
+
     props: Readonly<{
         awsutill: AWSUtiil;
         album: string;
     }> = this.props;
 
+    // 페이지 첫 로딩시 실행
     componentDidMount(): void {
         this.getAlbumList().then((item) => {
-            for (const filename of item) this.setPlayerComp(filename!!);
+            item.forEach((filename) => {
+                this.state.playerElement?.push({ url: "", title: "" });
+                this.putUrls(
+                    filename!!,
+                    this.state.playerElement?.length!! - 1
+                );
+                this.putTitle(
+                    filename!!,
+                    this.state.playerElement?.length!! - 1
+                );
+            });
         });
     }
 
-    private async setPlayerComp(filename: string) {
+    // 모든 url 목록 배열에
+    private async putUrls(filename: string, index: number) {
         const url = await this.props.awsutill.getFileURL(filename);
+        const temp = [...this.state.playerElement!!];
+
+        temp[index].url = url;
+        this.setState({ ...this.state, playerElement: temp });
+    }
+
+    // 모든 곡 제목을 배열에
+    private async putTitle(filename: string, index: number) {
         const mataData = await this.props.awsutill.getID3Tag(filename);
+        const temp = [...this.state.playerElement!!];
+        temp[index].title = mataData.title;
 
-        const playerElement = (
-            <div>
-                <h1>{mataData.title}</h1>
-                <audio controls>
-                    <source src={url}></source>
-                </audio>
-            </div>
-        );
-
-        this.state.playerElement.push(playerElement);
-        this.setState({ ...this.state });
+        this.setState({ ...this.state, playerElement: temp });
     }
 
     private async getAlbumList() {
@@ -40,7 +56,23 @@ class AlbumView extends Component {
     }
 
     render(): React.ReactNode {
-        return <div>{this.state.playerElement}</div>;
+        if (this.state.playerElement) {
+            const playList = this.state.playerElement.map((item, index) => {
+                return (
+                    <Fragment key={index}>
+                        <h1>{item.title || "타이틀"}</h1>
+                        <audio controls>
+                            <source src={item.url}></source>
+                        </audio>
+                    </Fragment>
+                );
+            });
+
+            return <div>{playList}</div>;
+        } else {
+            //로딩화면 구성
+            return <div>로딩중</div>;
+        }
     }
 }
 
