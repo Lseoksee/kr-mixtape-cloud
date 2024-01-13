@@ -79,15 +79,7 @@ class AWSUtiil {
     /** 해당 파일에 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getID3Tag(filename: string) {
-        // 개발 모드 활성화 시
-        if (this.devMode) {
-            // 개발용 임시 타이틀 (캐쉬 구현하면 제거)
-            return {
-                title: "곡 제목"
-            }
-        }
-
+    public async getID3Tag(filename: string, skipCovers = true) {
         const bytes = 1000 * 500; //가져올 파일 바이트 수 (500kb)
 
         const getfile = new GetObjectCommand({
@@ -101,7 +93,7 @@ class AWSUtiil {
             results.Body?.transformToWebStream()!!,
             {},
             {
-                skipCovers: true,
+                skipCovers: skipCovers,
             }
         );
 
