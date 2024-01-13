@@ -1,0 +1,12 @@
+#albuminfoDiv {
+    display: flex;
+    align-items: center;
+}
+
+#albumName {
+    font-size: 2rem;
+}
+
+#trackView {
+
+}

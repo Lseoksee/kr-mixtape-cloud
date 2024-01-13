@@ -3,12 +3,13 @@ import albumList from "../albumList.json";
 import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
+import "./App.css";
 
 function SetMusic(props: any): JSX.Element {
     const aws = new AWSUtiil(constants.ENV_DEVMODE);
 
     return (
-        <div>
+        <div id="albumDiv">
             <AlbumView
                 album="E SENS - New Blood Rapper, Vol.1"
                 awsutill={aws}

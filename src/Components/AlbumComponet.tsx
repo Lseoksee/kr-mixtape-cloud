@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import AWSUtiil from "../Utils/AWSUtill";
+import "./AlbumComponet.css"
 
 class AlbumView extends Component {
     state: Readonly<{
@@ -100,11 +101,13 @@ class AlbumView extends Component {
             });
 
             return (
-                <div>
-                    <h1>{stateData.albumInfo.album || "앨범명"}</h1>
-                    <h1>{stateData.albumInfo.albumyear || "발매일"}</h1>
-                    <h1>트랙리스트: {stateData.albumInfo.tracklist}</h1>
-                    <img src={albumArt} alt="앨범 아트"></img>
+                <div id="trackView">
+                    <div id="albuminfoDiv">
+                        <img src={albumArt} alt="앨범 아트" width="160px"></img>
+                        <p id="albumName">{stateData.albumInfo.album || "앨범명"}</p>
+                        <p>{stateData.albumInfo.albumyear || "발매일"}</p>
+                        <p>트랙리스트: {stateData.albumInfo.tracklist}</p>
+                    </div>
                 </div>
             );
         } else {
