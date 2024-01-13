@@ -84,6 +84,10 @@ class AlbumView extends Component {
         if (this.state.playerElement) {
             const stateData = this.state;
 
+            let albumArt: string;
+            if (stateData.albumInfo.albumArt) albumArt = URL.createObjectURL(stateData.albumInfo.albumArt);
+            else albumArt = tempAlbumArt;
+
             const playList = this.state.playerElement.map((item, index) => {
                 return (
                     <Fragment key={index}>
@@ -94,10 +98,6 @@ class AlbumView extends Component {
                     </Fragment>
                 );
             });
-
-            let albumArt: string;
-            if (stateData.albumInfo.albumArt) albumArt = URL.createObjectURL(stateData.albumInfo.albumArt);
-            else albumArt = tempAlbumArt;
 
             return (
                 <div>
