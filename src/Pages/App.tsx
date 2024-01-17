@@ -11,8 +11,10 @@ function SetMusic(props: any): JSX.Element {
     return (
         <div id="albumDiv">
             <AlbumView
-                album="E SENS - New Blood Rapper, Vol.1"
+                albumSrc="E SENS - New Blood Rapper, Vol.1"
+                albumName="New Blood Rapper, Vol.1"
                 awsutill={aws}
+                artist="E SENS"
             ></AlbumView>
         </div>
     );
