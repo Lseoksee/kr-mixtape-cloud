@@ -19,10 +19,11 @@ class AlbumView extends Component {
     urls: string[] = [];
 
     props: Readonly<{
-        awsutill: AWSUtiil;
         albumSrc: string; //앨범경로
         albumName: string; //앨범명
         artist: string; //아티스트명
+        awsutill: AWSUtiil;
+        songCache: SongCache;
     }> = this.props;
 
     // 페이지 첫 로딩시 실행
@@ -39,24 +40,9 @@ class AlbumView extends Component {
             });
 
             // 곡 정보 불러오기
-            const songCache = new SongCache();
-            const cache = songCache.getSongCache(
-                item,
-                this.props.albumName,
-                this.props.artist
-            );
-            if (cache) {
-                this.setState({ playerElement: cache});
-            } else {
-                this.props.awsutill.getMusicID3Tag(item).then((item) => {
-                    songCache.saveSongCache(
-                        item,
-                        this.props.albumName,
-                        this.props.artist
-                    );
-                    this.setState({ playerElement: item });
-                });
-            }
+            this.props.awsutill.getMusicID3Tag(item).then((item) => {
+                this.setState({ playerElement: item });
+            });
 
             for (const file of item) {
                 this.props.awsutill.getFileURL(file!!).then((url) => {

@@ -9,39 +9,26 @@ type songCacheType = [
 ];
 
 class SongCache {
+    private loStorage: songCacheType | [];
+
     constructor() {
-        if (!localStorage.getItem("songs")) {
-            localStorage.setItem("songs", JSON.stringify([]));
+        const storage = localStorage.getItem("songs");
+        if (storage) {
+            this.loStorage = JSON.parse(storage) as songCacheType;
+        } else {
+            this.loStorage = [];
         }
     }
 
     getSongCache(newFils: fileType[], album: string, artist: string) {
-        const saved: songCacheType = JSON.parse(
-            localStorage.getItem("songs")!!
-        );
-        const thisAlbumIndex = saved.findIndex(
+        const thisAlbumIndex = this.loStorage.findIndex(
             (item) => item.albumName === album && item.artist === artist
         );
 
-        if (thisAlbumIndex === -1) {
+        if (thisAlbumIndex === -1 || !newFils) {
             return null;
         }
-
-        // 앨범 폴더가 완전히 삭제된 경우
-        if (!newFils) {
-            const reSave = saved.filter((item, index) => {
-                if (thisAlbumIndex === index) {
-                    return false;
-                }
-                return true;
-            }) as songCacheType;
-
-            localStorage.setItem("songs", JSON.stringify(reSave));
-
-            return null;
-        }
-
-        const thisAlbum = saved[thisAlbumIndex];
+        const thisAlbum = this.loStorage[thisAlbumIndex];
 
         const newData = newFils.map((item) => item.ETag);
         const curData = thisAlbum.album.map((item) => item.ETag);
@@ -51,20 +38,23 @@ class SongCache {
             return thisAlbum.album;
         }
 
-        const missing = thisAlbum.album.filter((itme) => {
-            return newData.find((it) => it === itme.ETag);
+        //무결성한 파일들만 리턴
+        const noMissing = thisAlbum.album.filter((itme) => {
+            return newFils.find((it) => it.ETag === itme.ETag);
         });
 
-        const reSave = saved.map((item, index) => {
-            if (thisAlbumIndex === index) {
-                item.album = missing;
-            }
+        //추가된 항목들 리턴
+        const addEelment = newFils.filter((item) => {
+            return thisAlbum.album.find((it) => it.ETag !== item.ETag);
+        });
 
-            return item;
-        }) as songCacheType;
+        this.loStorage[thisAlbumIndex].album = noMissing;
 
-        localStorage.setItem("songs", JSON.stringify(reSave));
-        return thisAlbum.album;
+        if (addEelment.length) {
+            return noMissing && {addEelment: addEelment};
+        }
+
+        return noMissing;
     }
 
     saveSongCache(newValue: musicMetaType[], album: string, artist: string) {
