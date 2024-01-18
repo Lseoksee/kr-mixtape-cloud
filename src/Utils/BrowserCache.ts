@@ -57,20 +57,19 @@ class SongCache {
         return noMissing;
     }
 
-    saveSongCache(newValue: musicMetaType[], album: string, artist: string) {
-        const data: songCacheType = [
-            {
-                albumName: album,
-                artist: artist,
-                album: newValue,
-            },
-        ];
+    insertSongCache(newValue: musicMetaType[], album: string, artist: string) {
+        let index = this.loStorage.findIndex((itme) => {
+            return itme.albumName === album && itme.artist === artist
+        });     
 
-        let temp: songCacheType = JSON.parse(localStorage.getItem("songs")!!);
-        if (temp.length) {
-            localStorage.setItem("songs", JSON.stringify([...temp, ...data]));
+        if (index === -1) {
+            this.loStorage.push({
+                album: newValue,
+                albumName: album,
+                artist: artist
+            } as never)
         } else {
-            localStorage.setItem("songs", JSON.stringify(data));
+            this.loStorage[index].album = newValue;
         }
     }
 }
