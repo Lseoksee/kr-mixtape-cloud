@@ -8,21 +8,66 @@ type songCacheType = [
     }
 ];
 
-class BrowserCache {
-    static getSongCache(newValue: fileType[], album: string, artist: string) {
-        //TODO: 이거 다른앨범 값 처리 해야함
-        const saved = localStorage.getItem("songs");
-        if (!saved) {
+class SongCache {
+    constructor() {
+        if (!localStorage.getItem("songs")) {
+            localStorage.setItem("songs", JSON.stringify([]));
+        }
+    }
+
+    getSongCache(newFils: fileType[], album: string, artist: string) {
+        const saved: songCacheType = JSON.parse(
+            localStorage.getItem("songs")!!
+        );
+        const thisAlbumIndex = saved.findIndex(
+            (item) => item.albumName === album && item.artist === artist
+        );
+
+        if (thisAlbumIndex === -1) {
             return null;
         }
 
-        const storage = JSON.parse(saved) as songCacheType;
-        return storage.find(
-            (item) => item.albumName === album && item.artist === artist
-        )?.album!!;
+        // 앨범 폴더가 완전히 삭제된 경우
+        if (!newFils) {
+            const reSave = saved.filter((item, index) => {
+                if (thisAlbumIndex === index) {
+                    return false;
+                }
+                return true;
+            }) as songCacheType;
+
+            localStorage.setItem("songs", JSON.stringify(reSave));
+
+            return null;
+        }
+
+        const thisAlbum = saved[thisAlbumIndex];
+
+        const newData = newFils.map((item) => item.ETag);
+        const curData = thisAlbum.album.map((item) => item.ETag);
+
+        if (newData.toString() === curData.toString()) {
+            console.log("같아서 잘 리턴함");
+            return thisAlbum.album;
+        }
+
+        const missing = thisAlbum.album.filter((itme) => {
+            return newData.find((it) => it === itme.ETag);
+        });
+
+        const reSave = saved.map((item, index) => {
+            if (thisAlbumIndex === index) {
+                item.album = missing;
+            }
+
+            return item;
+        }) as songCacheType;
+
+        localStorage.setItem("songs", JSON.stringify(reSave));
+        return thisAlbum.album;
     }
 
-    static saveSongCache( newValue: musicMetaType[], album: string, artist: string) {
+    saveSongCache(newValue: musicMetaType[], album: string, artist: string) {
         const data: songCacheType = [
             {
                 albumName: album,
@@ -31,13 +76,13 @@ class BrowserCache {
             },
         ];
 
-        let temp = localStorage.getItem("songs");
-        if (temp) {
-            localStorage.setItem("songs",  JSON.stringify([temp ,...data]));
+        let temp: songCacheType = JSON.parse(localStorage.getItem("songs")!!);
+        if (temp.length) {
+            localStorage.setItem("songs", JSON.stringify([...temp, ...data]));
         } else {
-            localStorage.setItem("songs",  JSON.stringify(data));
-        }       
+            localStorage.setItem("songs", JSON.stringify(data));
+        }
     }
 }
 
-export default BrowserCache;
+export { SongCache };

@@ -8,7 +8,6 @@ import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import * as musicMetadata from "music-metadata-browser";
-import BrowserCache from "./BrowserCache";
 
 /* 앨범 타입 */
 export type albumType = {
@@ -122,12 +121,7 @@ class AWSUtiil {
     /** 해당 파일들의 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getMusicID3Tag(files: fileType[], album: string, artist: string) {
-        const Cache = BrowserCache.getSongCache(files, album, artist);
-        if (Cache) {
-            return Cache;
-        }
-        
+    public async getMusicID3Tag(files: fileType[]) {
         const data = await Promise.all(
             files.map(async (file) => {
                 const getfile = new GetObjectCommand({
@@ -148,8 +142,6 @@ class AWSUtiil {
                 return { ...metadata, ETag: file.ETag } as musicMetaType;
             })
         );
-
-        BrowserCache.saveSongCache(data, album, artist);
         return data;
     }
 

@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
-import AWSUtiil, { albumType, fileType, musicMetaType } from "../Utils/AWSUtill";
+import AWSUtiil, { albumType, musicMetaType } from "../Utils/AWSUtill";
 import "./AlbumComponet.css";
+import { SongCache } from "../Utils/BrowserCache";
 
 class AlbumView extends Component {
     state: Readonly<{
@@ -21,13 +22,15 @@ class AlbumView extends Component {
         awsutill: AWSUtiil;
         albumSrc: string; //앨범경로
         albumName: string; //앨범명
-        artist: string //아티스트명
+        artist: string; //아티스트명
     }> = this.props;
 
     // 페이지 첫 로딩시 실행
     componentDidMount(): void {
         // 앨범 곡 리스트 불러오기
-        const getAlbumList = this.props.awsutill.getFilelist(this.props.albumSrc);
+        const getAlbumList = this.props.awsutill.getFilelist(
+            this.props.albumSrc
+        );
 
         getAlbumList.then((item) => {
             //앨범 정보 불러오기
@@ -36,9 +39,24 @@ class AlbumView extends Component {
             });
 
             // 곡 정보 불러오기
-            this.props.awsutill.getMusicID3Tag(item, this.props.albumName, this.props.artist).then((item) => {
-                this.setState({ playerElement: item });
-            });
+            const songCache = new SongCache();
+            const cache = songCache.getSongCache(
+                item,
+                this.props.albumName,
+                this.props.artist
+            );
+            if (cache) {
+                this.setState({ playerElement: cache});
+            } else {
+                this.props.awsutill.getMusicID3Tag(item).then((item) => {
+                    songCache.saveSongCache(
+                        item,
+                        this.props.albumName,
+                        this.props.artist
+                    );
+                    this.setState({ playerElement: item });
+                });
+            }
 
             for (const file of item) {
                 this.props.awsutill.getFileURL(file!!).then((url) => {
