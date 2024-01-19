@@ -1,32 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import albumList from "../albumList.json";
 import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
 import "./App.css";
-import { SongCache } from "../Utils/BrowserCache";
+import { SongCache, songCacheType } from "../Utils/BrowserCache";
 
-function SetMusic(props: any): JSX.Element {
-    const aws = new AWSUtiil(constants.ENV_DEVMODE);
-    const songCache = new SongCache();
+const constValue = {
+    SetMusicMemo: React.memo(SetMusic),
+};
 
-    const album = (
-        <AlbumView
-            albumSrc="E SENS - New Blood Rapper, Vol.1"
-            albumName="New Blood Rapper, Vol.1"
-            artist="E SENS"
-            awsutill={aws}
-            songCache={songCache}
-        ></AlbumView>
-    );
+function SetMusic(): JSX.Element {
+    const [state, setState] = useState<{
+        element: JSX.Element[];
+        loadAlbum: songCacheType[];
+    }>({ element: [], loadAlbum: [] });
 
-    return <div id="albumDiv">{album}</div>;
+    const readyEvent = (albumData: songCacheType) => {
+        state.loadAlbum.push(albumData);
+        setState((ref) => {
+            return { ...ref };
+        });
+    };
+
+    useEffect(() => {
+        if (state.element.length === state.loadAlbum.length) {
+            SongCache.applySongCache(state.loadAlbum);
+        }
+    }, [state.loadAlbum.length]);
+
+    if (!state.element.length) {
+        const aws = new AWSUtiil(constants.ENV_DEVMODE);
+
+        state.element = albumList.map((item) => {
+            const album = item.albums[0];
+            const art = item.artist;
+            return (
+                <AlbumView
+                    albumSrc={album.dirname}
+                    albumName={album.dirname}
+                    artist={art}
+                    renew={readyEvent}
+                    awsutill={aws}
+                ></AlbumView>
+            );
+        });
+    }
+    return <div id="albumDiv">{state.element}</div>;
 }
 
 function App(): JSX.Element {
     return (
-        <div>
-            <SetMusic />
+        <div id="albumDiv">
+            <constValue.SetMusicMemo></constValue.SetMusicMemo>
         </div>
     );
 }

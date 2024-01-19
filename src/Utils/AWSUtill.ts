@@ -121,7 +121,7 @@ class AWSUtiil {
     /** 해당 파일들의 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getMusicID3Tag(files: fileType[]) {
+    public async getMusicID3Tag(files: fileType[]): Promise<musicMetaType[]> {
         const data = await Promise.all(
             files.map(async (file) => {
                 const getfile = new GetObjectCommand({

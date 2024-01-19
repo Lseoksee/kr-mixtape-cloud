@@ -1,26 +1,27 @@
 import { fileType, musicMetaType } from "./AWSUtill";
 
-type songCacheType = [
-    {
-        albumName: string;
-        artist: string;
-        album: musicMetaType[];
-    }
-];
+export type songCacheType =  {
+    albumName: string;
+    artist: string;
+    album: musicMetaType[];
+}
 
 class SongCache {
-    private loStorage: songCacheType | [];
+    static readonly saveValue ="songs"
+    static loStorage: songCacheType[] | [];
+    saveStorage: songCacheType | undefined
 
     constructor() {
-        const storage = localStorage.getItem("songs");
+        const storage = localStorage.getItem(SongCache.saveValue);
         if (storage) {
-            this.loStorage = JSON.parse(storage) as songCacheType;
+            SongCache.loStorage = JSON.parse(storage) as songCacheType[];
         } else {
-            this.loStorage = [];
+            SongCache.loStorage = [];
         }
     }
 
-    getSongCache(newFils: fileType[], album: string, artist: string) {
+    /** 해당 곡에 저장된 케시 데이터를 불러옵니다. */
+    static getSongCache(newFils: fileType[], album: string, artist: string) {
         const thisAlbumIndex = this.loStorage.findIndex(
             (item) => item.albumName === album && item.artist === artist
         );
@@ -35,7 +36,7 @@ class SongCache {
 
         if (newData.toString() === curData.toString()) {
             console.log("같아서 잘 리턴함");
-            return thisAlbum.album;
+            return { album: thisAlbum.album };
         }
 
         //무결성한 파일들만 리턴
@@ -45,31 +46,50 @@ class SongCache {
 
         //추가된 항목들 리턴
         const addEelment = newFils.filter((item) => {
-            return thisAlbum.album.find((it) => it.ETag !== item.ETag);
+            return !thisAlbum.album.find((it) => it.ETag === item.ETag);
         });
 
         this.loStorage[thisAlbumIndex].album = noMissing;
 
         if (addEelment.length) {
-            return noMissing && {addEelment: addEelment};
+            return { album: noMissing, addEelment: addEelment};
         }
 
-        return noMissing;
+        return { album: noMissing };
     }
 
-    insertSongCache(newValue: musicMetaType[], album: string, artist: string) {
-        let index = this.loStorage.findIndex((itme) => {
-            return itme.albumName === album && itme.artist === artist
-        });     
+    /** 앨범을 처음로드 시키는경우 케싱합니다, */
+    addSongCache(newValue: musicMetaType[], album: string, artist: string) {
+        (this.saveStorage as songCacheType) = {
+            album: newValue,
+            albumName: album,
+            artist: artist
+        }
+    }
 
-        if (index === -1) {
-            this.loStorage.push({
-                album: newValue,
-                albumName: album,
-                artist: artist
-            } as never)
+    /** 해당 앨범에서 음악이 추가로 발견되는경우 추가합니다. */
+    insertSongCache(newValue: musicMetaType[]) {
+        if (this.saveStorage) {
+            newValue.forEach((item) => {
+                this.saveStorage!!.album.push(item);
+            })
+        }
+    }
+
+    /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
+    static applySongCache(songCaches: songCacheType[]) {
+        const addEelment = songCaches.filter((item) => item);
+        
+        if (addEelment.length) {
+            if (this.loStorage.length) {
+                localStorage.setItem(SongCache.saveValue, JSON.stringify([...this.loStorage, ...addEelment]));
+            } else {
+                localStorage.setItem(SongCache.saveValue, JSON.stringify([...addEelment]));
+            }
         } else {
-            this.loStorage[index].album = newValue;
+            if (this.loStorage.length) {
+                localStorage.setItem(SongCache.saveValue, JSON.stringify(this.loStorage));
+            }
         }
     }
 }
