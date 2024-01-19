@@ -23,11 +23,11 @@ function SetMusic(): JSX.Element {
         });
     };
 
-    useEffect(() => {
+    useEffect(() => { 
         if (state.element.length === state.loadAlbum.length) {
             SongCache.applySongCache(state.loadAlbum);
         }
-    }, [state.loadAlbum.length]);
+    }, [state.element.length, state.loadAlbum, state.loadAlbum.length]);
 
     if (!state.element.length) {
         const aws = new AWSUtiil(constants.ENV_DEVMODE);

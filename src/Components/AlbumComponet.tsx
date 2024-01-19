@@ -6,7 +6,7 @@ import { SongCache, songCacheType } from "../Utils/BrowserCache";
 
 class AlbumView extends Component {
     state: Readonly<{
-        playerElement?: Array<musicMetaType>;
+        playerElement: Array<musicMetaType>;
         albumInfo: albumType;
     }> = {
         playerElement: [],
@@ -88,10 +88,9 @@ class AlbumView extends Component {
             else albumArt = tempAlbumArt;
 
             const playList = this.state.playerElement.map((item, index) => {
-                const metadata = item.common;
                 return (
                     <Fragment key={index}>
-                        <h1>{metadata.title || "타이틀"}</h1>
+                        <h1>{item.title || "타이틀"}</h1>
                         <audio controls>
                             <source src=""></source>
                         </audio>

@@ -24,7 +24,7 @@ export type fileType = {
     fileName: string;
 };
 
-export type musicMetaType = musicMetadata.IAudioMetadata & { ETag: string };
+export type musicMetaType = musicMetadata.IAudioMetadata["common"] & { ETag: string };
 
 class AWSUtiil {
     static Bytes = 500 * 1000;
@@ -139,7 +139,7 @@ class AWSUtiil {
                     }
                 );
 
-                return { ...metadata, ETag: file.ETag } as musicMetaType;
+                return { ...metadata.common, ETag: file.ETag };
             })
         );
         return data;
