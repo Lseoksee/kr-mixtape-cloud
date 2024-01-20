@@ -1,4 +1,31 @@
-class SongCache  {
+class BrowserCache {
+    /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
+    static applySongCache(songCaches: AlbumCompType.songCache[], saveValue: string, loStorage: any[]) {
+        const addEelment = songCaches.filter((item) => item);
+        if (addEelment.length) {
+            if (loStorage.length) {
+                localStorage.setItem(
+                    saveValue,
+                    JSON.stringify([...loStorage, ...addEelment])
+                );
+            } else {
+                localStorage.setItem(
+                    saveValue,
+                    JSON.stringify([...addEelment])
+                );
+            }
+        } else {
+            if (loStorage.length) {
+                localStorage.setItem(
+                    saveValue,
+                    JSON.stringify(loStorage)
+                );
+            }
+        }
+    }
+}
+
+class SongCache extends BrowserCache  {
     private static readonly saveValue = "songs";
     private static loStorage: AlbumCompType.songCache[] | [];
 
@@ -6,6 +33,7 @@ class SongCache  {
     loadStorageIndex: number = -1;
 
     constructor() {
+        super();
         const storage = localStorage.getItem(SongCache.saveValue);
         if (storage) {
             SongCache.loStorage = JSON.parse(
@@ -55,11 +83,7 @@ class SongCache  {
     }
 
     /** 앨범을 처음로드 시키는경우 케싱합니다, */
-    addSongCache(
-        newValue: AlbumCompType.musicMeta[],
-        album: string,
-        artist: string
-    ) {
+    addSongCache(newValue: AlbumCompType.musicMeta[], album: string, artist: string) {
         newValue.sort((a, b) => {
             if (a.track.no!! > b.track.no!!) return 1;
             return -1;
@@ -88,33 +112,12 @@ class SongCache  {
         }
     }
 
-    /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
-    static applySongCache(songCaches: AlbumCompType.songCache[]) {
-        const addEelment = songCaches.filter((item) => item);
-        if (addEelment.length) {
-            if (this.loStorage.length) {
-                localStorage.setItem(
-                    SongCache.saveValue,
-                    JSON.stringify([...this.loStorage, ...addEelment])
-                );
-            } else {
-                localStorage.setItem(
-                    SongCache.saveValue,
-                    JSON.stringify([...addEelment])
-                );
-            }
-        } else {
-            if (this.loStorage.length) {
-                localStorage.setItem(
-                    SongCache.saveValue,
-                    JSON.stringify(this.loStorage)
-                );
-            }
-        }
+    static applySongCache(songCaches: AlbumCompType.songCache[]): void {
+        BrowserCache.applySongCache(songCaches, this.saveValue, this.loStorage);
     }
 }
 
-class AlbumCache {
+class AlbumCache extends BrowserCache {
     private static readonly saveValue = "album";
     private static loStorage: AlbumCompType.album[] | [];
 
@@ -122,6 +125,7 @@ class AlbumCache {
     saveStorage: AlbumCompType.album | undefined;
 
     constructor() {
+        super();
         const storage = localStorage.getItem(AlbumCache.saveValue);
         if (storage) {
             AlbumCache.loStorage = JSON.parse(storage) as AlbumCompType.album[];
@@ -144,28 +148,8 @@ class AlbumCache {
         this.saveStorage = albumInfo;
     }
 
-    static applySongCache(albumCache: AlbumCompType.album[]) {
-        const addEelment = albumCache.filter((item) => item);
-        if (addEelment.length) {
-            if (this.loStorage.length) {
-                localStorage.setItem(
-                    AlbumCache.saveValue,
-                    JSON.stringify([...this.loStorage, ...addEelment])
-                );
-            } else {
-                localStorage.setItem(
-                    AlbumCache.saveValue,
-                    JSON.stringify([...addEelment])
-                );
-            }
-        } else {
-            if (this.loStorage.length) {
-                localStorage.setItem(
-                    AlbumCache.saveValue,
-                    JSON.stringify(this.loStorage)
-                );
-            }
-        }
+    static applySongCache(songCaches: AlbumCompType.songCache[]): void {
+        BrowserCache.applySongCache(songCaches, this.saveValue, this.loStorage);
     }
 }
 

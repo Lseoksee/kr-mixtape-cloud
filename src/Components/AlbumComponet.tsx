@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import AWSUtiil from "../Utils/AWSUtill";
 import "./AlbumComponet.css";
-import { SongCache } from "../Utils/BrowserCache";
+import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 
 class AlbumView extends Component {
     state: Readonly<{
@@ -15,7 +15,8 @@ class AlbumView extends Component {
         },
     };
 
-    ch = new SongCache();
+    songCache = new SongCache();
+    albumCache = new AlbumCache();
 
     // url 목록들
     urls: string[] = [];
@@ -31,7 +32,7 @@ class AlbumView extends Component {
     //state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{}>, snapshot?: any): void {
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
-            this.props.readyEvent(this.ch.saveStorage!!);
+            this.props.readyEvent(this.songCache.saveStorage!!);
         }   
     }
 
@@ -43,30 +44,36 @@ class AlbumView extends Component {
         );
 
         getAlbumList.then((item) => {
-            //앨범 정보 불러오기
-            this.props.awsutill.getAlbumTag(item).then((res) => {
-                this.setState({ albumInfo: res });
-            });
-
-            const cached =  this.ch.getSongCache(item, this.props.albumName, this.props.artist);
             
-            if (cached) {
+            //앨범 정보 불러오기
+            const albumCached = this.albumCache.getAlbumCache(this.props.albumName, this.props.artist);
+            if (albumCached) {
+                this.setState({ playerElement: albumCached });
+            } else {
+                this.props.awsutill.getAlbumTag(item).then((res) => {
+                    this.setState({ albumInfo: res });
+                });
+            }
+
+            const songCached =  this.songCache.getSongCache(item, this.props.albumName, this.props.artist);
+            
+            if (songCached) {
                 // 캐싱된 데이터에서 추가된 값이 있는지
-                if (cached.addEelment) {
-                    this.props.awsutill.getMusicID3Tag(cached.addEelment).then((item) => {
-                        const cachedSort = this.ch.insertSongCache(item);
+                if (songCached.addEelment) {
+                    this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
+                        const cachedSort = this.songCache.insertSongCache(item);
                         this.setState({ playerElement: cachedSort });
                     }); 
                 }
                 
                 // 없으면 그냥 setState
                 else {
-                    this.setState({ playerElement: cached.album });
+                    this.setState({ playerElement: songCached.album });
                 }
             } else {
                 // 최초 로드시 앨범 전체 요청
                 this.props.awsutill.getMusicID3Tag(item).then((item) => {
-                    this.ch.addSongCache(item, this.props.albumName, this.props.artist);
+                    this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
                     this.setState({ playerElement: item });
                 });
             }
