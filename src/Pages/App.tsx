@@ -18,9 +18,7 @@ function SetMusic(): JSX.Element {
 
     const readyEvent = (albumData: songCacheType) => {
         state.loadAlbum.push(albumData);
-        setState((ref) => {
-            return { ...ref };
-        });
+        setState((ref) => ({ ...ref }));
     };
 
     useEffect(() => { 

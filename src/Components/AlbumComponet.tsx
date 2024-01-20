@@ -48,15 +48,15 @@ class AlbumView extends Component {
                 this.setState({ albumInfo: res });
             });
 
-            const cached =  SongCache.getSongCache(item, this.props.albumName, this.props.artist);
+            const cached =  this.ch.getSongCache(item, this.props.albumName, this.props.artist);
             
             if (cached) {
                 // 캐싱된 데이터에서 추가된 값이 있는지
                 if (cached.addEelment) {
-                    // TODO: 정렬구현할것
                     this.props.awsutill.getMusicID3Tag(cached.addEelment).then((item) => {
-                        this.ch.insertSongCache(item);
-                    });
+                        const cachedSort = this.ch.insertSongCache(item);
+                        this.setState({ playerElement: cachedSort });
+                    }); 
                 }
                 
                 // 없으면 그냥 setState
@@ -64,7 +64,7 @@ class AlbumView extends Component {
                     this.setState({ playerElement: cached.album });
                 }
             } else {
-                // 곡 정보 불러오기
+                // 최초 로드시 앨범 전체 요청
                 this.props.awsutill.getMusicID3Tag(item).then((item) => {
                     this.ch.addSongCache(item, this.props.albumName, this.props.artist);
                     this.setState({ playerElement: item });

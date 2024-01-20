@@ -1,15 +1,17 @@
 import { fileType, musicMetaType } from "./AWSUtill";
 
-export type songCacheType =  {
+export type songCacheType = {
     albumName: string;
     artist: string;
     album: musicMetaType[];
-}
+};
 
 class SongCache {
-    static readonly saveValue ="songs"
+    static readonly saveValue = "songs";
     static loStorage: songCacheType[] | [];
-    saveStorage: songCacheType | undefined
+
+    saveStorage: songCacheType | undefined;
+    loadStorageIndex: number = -1;
 
     constructor() {
         const storage = localStorage.getItem(SongCache.saveValue);
@@ -21,15 +23,15 @@ class SongCache {
     }
 
     /** 해당 곡에 저장된 케시 데이터를 불러옵니다. */
-    static getSongCache(newFils: fileType[], album: string, artist: string) {
-        const thisAlbumIndex = this.loStorage.findIndex(
+    getSongCache(newFils: fileType[], album: string, artist: string) {
+        this.loadStorageIndex = SongCache.loStorage.findIndex(
             (item) => item.albumName === album && item.artist === artist
         );
 
-        if (thisAlbumIndex === -1 || !newFils) {
+        if (this.loadStorageIndex === -1 || !newFils) {
             return null;
         }
-        const thisAlbum = this.loStorage[thisAlbumIndex];
+        const thisAlbum = SongCache.loStorage[this.loadStorageIndex];
 
         const newData = newFils.map((item) => item.ETag);
         const curData = thisAlbum.album.map((item) => item.ETag);
@@ -49,10 +51,10 @@ class SongCache {
             return !thisAlbum.album.find((it) => it.ETag === item.ETag);
         });
 
-        this.loStorage[thisAlbumIndex].album = noMissing;
+        SongCache.loStorage[this.loadStorageIndex].album = noMissing;
 
         if (addEelment.length) {
-            return { album: noMissing, addEelment: addEelment};
+            return { album: noMissing, addEelment: addEelment };
         }
 
         return { album: noMissing };
@@ -60,35 +62,55 @@ class SongCache {
 
     /** 앨범을 처음로드 시키는경우 케싱합니다, */
     addSongCache(newValue: musicMetaType[], album: string, artist: string) {
+        newValue.sort((a, b) => {
+            if (a.track.no!! > b.track.no!!) return 1;
+            return -1;
+        });
+
         (this.saveStorage as songCacheType) = {
             album: newValue,
             albumName: album,
-            artist: artist
-        }
+            artist: artist,
+        };
     }
 
     /** 해당 앨범에서 음악이 추가로 발견되는경우 추가합니다. */
     insertSongCache(newValue: musicMetaType[]) {
-        if (this.saveStorage) {
+        if (this.loadStorageIndex !== -1) {
             newValue.forEach((item) => {
-                this.saveStorage!!.album.push(item);
-            })
+                SongCache.loStorage[this.loadStorageIndex].album.push(item);
+            });
+
+            return SongCache.loStorage[this.loadStorageIndex].album.sort(
+                (a, b) => {
+                    if (a.track.no!! > b.track.no!!) return 1;
+                    return -1;
+                }
+            );
         }
     }
 
     /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
     static applySongCache(songCaches: songCacheType[]) {
         const addEelment = songCaches.filter((item) => item);
-        
         if (addEelment.length) {
             if (this.loStorage.length) {
-                localStorage.setItem(SongCache.saveValue, JSON.stringify([...this.loStorage, ...addEelment]));
+                localStorage.setItem(
+                    SongCache.saveValue,
+                    JSON.stringify([...this.loStorage, ...addEelment])
+                );
             } else {
-                localStorage.setItem(SongCache.saveValue, JSON.stringify([...addEelment]));
+                localStorage.setItem(
+                    SongCache.saveValue,
+                    JSON.stringify([...addEelment])
+                );
             }
         } else {
             if (this.loStorage.length) {
-                localStorage.setItem(SongCache.saveValue, JSON.stringify(this.loStorage));
+                localStorage.setItem(
+                    SongCache.saveValue,
+                    JSON.stringify(this.loStorage)
+                );
             }
         }
     }
