@@ -1,6 +1,6 @@
-class SongCache {
-    static readonly saveValue = "songs";
-    static loStorage: AlbumCompType.songCache[] | [];
+class SongCache  {
+    private static readonly saveValue = "songs";
+    private static loStorage: AlbumCompType.songCache[] | [];
 
     saveStorage: AlbumCompType.songCache | undefined;
     loadStorageIndex: number = -1;
@@ -8,7 +8,9 @@ class SongCache {
     constructor() {
         const storage = localStorage.getItem(SongCache.saveValue);
         if (storage) {
-            SongCache.loStorage = JSON.parse(storage) as AlbumCompType.songCache[];
+            SongCache.loStorage = JSON.parse(
+                storage
+            ) as AlbumCompType.songCache[];
         } else {
             SongCache.loStorage = [];
         }
@@ -53,7 +55,11 @@ class SongCache {
     }
 
     /** 앨범을 처음로드 시키는경우 케싱합니다, */
-    addSongCache(newValue: AlbumCompType.musicMeta[], album: string, artist: string) {
+    addSongCache(
+        newValue: AlbumCompType.musicMeta[],
+        album: string,
+        artist: string
+    ) {
         newValue.sort((a, b) => {
             if (a.track.no!! > b.track.no!!) return 1;
             return -1;
@@ -108,4 +114,59 @@ class SongCache {
     }
 }
 
-export { SongCache };
+class AlbumCache {
+    private static readonly saveValue = "album";
+    private static loStorage: AlbumCompType.album[] | [];
+
+    loadStorageIndex: number = -1;
+    saveStorage: AlbumCompType.album | undefined;
+
+    constructor() {
+        const storage = localStorage.getItem(AlbumCache.saveValue);
+        if (storage) {
+            AlbumCache.loStorage = JSON.parse(storage) as AlbumCompType.album[];
+        } else {
+            AlbumCache.loStorage = [];
+        }
+    }
+
+    getAlbumCache(album: string, artist: string) {
+        this.loadStorageIndex = AlbumCache.loStorage.findIndex(
+            (item) => item.album === album && item.albumartist === artist
+        );
+
+        if (this.loadStorageIndex === -1) return null;
+
+        return AlbumCache.loStorage[this.loadStorageIndex];
+    }
+
+    addAlbumCache(albumInfo: AlbumCompType.album) {
+        this.saveStorage = albumInfo;
+    }
+
+    static applySongCache(albumCache: AlbumCompType.album[]) {
+        const addEelment = albumCache.filter((item) => item);
+        if (addEelment.length) {
+            if (this.loStorage.length) {
+                localStorage.setItem(
+                    AlbumCache.saveValue,
+                    JSON.stringify([...this.loStorage, ...addEelment])
+                );
+            } else {
+                localStorage.setItem(
+                    AlbumCache.saveValue,
+                    JSON.stringify([...addEelment])
+                );
+            }
+        } else {
+            if (this.loStorage.length) {
+                localStorage.setItem(
+                    AlbumCache.saveValue,
+                    JSON.stringify(this.loStorage)
+                );
+            }
+        }
+    }
+}
+
+export { SongCache, AlbumCache };

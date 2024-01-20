@@ -11,14 +11,13 @@ import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 // aws 요청을 url로 파싱해주는 라이브러리
 
-async function task() {
+async function awsTest() {
     // Amazon Cognito 자격증명 받기
     const client = new S3Client({
         region: process.env.REACT_APP_AWS_S3_REGION,
         credentials: fromCognitoIdentityPool({
-            clientConfig: { region: process.env.REACT_APP_AWS_S3_REGION},
-            identityPoolId:
-                process.env.REACT_APP_AWS_IDENTITYPOOLLD!!,
+            clientConfig: { region: process.env.REACT_APP_AWS_S3_REGION },
+            identityPoolId: process.env.REACT_APP_AWS_IDENTITYPOOLLD!!,
         }),
     });
 
@@ -40,7 +39,7 @@ async function task() {
     });
 
     console.log(url);
-    
+
     try {
         const res = await client.send(getlist);
         console.log(res);
@@ -50,7 +49,6 @@ async function task() {
 }
 
 export function Test(): JSX.Element {
-    task();
-
+    awsTest();
     return <></>;
 }

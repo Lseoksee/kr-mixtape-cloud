@@ -149,7 +149,7 @@ class AWSUtiil {
 
         let albumart;
         if (metadata.common.picture) {
-            albumart = new Blob([metadata.common.picture[0].data]);
+            albumart = metadata.common.picture[0].data;
         }
 
         return {

@@ -7,18 +7,17 @@ declare namespace NodeJS {
         readonly REACT_APP_AWS_S3_BUCKET: string;
         readonly REACT_APP_AWS_IDENTITYPOOLLD: string;
     }
-    
 }
 
 /* AlbumComponet 타입 지정  */
 declare namespace AlbumCompType {
-    /** 앨범타입 */
+    /** 앨범 로컬스토리지 저장 타입 */
     type album = {
         album?: string;
         albumartist?: string;
         year?: number;
         count: number;
-        albumart?: Blob;
+        albumart?: Buffer;
     };
 
     /** 파일 타입 */
@@ -33,7 +32,7 @@ declare namespace AlbumCompType {
             ETag: string;
         };
 
-    /** 음악 로컬스토리지 저장 타입 */ 
+    /** 음악 로컬스토리지 저장 타입 */
     type songCache = {
         albumName: string;
         artist: string;

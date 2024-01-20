@@ -83,9 +83,12 @@ class AlbumView extends Component {
         if (this.state.playerElement?.length) {
             const stateData = this.state;
 
-            let albumArt: string;
-            if (stateData.albumInfo.albumart) albumArt = URL.createObjectURL(stateData.albumInfo.albumart);
-            else albumArt = tempAlbumArt;
+            let albumArt = tempAlbumArt;
+            
+            if (stateData.albumInfo.albumart)  {
+                const blob= new Blob([stateData.albumInfo.albumart])
+                albumArt = URL.createObjectURL(blob);
+            }
 
             const playList = this.state.playerElement.map((item, index) => {
                 return (
