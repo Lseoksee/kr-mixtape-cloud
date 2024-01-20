@@ -25,13 +25,13 @@ class AlbumView extends Component {
         albumName: string; //앨범명
         artist: string; //아티스트명
         awsutill: AWSUtiil;
-        renew: (albumData: AlbumCompType.songCache) => void
+        readyEvent: (albumData: AlbumCompType.songCache) => void
     }> = this.props;
 
     //state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{}>, snapshot?: any): void {
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
-            this.props.renew(this.ch.saveStorage!!);
+            this.props.readyEvent(this.ch.saveStorage!!);
         }   
     }
 

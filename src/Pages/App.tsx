@@ -4,7 +4,7 @@ import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
 import "./App.css";
-import { SongCache, songCacheType } from "../Utils/BrowserCache";
+import { SongCache } from "../Utils/BrowserCache";
 
 const constValue = {
     SetMusicMemo: React.memo(SetMusic),
@@ -13,10 +13,10 @@ const constValue = {
 function SetMusic(): JSX.Element {
     const [state, setState] = useState<{
         element: JSX.Element[];
-        loadAlbum: songCacheType[];
+        loadAlbum: AlbumCompType.songCache[];
     }>({ element: [], loadAlbum: [] });
 
-    const readyEvent = (albumData: songCacheType) => {
+    const readyEvent = (albumData: AlbumCompType.songCache) => {
         state.loadAlbum.push(albumData);
         setState((ref) => ({ ...ref }));
     };
@@ -30,15 +30,16 @@ function SetMusic(): JSX.Element {
     if (!state.element.length) {
         const aws = new AWSUtiil(constants.ENV_DEVMODE);
 
-        state.element = albumList.map((item) => {
+        state.element = albumList.map((item, index) => {
             const album = item.albums[0];
             const art = item.artist;
             return (
                 <AlbumView
+                    key={index}
                     albumSrc={album.dirname}
                     albumName={album.dirname}
                     artist={art}
-                    renew={readyEvent}
+                    readyEvent={readyEvent}
                     awsutill={aws}
                 ></AlbumView>
             );
