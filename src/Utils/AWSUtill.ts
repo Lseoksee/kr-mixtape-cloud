@@ -7,24 +7,7 @@ import {
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import * as musicMetadata from "music-metadata-browser";
-
-/* 앨범 타입 */
-export type albumType = {
-    album?: string;
-    albumartist?: string;
-    year?: number;
-    count: number;
-    albumart?: Blob;
-};
-
-//파일 타입
-export type fileType = {
-    ETag: string;
-    fileName: string;
-};
-
-export type musicMetaType = musicMetadata.IAudioMetadata["common"] & { ETag: string };
+import { parseReadableStream } from "music-metadata-browser";
 
 class AWSUtiil {
     static Bytes = 500 * 1000;
@@ -102,7 +85,7 @@ class AWSUtiil {
     }
 
     /** 다운로드와 스트리밍이 가능한 url 주소를 리턴합니다. */
-    public async getFileURL(file: fileType) {
+    public async getFileURL(file: AlbumCompType.file) {
         // 개발 모드 활성화 시
         if (this.devMode) {
             return "";
@@ -121,7 +104,7 @@ class AWSUtiil {
     /** 해당 파일들의 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getMusicID3Tag(files: fileType[]): Promise<musicMetaType[]> {
+    public async getMusicID3Tag(files: AlbumCompType.file[]): Promise<AlbumCompType.musicMeta[]> {
         const data = await Promise.all(
             files.map(async (file) => {
                 const getfile = new GetObjectCommand({
@@ -131,7 +114,7 @@ class AWSUtiil {
                 });
 
                 const results = await this.clinet.send(getfile);
-                const metadata = await musicMetadata.parseReadableStream(
+                const metadata = await parseReadableStream(
                     results.Body?.transformToWebStream()!!,
                     {},
                     {
@@ -148,7 +131,7 @@ class AWSUtiil {
     /** 해당 앨범리스트에서 앨범 태그를 리턴합니다.
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getAlbumTag(albumList: fileType[]) {
+    public async getAlbumTag(albumList: AlbumCompType.file[]) {
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: albumList[0].fileName,
@@ -156,7 +139,7 @@ class AWSUtiil {
         });
 
         const results = await this.clinet.send(getfile);
-        const metadata = await musicMetadata.parseReadableStream(
+        const metadata = await parseReadableStream(
             results.Body?.transformToWebStream()!!,
             {},
             {
@@ -175,7 +158,7 @@ class AWSUtiil {
             year: metadata.common.year,
             count: albumList.length,
             albumart: albumart,
-        } as albumType;
+        } as AlbumCompType.album;
     }
 }
 

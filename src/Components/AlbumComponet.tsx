@@ -1,13 +1,13 @@
 import React, { Component, Fragment } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
-import AWSUtiil, { albumType, musicMetaType } from "../Utils/AWSUtill";
+import AWSUtiil from "../Utils/AWSUtill";
 import "./AlbumComponet.css";
-import { SongCache, songCacheType } from "../Utils/BrowserCache";
+import { SongCache } from "../Utils/BrowserCache";
 
 class AlbumView extends Component {
     state: Readonly<{
-        playerElement: Array<musicMetaType>;
-        albumInfo: albumType;
+        playerElement: Array<AlbumCompType.musicMeta>;
+        albumInfo: AlbumCompType.album;
     }> = {
         playerElement: [],
         albumInfo: {
@@ -25,7 +25,7 @@ class AlbumView extends Component {
         albumName: string; //앨범명
         artist: string; //아티스트명
         awsutill: AWSUtiil;
-        renew: (albumData: songCacheType) => void
+        renew: (albumData: AlbumCompType.songCache) => void
     }> = this.props;
 
     //state 값 업데이트 시 실행

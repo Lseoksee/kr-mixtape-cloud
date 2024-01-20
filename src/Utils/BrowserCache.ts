@@ -1,29 +1,21 @@
-import { fileType, musicMetaType } from "./AWSUtill";
-
-export type songCacheType = {
-    albumName: string;
-    artist: string;
-    album: musicMetaType[];
-};
-
 class SongCache {
     static readonly saveValue = "songs";
-    static loStorage: songCacheType[] | [];
+    static loStorage: AlbumCompType.songCache[] | [];
 
-    saveStorage: songCacheType | undefined;
+    saveStorage: AlbumCompType.songCache | undefined;
     loadStorageIndex: number = -1;
 
     constructor() {
         const storage = localStorage.getItem(SongCache.saveValue);
         if (storage) {
-            SongCache.loStorage = JSON.parse(storage) as songCacheType[];
+            SongCache.loStorage = JSON.parse(storage) as AlbumCompType.songCache[];
         } else {
             SongCache.loStorage = [];
         }
     }
 
     /** 해당 곡에 저장된 케시 데이터를 불러옵니다. */
-    getSongCache(newFils: fileType[], album: string, artist: string) {
+    getSongCache(newFils: AlbumCompType.file[], album: string, artist: string) {
         this.loadStorageIndex = SongCache.loStorage.findIndex(
             (item) => item.albumName === album && item.artist === artist
         );
@@ -61,13 +53,13 @@ class SongCache {
     }
 
     /** 앨범을 처음로드 시키는경우 케싱합니다, */
-    addSongCache(newValue: musicMetaType[], album: string, artist: string) {
+    addSongCache(newValue: AlbumCompType.musicMeta[], album: string, artist: string) {
         newValue.sort((a, b) => {
             if (a.track.no!! > b.track.no!!) return 1;
             return -1;
         });
 
-        (this.saveStorage as songCacheType) = {
+        (this.saveStorage as AlbumCompType.songCache) = {
             album: newValue,
             albumName: album,
             artist: artist,
@@ -75,7 +67,7 @@ class SongCache {
     }
 
     /** 해당 앨범에서 음악이 추가로 발견되는경우 추가합니다. */
-    insertSongCache(newValue: musicMetaType[]) {
+    insertSongCache(newValue: AlbumCompType.musicMeta[]) {
         if (this.loadStorageIndex !== -1) {
             newValue.forEach((item) => {
                 SongCache.loStorage[this.loadStorageIndex].album.push(item);
@@ -91,7 +83,7 @@ class SongCache {
     }
 
     /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
-    static applySongCache(songCaches: songCacheType[]) {
+    static applySongCache(songCaches: AlbumCompType.songCache[]) {
         const addEelment = songCaches.filter((item) => item);
         if (addEelment.length) {
             if (this.loStorage.length) {
