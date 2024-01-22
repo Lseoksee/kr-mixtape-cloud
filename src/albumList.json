@@ -3,7 +3,8 @@
         "artist": "E SENS",
         "albums": [
             {
-                "name": "New Blood Rapper, Vol.1",
+                "album": "New Blood Rapper, Vol.1",
+                "AlbumInfoSrc": "01. Still Rappin'.mp3",
                 "dirname": "E SENS - New Blood Rapper, Vol.1"
             }
         ]
@@ -12,7 +13,8 @@
         "artist": "San E",
         "albums": [
             {
-                "name": "Ready To Be Signed",
+                "album": "Ready To Be Signed",
+                "AlbumInfoSrc": "01. 산선생님(랩의진수).mp3",
                 "dirname": "San E - Ready To Be Signed"
             }
         ]

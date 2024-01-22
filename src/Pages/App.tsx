@@ -5,6 +5,9 @@ import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
 import "./App.css";
 import { SongCache } from "../Utils/BrowserCache";
+import { useDispatch } from "react-redux";
+import { Dispatch } from "redux";
+import { FunctionRedux } from "../Utils/ConfingRedux";
 
 const constValue = {
     SetMusicMemo: React.memo(SetMusic),
@@ -16,11 +19,13 @@ function SetMusic(): JSX.Element {
         loadAlbum: AlbumCompType.songCache[];
     }>({ element: [], loadAlbum: [] });
 
+    const dispatch  = useDispatch<Dispatch<ReduxType.action>>();
+
     const readyEvent = (albumData: AlbumCompType.songCache) => {
         state.loadAlbum.push(albumData);
         setState((ref) => ({ ...ref }));
     };
-
+    
     useEffect(() => { 
         if (state.element.length === state.loadAlbum.length) {
             SongCache.applySongCache(state.loadAlbum);
@@ -37,13 +42,15 @@ function SetMusic(): JSX.Element {
                 <AlbumView
                     key={index}
                     albumSrc={album.dirname}
-                    albumName={album.dirname}
+                    albumName={album.album}
                     artist={art}
                     readyEvent={readyEvent}
                     awsutill={aws}
                 ></AlbumView>
             );
         });
+
+        dispatch(FunctionRedux.setAlbumCache(state.element.length));
     }
     return <div id="albumDiv">{state.element}</div>;
 }

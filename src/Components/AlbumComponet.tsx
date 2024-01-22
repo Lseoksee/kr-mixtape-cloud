@@ -3,17 +3,31 @@ import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import AWSUtiil from "../Utils/AWSUtill";
 import "./AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
+import { ConnectedProps, connect } from "react-redux";
+import { ClassRedux } from "../Utils/ConfingRedux";
 
-class AlbumView extends Component {
-    state: Readonly<{
-        playerElement: Array<AlbumCompType.musicMeta>;
-        albumInfo: AlbumCompType.album;
-    }> = {
+type AlbumViewProp = {
+    albumSrc: string; //앨범경로
+    albumName: string; //앨범명
+    artist: string; //아티스트명
+    awsutill: AWSUtiil;
+    readyEvent: (albumData: AlbumCompType.songCache) => void;
+} & ConnectedProps<typeof reduxConnect>;
+
+type AlbumViewState = {
+    playerElement: Array<AlbumCompType.musicMeta>;
+    albumInfo: AlbumCompType.album;
+};
+
+class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
+    state: Readonly<AlbumViewState> = {
         playerElement: [],
         albumInfo: {
-            count: 0,
-        },
+            count: 0
+        }
     };
+
+    props: Readonly<AlbumViewProp> = this.props;
 
     songCache = new SongCache();
     albumCache = new AlbumCache();
@@ -21,19 +35,11 @@ class AlbumView extends Component {
     // url 목록들
     urls: string[] = [];
 
-    props: Readonly<{
-        albumSrc: string; //앨범경로
-        albumName: string; //앨범명
-        artist: string; //아티스트명
-        awsutill: AWSUtiil;
-        readyEvent: (albumData: AlbumCompType.songCache) => void
-    }> = this.props;
-
     //state 값 업데이트 시 실행
-    componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{}>, snapshot?: any): void {
+    componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
             this.props.readyEvent(this.songCache.saveStorage!!);
-        }   
+        }
     }
 
     // 페이지 첫 로딩시 실행
@@ -44,28 +50,33 @@ class AlbumView extends Component {
         );
 
         getAlbumList.then((item) => {
-            
             //앨범 정보 불러오기
             const albumCached = this.albumCache.getAlbumCache(this.props.albumName, this.props.artist);
             if (albumCached) {
-                this.setState({ playerElement: albumCached });
+                this.setState({ albumInfo: albumCached });
             } else {
-                this.props.awsutill.getAlbumTag(item).then((res) => {
+                this.props.awsutill.getAlbumTag(item, this.props.albumName, this.props.artist).then((res) => {
                     this.setState({ albumInfo: res });
-                });
+                    this.props.albumArtLoadEvent(res);
+                });   
             }
 
-            const songCached =  this.songCache.getSongCache(item, this.props.albumName, this.props.artist);
-            
+            const songCached = this.songCache.getSongCache(
+                item,
+                this.props.albumName,
+                this.props.artist
+            );
+
             if (songCached) {
                 // 캐싱된 데이터에서 추가된 값이 있는지
                 if (songCached.addEelment) {
-                    this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
-                        const cachedSort = this.songCache.insertSongCache(item);
-                        this.setState({ playerElement: cachedSort });
-                    }); 
+                    this.props.awsutill
+                        .getMusicID3Tag(songCached.addEelment)
+                        .then((item) => {
+                            const cachedSort = this.songCache.insertSongCache(item);
+                            this.setState({ playerElement: cachedSort!! });
+                        });
                 }
-                
                 // 없으면 그냥 setState
                 else {
                     this.setState({ playerElement: songCached.album });
@@ -91,9 +102,10 @@ class AlbumView extends Component {
             const stateData = this.state;
 
             let albumArt = tempAlbumArt;
-            
-            if (stateData.albumInfo.albumart)  {
-                const blob= new Blob([stateData.albumInfo.albumart])
+
+            if (stateData.albumInfo.album) {
+                const buffer = Buffer.from(Array.from(stateData.albumInfo.art!!).map(line => line.charCodeAt(0)));
+                const blob = new Blob([buffer]);
                 albumArt = URL.createObjectURL(blob);
             }
 
@@ -107,7 +119,7 @@ class AlbumView extends Component {
                     </Fragment>
                 );
             });
-            
+
             return (
                 <div id="trackView">
                     <div id="albuminfoDiv">
@@ -128,4 +140,8 @@ class AlbumView extends Component {
     }
 }
 
-export default AlbumView;
+// 클래스 컴포넌트에서 redux 재어를 위한
+const reduxConnect = connect(ClassRedux.mapStateToProps, ClassRedux.mapDispatchToProps);
+const useClassRedux = reduxConnect(AlbumView);
+
+export default useClassRedux;

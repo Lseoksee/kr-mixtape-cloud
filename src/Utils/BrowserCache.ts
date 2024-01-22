@@ -1,7 +1,7 @@
 class BrowserCache {
-    /** 케싱된 사항들을 로컬스토리지에 최종 저장합니다 */
-    static applySongCache(songCaches: AlbumCompType.songCache[], saveValue: string, loStorage: any[]) {
-        const addEelment = songCaches.filter((item) => item);
+    /** 캐싱된 사항들을 로컬스토리지에 최종 저장합니다 */
+    static applyCache(caches: any[], saveValue: string, loStorage: any[]) {
+        const addEelment = caches.filter((item) => item);
         if (addEelment.length) {
             if (loStorage.length) {
                 localStorage.setItem(
@@ -82,7 +82,7 @@ class SongCache extends BrowserCache  {
         return { album: noMissing };
     }
 
-    /** 앨범을 처음로드 시키는경우 케싱합니다, */
+    /** 앨범을 처음로드 시키는경우 캐싱합니다 */
     addSongCache(newValue: AlbumCompType.musicMeta[], album: string, artist: string) {
         newValue.sort((a, b) => {
             if (a.track.no!! > b.track.no!!) return 1;
@@ -113,7 +113,7 @@ class SongCache extends BrowserCache  {
     }
 
     static applySongCache(songCaches: AlbumCompType.songCache[]): void {
-        BrowserCache.applySongCache(songCaches, this.saveValue, this.loStorage);
+        BrowserCache.applyCache(songCaches, this.saveValue, this.loStorage);
     }
 }
 
@@ -134,9 +134,10 @@ class AlbumCache extends BrowserCache {
         }
     }
 
+    /* 앨범 정보 캐시를 리턴합니다 */
     getAlbumCache(album: string, artist: string) {
         this.loadStorageIndex = AlbumCache.loStorage.findIndex(
-            (item) => item.album === album && item.albumartist === artist
+            (item) => item.album === album && item.artist === artist
         );
 
         if (this.loadStorageIndex === -1) return null;
@@ -144,12 +145,14 @@ class AlbumCache extends BrowserCache {
         return AlbumCache.loStorage[this.loadStorageIndex];
     }
 
+    /** 앨범을 처음로드 시키는경우 캐싱합니다 */
     addAlbumCache(albumInfo: AlbumCompType.album) {
         this.saveStorage = albumInfo;
     }
 
-    static applySongCache(songCaches: AlbumCompType.songCache[]): void {
-        BrowserCache.applySongCache(songCaches, this.saveValue, this.loStorage);
+
+    static applyCache(albumCaches: AlbumCompType.album[]): void {
+        BrowserCache.applyCache(albumCaches, this.saveValue, this.loStorage);
     }
 }
 

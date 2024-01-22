@@ -9,15 +9,15 @@ declare namespace NodeJS {
     }
 }
 
-/* AlbumComponet 타입 지정  */
+// AlbumComponet 타입 지정
 declare namespace AlbumCompType {
     /** 앨범 로컬스토리지 저장 타입 */
     type album = {
         album?: string;
-        albumartist?: string;
-        year?: number;
+        artist?: string;
+        year?: number
         count: number;
-        albumart?: Buffer;
+        art?: string;
     };
 
     /** 파일 타입 */
@@ -37,5 +37,26 @@ declare namespace AlbumCompType {
         albumName: string;
         artist: string;
         album: musicMeta[];
+    };
+}
+
+// Redux 관리용 타입
+declare namespace ReduxType {
+    /** Redux 결과값 타입 */
+    type state = {
+        /** 로드해야 하는 앨범 개수 */
+        AlbumConunt?: number;
+        /** 현재 로드한 앨범 카운트 */
+        loadAlbum?: AlbumCompType.album[];
+    };
+    /** Redux 행동 타입들 */
+    type action = {
+        /** Reducer 함수에서 키 식별용 (기본적으로 필요) */
+        type: "AlbumConunt" | "LoadAlbum";
+        /** 담고싶은 데이터 아무거나 */
+        data: {
+            AlbumConunt?: any;
+            LoadAlbum?: AlbumCompType.album;
+        };
     };
 }

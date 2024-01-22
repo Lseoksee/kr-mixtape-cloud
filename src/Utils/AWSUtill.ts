@@ -131,7 +131,7 @@ class AWSUtiil {
     /** 해당 앨범리스트에서 앨범 태그를 리턴합니다.
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getAlbumTag(albumList: AlbumCompType.file[]) {
+    public async getAlbumTag(albumList: AlbumCompType.file[], album: string, artist: string) {
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: albumList[0].fileName,
@@ -153,11 +153,11 @@ class AWSUtiil {
         }
 
         return {
-            album: metadata.common.album,
-            albumartist: metadata.common.albumartist,
+            album: album,
+            artist: artist,
             year: metadata.common.year,
             count: albumList.length,
-            albumart: albumart,
+            art: albumart?.toString("binary"),
         } as AlbumCompType.album;
     }
 }
