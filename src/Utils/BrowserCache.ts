@@ -112,7 +112,7 @@ class SongCache extends BrowserCache  {
         }
     }
 
-    static applySongCache(songCaches: AlbumCompType.songCache[]): void {
+    static applyCache(songCaches: AlbumCompType.songCache[]): void {
         BrowserCache.applyCache(songCaches, this.saveValue, this.loStorage);
     }
 }

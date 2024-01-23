@@ -46,17 +46,17 @@ declare namespace ReduxType {
     type state = {
         /** 로드해야 하는 앨범 개수 */
         AlbumConunt?: number;
-        /** 현재 로드한 앨범 카운트 */
-        loadAlbum?: AlbumCompType.album[];
     };
     /** Redux 행동 타입들 */
     type action = {
         /** Reducer 함수에서 키 식별용 (기본적으로 필요) */
-        type: "AlbumConunt" | "LoadAlbum";
+        type: "AlbumConunt" | "LoadAlbum" | "LoadSong";
+        
         /** 담고싶은 데이터 아무거나 */
-        data: {
+        payload: {
             AlbumConunt?: any;
             LoadAlbum?: AlbumCompType.album;
+            LoadSong?: AlbumCompType.songCache;
         };
     };
 }

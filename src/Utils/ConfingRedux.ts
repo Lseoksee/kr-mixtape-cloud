@@ -12,7 +12,12 @@ class ClassRedux {
     static mapDispatchToProps = (dispatch: Dispatch<ReduxType.action>) => ({
         /** 앨범아트 로드를 Reducer에 알림 */
         albumArtLoadEvent: (album: AlbumCompType.album) => {
-            dispatch({ type: "LoadAlbum", data: { LoadAlbum: album } });
+            dispatch({ type: "LoadAlbum", payload: { LoadAlbum: album } });
+        },
+
+        /** 곡 목록 로드를 Reducer에 알림 */
+        SongLoadEvent: (songData: AlbumCompType.songCache) => {
+            dispatch({ type: "LoadSong", payload: { LoadSong: songData } });
         },
     });
 }
@@ -20,9 +25,9 @@ class ClassRedux {
 /* 함수용 컴포넌트용 */
 class FunctionRedux {
     /** 로드할 엘범 아트 개수를 Reducer에 알림 */
-    static setAlbumCache(albumCount: number): ReduxType.action {
-        return {type: "AlbumConunt", data: { AlbumConunt: albumCount}}}
+    static setAlbumConunt(albumCount: number): ReduxType.action {
+        return { type: "AlbumConunt", payload: { AlbumConunt: albumCount } };
     }
+}
 
-
-export { ClassRedux, FunctionRedux};
+export { ClassRedux, FunctionRedux };

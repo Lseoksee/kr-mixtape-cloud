@@ -11,7 +11,6 @@ type AlbumViewProp = {
     albumName: string; //앨범명
     artist: string; //아티스트명
     awsutill: AWSUtiil;
-    readyEvent: (albumData: AlbumCompType.songCache) => void;
 } & ConnectedProps<typeof reduxConnect>;
 
 type AlbumViewState = {
@@ -38,7 +37,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     //state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
-            this.props.readyEvent(this.songCache.saveStorage!!);
+            this.props.SongLoadEvent(this.songCache.saveStorage!!);
         }
     }
 
