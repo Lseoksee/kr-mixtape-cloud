@@ -5,15 +5,14 @@ import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
 import "./App.css";
 import { useDispatch } from "react-redux";
-import { Dispatch } from "redux";
-import { FunctionRedux } from "../Utils/ConfingRedux";
+import { ReduxActions } from "../Utils/ConfingRedux";
 
 const constValue = {
     SetMusicMemo: React.memo(SetMusic),
 };
 
 function SetMusic(): JSX.Element {
-    const dispatch = useDispatch<Dispatch<ReduxType.action>>();
+    const dispatch = useDispatch();
     const aws = new AWSUtiil(constants.ENV_DEVMODE);
 
     const element = albumList.map((item, index) => {
@@ -30,7 +29,7 @@ function SetMusic(): JSX.Element {
         );
     });
 
-    dispatch(FunctionRedux.setAlbumConunt(element.length));
+    dispatch(ReduxActions.setAlbumConunt({AlbumConunt: element.length}));
 
     return <div id="albumDiv">{element}</div>;
 }

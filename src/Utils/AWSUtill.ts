@@ -30,7 +30,7 @@ class AWSUtiil {
     }
 
     /** S3 에서 해당 폴더에 파일목록을 리턴합니다. */
-    public async getFilelist(loc: string) {
+    public async getFilelist(loc: string): Promise<AlbumCompType.file[]> {
         // 개발 모드 활성화 시
         if (this.devMode) {
             return [

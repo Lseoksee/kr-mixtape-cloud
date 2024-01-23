@@ -15,7 +15,7 @@ declare namespace AlbumCompType {
     type album = {
         album?: string;
         artist?: string;
-        year?: number
+        year?: number;
         count: number;
         art?: string;
     };
@@ -47,16 +47,11 @@ declare namespace ReduxType {
         /** 로드해야 하는 앨범 개수 */
         AlbumConunt?: number;
     };
-    /** Redux 행동 타입들 */
+
+    /** Redux 요청 데이터들 */
     type action = {
-        /** Reducer 함수에서 키 식별용 (기본적으로 필요) */
-        type: "AlbumConunt" | "LoadAlbum" | "LoadSong";
-        
-        /** 담고싶은 데이터 아무거나 */
-        payload: {
-            AlbumConunt?: any;
-            LoadAlbum?: AlbumCompType.album;
-            LoadSong?: AlbumCompType.songCache;
-        };
+        AlbumConunt?: any;
+        LoadAlbum?: AlbumCompType.album;
+        LoadSong?: AlbumCompType.songCache;
     };
 }
