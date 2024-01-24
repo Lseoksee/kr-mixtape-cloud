@@ -7,10 +7,6 @@
         "@aws-sdk/credential-providers": "^3.485.0",
         "@aws-sdk/s3-request-presigner": "^3.485.0",
         "@reduxjs/toolkit": "^2.0.1",
-        "@testing-library/jest-dom": "^5.17.0",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^13.5.0",
-        "@types/jest": "^27.5.2",
         "@types/node": "^16.18.68",
         "@types/react": "^18.2.46",
         "@types/react-dom": "^18.2.18",
@@ -48,5 +44,6 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    }
+    },
+    "packageManager": "^pnpm@8.14.3"
 }
