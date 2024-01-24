@@ -8,10 +8,7 @@
             "name": "npm 으로 실행",
             "request": "launch",
             "runtimeArgs": ["start"],
-            "runtimeExecutable": "npm",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "runtimeExecutable": "pnpm",
             "type": "node"
         },
     ]
