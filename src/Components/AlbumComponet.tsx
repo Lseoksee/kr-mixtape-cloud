@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import AWSUtiil from "../Utils/AWSUtill";
-import "./AlbumComponet.css";
+import "./css/AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Utils/ConfingRedux";

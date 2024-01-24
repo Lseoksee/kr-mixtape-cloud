@@ -3,7 +3,7 @@ import albumList from "../albumList.json";
 import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
-import "./App.css";
+import "./css/App.css";
 import { useDispatch } from "react-redux";
 import { ReduxActions } from "../Utils/ConfingRedux";
 
