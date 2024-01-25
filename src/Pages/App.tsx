@@ -3,7 +3,7 @@ import albumList from "../albumList.json";
 import AWSUtiil from "../Utils/AWSUtill";
 import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
-import "./css/App.css";
+import "../Style/App.css";
 import { useDispatch } from "react-redux";
 import { ReduxActions } from "../Utils/ConfingRedux";
 
@@ -31,12 +31,12 @@ function SetMusic(): JSX.Element {
 
     dispatch(ReduxActions.setAlbumConunt({AlbumConunt: element.length}));
 
-    return <div id="albumDiv">{element}</div>;
+    return <div id="albumDiv">{element[0]}</div>;
 }
 
 function App(): JSX.Element {
     return (
-        <div id="albumDiv">
+        <div>
             <constValue.SetMusicMemo></constValue.SetMusicMemo>
         </div>
     );
