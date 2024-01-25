@@ -6,6 +6,15 @@ import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Utils/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from "@mui/material";
 
 type AlbumViewProp = {
     albumSrc: string; //앨범경로
@@ -141,14 +150,23 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 
             const playList = this.state.playerElement.map((item, index) => {
                 return (
+                    <TableRow>
+                        <TableCell>{item.track.no}</TableCell>
+                        <TableCell>{item.title}</TableCell>
+                        <TableCell>{this.props.artist}</TableCell>
+                        <TableCell>{}</TableCell>
+                        <TableCell>{"길이"}</TableCell>
+                    </TableRow>
+                );
+            });
+
+            /*                 </TableRow>
                     <Fragment key={index}>
                         <h1>{item.title || "타이틀"}</h1>
                         <audio controls>
                             <source src=""></source>
                         </audio>
-                    </Fragment>
-                );
-            });
+                    </Fragment> */
 
             return (
                 <div className="trackView">
@@ -178,10 +196,30 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                     sx={{ fontSize: "36px" }}
                                     className="InfoIcon"
                                 ></AccessTimeIcon>
-                                <p>{stateData.albumInfo.year || ""}년 · {stateData.albumInfo.count}곡</p>
+                                <p>
+                                    {stateData.albumInfo.year || ""}년 ·{" "}
+                                    {stateData.albumInfo.count}곡
+                                </p>
                             </div>
                         </div>
                     </div>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableContainer>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell>제목</TableCell>
+                                        <TableCell>아티스트</TableCell>
+                                        <TableCell>길이</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {playList}
+                                </TableBody>
+                            </TableContainer>
+                        </Table>
+                    </TableContainer>
                 </div>
             );
         } else {
