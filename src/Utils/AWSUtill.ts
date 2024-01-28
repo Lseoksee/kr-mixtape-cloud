@@ -104,7 +104,9 @@ class AWSUtiil {
     /** 해당 파일들의 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getMusicID3Tag(files: AlbumCompType.file[]): Promise<AlbumCompType.musicMeta[]> {
+    public async getMusicID3Tag(
+        files: AlbumCompType.file[]
+    ): Promise<AlbumCompType.musicMeta[]> {
         const data = await Promise.all(
             files.map(async (file) => {
                 const getfile = new GetObjectCommand({
@@ -116,13 +118,19 @@ class AWSUtiil {
                 const results = await this.clinet.send(getfile);
                 const metadata = await parseReadableStream(
                     results.Body?.transformToWebStream()!!,
-                    {},
                     {
-                        skipCovers: true,
+                        mimeType: "audio/mpeg"
+                    },
+                    {
+                        skipCovers: true
                     }
                 );
 
-                return { ...metadata.common, ETag: file.ETag };
+                return {
+                    ...metadata.common,
+                    ETag: file.ETag,
+                    duration: metadata.format.duration || 0,
+                };
             })
         );
         return data;
@@ -131,7 +139,11 @@ class AWSUtiil {
     /** 해당 앨범리스트에서 앨범 태그를 리턴합니다.
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getAlbumTag(albumList: AlbumCompType.file[], album: string, artist: string) {
+    public async getAlbumTag(
+        albumList: AlbumCompType.file[],
+        album: string,
+        artist: string
+    ): Promise<AlbumCompType.album> {
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: albumList[0].fileName,
@@ -141,7 +153,9 @@ class AWSUtiil {
         const results = await this.clinet.send(getfile);
         const metadata = await parseReadableStream(
             results.Body?.transformToWebStream()!!,
-            {},
+            {
+                mimeType: "audio/mpeg",
+            },
             {
                 skipCovers: false,
             }
@@ -158,7 +172,7 @@ class AWSUtiil {
             year: metadata.common.year,
             count: albumList.length,
             art: albumart?.toString("binary"),
-        } as AlbumCompType.album;
+        };
     }
 }
 

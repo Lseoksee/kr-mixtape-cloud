@@ -15,6 +15,7 @@ import {
     TableHead,
     TableRow,
 } from "@mui/material";
+import { Utils } from "../Utils/Utils";
 
 type AlbumViewProp = {
     albumSrc: string; //앨범경로
@@ -207,7 +208,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                         <TableCell>
                                             {this.props.artist}
                                         </TableCell>
-                                        <TableCell>{"길이"}</TableCell>
+                                        <TableCell>
+                                            {Utils.secToMin(item.duration)}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

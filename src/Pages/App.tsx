@@ -31,7 +31,7 @@ function SetMusic(): JSX.Element {
 
     dispatch(ReduxActions.setAlbumConunt({AlbumConunt: element.length}));
 
-    return <div id="albumDiv">{element[0]}</div>;
+    return <div id="albumDiv">{element}</div>;
 }
 
 function App(): JSX.Element {
