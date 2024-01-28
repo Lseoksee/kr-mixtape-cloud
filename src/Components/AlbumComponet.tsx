@@ -148,26 +148,6 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                 albumArt = URL.createObjectURL(blob);
             }
 
-            const playList = this.state.playerElement.map((item, index) => {
-                return (
-                    <TableRow>
-                        <TableCell>{item.track.no}</TableCell>
-                        <TableCell>{item.title}</TableCell>
-                        <TableCell>{this.props.artist}</TableCell>
-                        <TableCell>{}</TableCell>
-                        <TableCell>{"길이"}</TableCell>
-                    </TableRow>
-                );
-            });
-
-            /*                 </TableRow>
-                    <Fragment key={index}>
-                        <h1>{item.title || "타이틀"}</h1>
-                        <audio controls>
-                            <source src=""></source>
-                        </audio>
-                    </Fragment> */
-
             return (
                 <div className="trackView">
                     <div className="albuminfoDiv">
@@ -205,19 +185,32 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     </div>
                     <TableContainer component={Paper}>
                         <Table>
-                            <TableContainer>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>제목</TableCell>
-                                        <TableCell>아티스트</TableCell>
-                                        <TableCell>길이</TableCell>
+                            <colgroup>
+                                <col width="0%" />
+                                <col width="65%" />
+                                <col width="35%" />
+                                <col width="0%" />
+                            </colgroup>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>제목</TableCell>
+                                    <TableCell>아티스트</TableCell>
+                                    <TableCell>길이</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.playerElement.map((item, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{item.track.no}</TableCell>
+                                        <TableCell>{item.title}</TableCell>
+                                        <TableCell>
+                                            {this.props.artist}
+                                        </TableCell>
+                                        <TableCell>{"길이"}</TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {playList}
-                                </TableBody>
-                            </TableContainer>
+                                ))}
+                            </TableBody>
                         </Table>
                     </TableContainer>
                 </div>
