@@ -11,4 +11,15 @@ export class Utils {
 
         return `${min}:${secString}`;
     }
+
+    /** string바이트를 Blob URL 로 */
+    static byteStringToBlob(byteString?: string) {
+        if (!byteString) {
+            return;
+        }
+
+        const buffer = Buffer.from(Array.from(byteString).map((line) => line.charCodeAt(0)));
+        const blob = new Blob([buffer]);
+        return URL.createObjectURL(blob);
+    }
 }

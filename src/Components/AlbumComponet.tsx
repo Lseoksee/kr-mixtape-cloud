@@ -6,6 +6,8 @@ import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Utils/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
+
 import {
     Paper,
     StyledEngineProvider,
@@ -28,6 +30,7 @@ type AlbumViewProp = {
 type AlbumViewState = {
     playerElement: Array<AlbumCompType.musicMeta>;
     albumInfo: AlbumCompType.album;
+    songHover: number;
 };
 
 class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
@@ -36,6 +39,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         albumInfo: {
             count: 0,
         },
+        songHover: -1,
     };
 
     appData: { urls: string[]; albumArt: string } = {
@@ -46,7 +50,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     songCache = new SongCache();
     albumCache = new AlbumCache();
 
-    //state 값 업데이트 시 실행
+    // state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
             const redux = ReduxActions.SongLoadEvent({
@@ -65,9 +69,14 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             //앨범 정보 불러오기
             const albumCached = this.albumCache.getAlbumCache(this.props.albumName, this.props.artist);
             if (albumCached) {
+                // 앨범 아트 설정
+                this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
                 this.setState({ albumInfo: albumCached });
             } else {
                 this.props.awsutill.getAlbumTag(item, this.props.albumName, this.props.artist).then((res) => {
+                    // 앨범 아트 설정
+                    this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
+
                     this.setState({ albumInfo: res });
                     const redux = ReduxActions.albumArtLoadEvent({
                         LoadAlbum: res,
@@ -113,19 +122,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         }
     }
 
-    private songHoverEvent(e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
-
-    }
-
     render(): React.ReactNode {
         if (this.state.playerElement?.length) {
             const stateData = this.state;
-
-            if (stateData.albumInfo.album) {
-                const buffer = Buffer.from(Array.from(stateData.albumInfo.art!!).map((line) => line.charCodeAt(0)));
-                const blob = new Blob([buffer]);
-                this.appData.albumArt = URL.createObjectURL(blob);
-            }
 
             return (
                 <div className="trackView">
@@ -171,8 +170,20 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                 </TableHead>
                                 <TableBody>
                                     {this.state.playerElement.map((item, index) => (
-                                        <TableRow key={index} hover onMouseOver={this.songHoverEvent}>
-                                            <TableCell>{item.track.no}</TableCell>
+                                        <TableRow
+                                            key={index}
+                                            hover
+                                            onMouseOver={() => {
+                                                this.setState({ songHover: index });
+                                            }}
+                                        >
+                                            <TableCell>
+                                                {index === stateData.songHover ? (
+                                                    <PlayArrowOutlinedIcon />
+                                                ) : (
+                                                    item.track.no
+                                                )}
+                                            </TableCell>
                                             <TableCell>{item.title}</TableCell>
                                             <TableCell>{this.props.artist}</TableCell>
                                             <TableCell>{Utils.secToMin(item.duration)}</TableCell>
