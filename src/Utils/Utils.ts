@@ -5,8 +5,10 @@ export class Utils {
         const min = Math.floor(sec / 60);
 
         // 정수 초만 구해서 단수(0~9) 까지는 01 이런식으로 바꿈
-        const secString = Math.floor(sec - min * 60).toString().padStart(2, "0");
-        
+        const secString = Math.floor(sec - min * 60)
+            .toString()
+            .padStart(2, "0");
+
         return `${min}:${secString}`;
     }
 }

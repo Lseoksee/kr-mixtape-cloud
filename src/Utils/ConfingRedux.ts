@@ -21,10 +21,7 @@ const mainSlice = createSlice({
         },
 
         /** 앨범아트 로드를 Reducer에 알림 */
-        albumArtLoadEvent(
-            state,
-            action: PayloadAction<{ LoadAlbum: AlbumCompType.album }>
-        ) {
+        albumArtLoadEvent(state, action: PayloadAction<{ LoadAlbum: AlbumCompType.album }>) {
             AsyncSafeData.LoadAlbum.push(action.payload.LoadAlbum!!);
 
             if (state.AlbumConunt === AsyncSafeData.LoadAlbum.length) {
@@ -34,10 +31,7 @@ const mainSlice = createSlice({
         },
 
         /** 곡 목록 로드를 Reducer에 알림 */
-        SongLoadEvent(
-            state,
-            action: PayloadAction<{ LoadSong: AlbumCompType.songCache }>
-        ) {
+        SongLoadEvent(state, action: PayloadAction<{ LoadSong: AlbumCompType.songCache }>) {
             AsyncSafeData.LoadSong.push(action.payload.LoadSong!!);
 
             if (state.AlbumConunt === AsyncSafeData.LoadSong.length) {
@@ -49,7 +43,6 @@ const mainSlice = createSlice({
 });
 
 class ConfingRedux {
-
     /** 클래스 컴포넌트 Reducer 응답 및 요청
      * this.props.reduxResponce 로 state 값 받아볼 수 있고
      * this.props.this.props.dispatch(ReduxActions.요청할 함수) 이렇게 요청

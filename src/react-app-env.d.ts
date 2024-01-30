@@ -27,11 +27,10 @@ declare namespace AlbumCompType {
     };
 
     /** 음악 메타데이터 타입 */
-    type musicMeta =
-        import("music-metadata-browser").IAudioMetadata["common"] & {
-            ETag: string;
-            duration: number;
-        };
+    type musicMeta = import("music-metadata-browser").IAudioMetadata["common"] & {
+        ETag: string;
+        duration: number;
+    };
 
     /** 음악 로컬스토리지 저장 타입 */
     type songCache = {

@@ -29,7 +29,7 @@ function SetMusic(): JSX.Element {
         );
     });
 
-    dispatch(ReduxActions.setAlbumConunt({AlbumConunt: element.length}));
+    dispatch(ReduxActions.setAlbumConunt({ AlbumConunt: element.length }));
 
     return <div id="albumDiv">{element}</div>;
 }

@@ -1,9 +1,5 @@
 /* aws 관련 유틸 */
-import {
-    ListObjectsV2Command,
-    S3Client,
-    GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { ListObjectsV2Command, S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -36,33 +32,27 @@ class AWSUtiil {
             return [
                 {
                     ETag: "1",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/01. Still Rappin'.mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/01. Still Rappin'.mp3",
                 },
                 {
                     ETag: "2",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/02. M.C. (Feat. 개코 of Dynamic Duo).mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/02. M.C. (Feat. 개코 of Dynamic Duo).mp3",
                 },
                 {
                     ETag: "3",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/03. 피똥 (Feat. Simon Dominic).mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/03. 피똥 (Feat. Simon Dominic).mp3",
                 },
                 {
                     ETag: "4",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/04. 꽐라 (Remix) (Feat. Swings & Verbal Jint).mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/04. 꽐라 (Remix) (Feat. Swings & Verbal Jint).mp3",
                 },
                 {
                     ETag: "5",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/05. Make Music (Feat. Absotyle).mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/05. Make Music (Feat. Absotyle).mp3",
                 },
                 {
                     ETag: "6",
-                    fileName:
-                        "E SENS - New Blood Rapper, Vol.1/06. Rhyme King (Feat. Dok2).mp3",
+                    fileName: "E SENS - New Blood Rapper, Vol.1/06. Rhyme King (Feat. Dok2).mp3",
                 },
             ];
         }
@@ -104,9 +94,7 @@ class AWSUtiil {
     /** 해당 파일들의 mp3ID3 태그를 파싱 합니다
      * 참고 @link https://github.com/Borewit/music-metadata-browser
      */
-    public async getMusicID3Tag(
-        files: AlbumCompType.file[]
-    ): Promise<AlbumCompType.musicMeta[]> {
+    public async getMusicID3Tag(files: AlbumCompType.file[]): Promise<AlbumCompType.musicMeta[]> {
         const data = await Promise.all(
             files.map(async (file) => {
                 const getfile = new GetObjectCommand({
@@ -119,10 +107,10 @@ class AWSUtiil {
                 const metadata = await parseReadableStream(
                     results.Body?.transformToWebStream()!!,
                     {
-                        mimeType: "audio/mpeg"
+                        mimeType: "audio/mpeg",
                     },
                     {
-                        skipCovers: true
+                        skipCovers: true,
                     }
                 );
 

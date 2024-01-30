@@ -4,28 +4,19 @@ class BrowserCache {
         const addEelment = caches.filter((item) => item);
         if (addEelment.length) {
             if (loStorage.length) {
-                localStorage.setItem(
-                    saveValue,
-                    JSON.stringify([...loStorage, ...addEelment])
-                );
+                localStorage.setItem(saveValue, JSON.stringify([...loStorage, ...addEelment]));
             } else {
-                localStorage.setItem(
-                    saveValue,
-                    JSON.stringify([...addEelment])
-                );
+                localStorage.setItem(saveValue, JSON.stringify([...addEelment]));
             }
         } else {
             if (loStorage.length) {
-                localStorage.setItem(
-                    saveValue,
-                    JSON.stringify(loStorage)
-                );
+                localStorage.setItem(saveValue, JSON.stringify(loStorage));
             }
         }
     }
 }
 
-class SongCache extends BrowserCache  {
+class SongCache extends BrowserCache {
     private static readonly saveValue = "songs";
     private static loStorage: AlbumCompType.songCache[] | [];
 
@@ -36,9 +27,7 @@ class SongCache extends BrowserCache  {
         super();
         const storage = localStorage.getItem(SongCache.saveValue);
         if (storage) {
-            SongCache.loStorage = JSON.parse(
-                storage
-            ) as AlbumCompType.songCache[];
+            SongCache.loStorage = JSON.parse(storage) as AlbumCompType.songCache[];
         } else {
             SongCache.loStorage = [];
         }
@@ -103,12 +92,10 @@ class SongCache extends BrowserCache  {
                 SongCache.loStorage[this.loadStorageIndex].album.push(item);
             });
 
-            return SongCache.loStorage[this.loadStorageIndex].album.sort(
-                (a, b) => {
-                    if (a.track.no!! > b.track.no!!) return 1;
-                    return -1;
-                }
-            );
+            return SongCache.loStorage[this.loadStorageIndex].album.sort((a, b) => {
+                if (a.track.no!! > b.track.no!!) return 1;
+                return -1;
+            });
         }
     }
 
@@ -149,7 +136,6 @@ class AlbumCache extends BrowserCache {
     addAlbumCache(albumInfo: AlbumCompType.album) {
         this.saveStorage = albumInfo;
     }
-
 
     static applyCache(albumCaches: AlbumCompType.album[]): void {
         BrowserCache.applyCache(albumCaches, this.saveValue, this.loStorage);

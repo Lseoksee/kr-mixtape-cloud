@@ -1,8 +1,4 @@
-import {
-    ListObjectsV2Command,
-    S3Client,
-    GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { ListObjectsV2Command, S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 // aws-sdk 라이브러리
 
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
