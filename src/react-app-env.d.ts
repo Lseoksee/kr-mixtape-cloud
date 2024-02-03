@@ -28,7 +28,7 @@ declare namespace AlbumCompType {
 
     /** 음악 메타데이터 타입 */
     type musicMeta = import("music-metadata-browser").IAudioMetadata["common"] & {
-        ETag: string;
+        file: file;
         duration: number;
     };
 
@@ -37,6 +37,14 @@ declare namespace AlbumCompType {
         albumName: string;
         artist: string;
         album: musicMeta[];
+    };
+
+    /** 음악 재생 타입 */
+    type loadMusicInfo = {
+        musicMeta: AlbumCompType.musicMeta;
+        albumArtist: string;
+        albumName: string;
+        url: string;
     };
 }
 

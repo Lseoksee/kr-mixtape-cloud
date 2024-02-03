@@ -45,7 +45,7 @@ class SongCache extends BrowserCache {
         const thisAlbum = SongCache.loStorage[this.loadStorageIndex];
 
         const newData = newFils.map((item) => item.ETag);
-        const curData = thisAlbum.album.map((item) => item.ETag);
+        const curData = thisAlbum.album.map((item) => item.file.ETag);
 
         if (newData.toString() === curData.toString()) {
             console.log("같아서 잘 리턴함");
@@ -54,12 +54,12 @@ class SongCache extends BrowserCache {
 
         //무결성한 파일들만 리턴
         const noMissing = thisAlbum.album.filter((itme) => {
-            return newFils.find((it) => it.ETag === itme.ETag);
+            return newFils.find((it) => it.ETag === itme.file.ETag);
         });
 
         //추가된 항목들 리턴
         const addEelment = newFils.filter((item) => {
-            return !thisAlbum.album.find((it) => it.ETag === item.ETag);
+            return !thisAlbum.album.find((it) => it.file.ETag === item.ETag);
         });
 
         SongCache.loStorage[this.loadStorageIndex].album = noMissing;

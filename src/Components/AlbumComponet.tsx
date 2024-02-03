@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import AWSUtiil from "../Utils/AWSUtill";
 import "../Style/AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
-import { ReduxActions, reduxConnect } from "../Utils/ConfingRedux";
+import { ReduxActions, reduxConnect } from "../Contexts/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { Utils } from "../Utils/Utils";
 import { MUITheme, MUIStyle } from "./MUICustum";
+import ContextStore, { ContextType } from "../Contexts/ConfingContext";
 
 type AlbumViewProp = {
     albumSrc: string; //앨범경로
@@ -36,6 +37,9 @@ type AlbumViewState = {
 };
 
 class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
+    // context 사용을 위한
+    static contextType = ContextStore;
+
     state: Readonly<AlbumViewState> = {
         playerElement: [],
         albumInfo: {
@@ -44,8 +48,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         songHover: -1,
     };
 
-    appData: { urls: string[]; albumArt: string } = {
-        urls: [],
+    appData: { albumArt: string } = {
         albumArt: tempAlbumArt,
     };
 
@@ -54,6 +57,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 
     // state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
+        // TODO: 중복갱신 문제 해결할것
         if (this.state.playerElement?.length && this.state.albumInfo.album) {
             const redux = ReduxActions.SongLoadEvent({
                 LoadSong: this.songCache.saveStorage!!,
@@ -88,40 +92,42 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             }
 
             // 곡정보 불러오기
-            this.getSongInfo(item);
+            const songCached = this.songCache.getSongCache(item, this.props.albumName, this.props.artist);
 
-            for (const file of item) {
-                this.props.awsutill.getFileURL(file!!).then((url) => {
-                    this.appData.urls.push(url);
+            if (songCached) {
+                // 캐싱된 데이터에서 추가된 값이 있는지
+                if (songCached.addEelment) {
+                    this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
+                        const cachedSort = this.songCache.insertSongCache(item);
+                        this.setState({ playerElement: cachedSort!! });
+                    });
+                }
+
+                // 없으면 그냥 setState
+                else {
+                    this.setState({ playerElement: songCached.album });
+                }
+            } else {
+                // 최초 로드시 앨범 전체 요청
+                this.props.awsutill.getMusicID3Tag(item).then((item) => {
+                    this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
+                    this.setState({ playerElement: item });
                 });
             }
         });
     }
 
-    // 곡 정보 불러오기
-    private getSongInfo(item: AlbumCompType.file[]) {
-        const songCached = this.songCache.getSongCache(item, this.props.albumName, this.props.artist);
+    // 클릭시 url로드하여 들을 수 있게
+    private async loadUrl(musicMeta: AlbumCompType.musicMeta) {
+        const context = this.context as ContextType;
+        const url = await this.props.awsutill.getFileURL(musicMeta.file);
 
-        if (songCached) {
-            // 캐싱된 데이터에서 추가된 값이 있는지
-            if (songCached.addEelment) {
-                this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
-                    const cachedSort = this.songCache.insertSongCache(item);
-                    this.setState({ playerElement: cachedSort!! });
-                });
-            }
-
-            // 없으면 그냥 setState
-            else {
-                this.setState({ playerElement: songCached.album });
-            }
-        } else {
-            // 최초 로드시 앨범 전체 요청
-            this.props.awsutill.getMusicID3Tag(item).then((item) => {
-                this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
-                this.setState({ playerElement: item });
-            });
-        }
+        context.setMusicState({
+            musicMeta: musicMeta,
+            albumArtist: this.props.artist,
+            albumName: this.props.albumName,
+            url: url,
+        });
     }
 
     render(): React.ReactNode {
@@ -179,6 +185,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 onMouseOver={() => {
                                                     this.setState({ songHover: index });
                                                 }}
+                                                onDoubleClick={() => {
+                                                    this.loadUrl(item);
+                                                }}
                                             >
                                                 <TableCell sx={MUIStyle.songNum}>
                                                     {index === stateData.songHover ? (
@@ -188,7 +197,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                     )}
                                                 </TableCell>
                                                 <TableCell>{item.title}</TableCell>
-                                                <TableCell>{this.props.artist}</TableCell>
+                                                <TableCell>{item.artist}</TableCell>
                                                 <TableCell>{Utils.secToMin(item.duration)}</TableCell>
                                             </TableRow>
                                         ))}

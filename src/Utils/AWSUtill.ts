@@ -116,9 +116,9 @@ class AWSUtiil {
 
                 return {
                     ...metadata.common,
-                    ETag: file.ETag,
+                    file: file,
                     duration: metadata.format.duration || 0,
-                };
+                } as AlbumCompType.musicMeta;
             })
         );
         return data;

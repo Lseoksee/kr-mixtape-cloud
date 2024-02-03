@@ -1,5 +1,6 @@
 #albumDiv {
-    
+    width: 100%;
+    margin: 10px;
 }
 
 .albumItem {

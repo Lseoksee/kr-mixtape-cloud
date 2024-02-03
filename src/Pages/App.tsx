@@ -5,7 +5,7 @@ import AlbumView from "../Components/AlbumComponet";
 import constants from "../constants";
 import "../Style/App.css";
 import { useDispatch } from "react-redux";
-import { ReduxActions } from "../Utils/ConfingRedux";
+import { ReduxActions } from "../Contexts/ConfingRedux";
 
 const constValue = {
     SetMusicMemo: React.memo(SetMusic),
@@ -19,14 +19,8 @@ function SetMusic(): JSX.Element {
         const album = item.albums[0];
         const art = item.artist;
         return (
-            <div className="albumItem">
-                <AlbumView
-                    key={index}
-                    albumSrc={album.dirname}
-                    albumName={album.album}
-                    artist={art}
-                    awsutill={aws}
-                ></AlbumView>
+            <div className="albumItem" key={index}>
+                <AlbumView albumSrc={album.dirname} albumName={album.album} artist={art} awsutill={aws}></AlbumView>
             </div>
         );
     });
@@ -36,9 +30,9 @@ function SetMusic(): JSX.Element {
     return <div id="albumDiv">{element}</div>;
 }
 
-function App(): JSX.Element {
+function App(): JSX.Element {   
     return (
-        <div style={{height: "100%"}}>
+        <div style={{ height: "100%", overflow: "scroll" }}>
             <constValue.SetMusicMemo></constValue.SetMusicMemo>
         </div>
     );

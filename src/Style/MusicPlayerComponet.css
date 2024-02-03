@@ -1,0 +1,10 @@
+.musicPlayerDiv {
+    position: fixed;
+    top: 90vh;
+    width: 70vw;
+    z-index: 2;
+}
+
+.musicPlayer {
+    width: 100%;
+}

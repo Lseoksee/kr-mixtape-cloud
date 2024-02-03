@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AlbumCache, SongCache } from "./BrowserCache";
+import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { connect } from "react-redux";
 
 // Redux 비동기 보호 데이터(state 가 직접 수정이 안되므로 이렇게 관리)
