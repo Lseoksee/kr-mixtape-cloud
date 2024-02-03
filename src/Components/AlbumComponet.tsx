@@ -17,8 +17,10 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    ThemeProvider,
 } from "@mui/material";
 import { Utils } from "../Utils/Utils";
+import { MUITheme, MUIStyle } from "./MUICustum";
 
 type AlbumViewProp = {
     albumSrc: string; //앨범경로
@@ -152,46 +154,48 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     </div>
                     {/* 사용자 스타일시트 우선순위 올리기 */}
                     <StyledEngineProvider injectFirst>
-                        <TableContainer component={Paper}>
-                            <Table stickyHeader>
-                                <colgroup>
-                                    <col width="5%" />
-                                    <col width="55%" />
-                                    <col width="25%" />
-                                    <col width="5%" />
-                                </colgroup>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>제목</TableCell>
-                                        <TableCell>아티스트</TableCell>
-                                        <TableCell>길이</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {this.state.playerElement.map((item, index) => (
-                                        <TableRow
-                                            key={index}
-                                            hover
-                                            onMouseOver={() => {
-                                                this.setState({ songHover: index });
-                                            }}
-                                        >
-                                            <TableCell>
-                                                {index === stateData.songHover ? (
-                                                    <PlayArrowOutlinedIcon />
-                                                ) : (
-                                                    item.track.no
-                                                )}
-                                            </TableCell>
-                                            <TableCell>{item.title}</TableCell>
-                                            <TableCell>{this.props.artist}</TableCell>
-                                            <TableCell>{Utils.secToMin(item.duration)}</TableCell>
+                        <ThemeProvider theme={MUITheme.defaultTheme}>
+                            <TableContainer component={Paper}>
+                                <Table stickyHeader>
+                                    <colgroup>
+                                        <col width="1%" />
+                                        <col width="55%" />
+                                        <col width="25%" />
+                                        <col width="1%" />
+                                    </colgroup>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={MUIStyle.songNum}>#</TableCell>
+                                            <TableCell>제목</TableCell>
+                                            <TableCell>아티스트</TableCell>
+                                            <TableCell>길이</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.playerElement.map((item, index) => (
+                                            <TableRow
+                                                key={index}
+                                                hover
+                                                onMouseOver={() => {
+                                                    this.setState({ songHover: index });
+                                                }}
+                                            >
+                                                <TableCell sx={MUIStyle.songNum}>
+                                                    {index === stateData.songHover ? (
+                                                        <PlayArrowOutlinedIcon />
+                                                    ) : (
+                                                        item.track.no
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>{item.title}</TableCell>
+                                                <TableCell>{this.props.artist}</TableCell>
+                                                <TableCell>{Utils.secToMin(item.duration)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </ThemeProvider>
                     </StyledEngineProvider>
                 </div>
             );

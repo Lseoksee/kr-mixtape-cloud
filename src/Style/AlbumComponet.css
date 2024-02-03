@@ -1,4 +1,4 @@
-.trackView { 
+.trackView {
     width: 100%;
     height: 100%;
 }
@@ -12,14 +12,12 @@
 }
 
 .albumTextDiv {
-
 }
 
 .artistImage {
     object-fit: cover;
     border-radius: 25px;
 }
-
 
 .albumArt {
     border-radius: 10px;
@@ -30,14 +28,15 @@
     font-weight: 600;
 }
 
-.albumData, .artistDiv {
+.albumData,
+.artistDiv {
     display: flex;
     align-items: center;
     gap: var(--elment-margin);
 }
 
 .css-rqglhn-MuiTable-root {
-    white-space:  nowrap;
+    white-space: nowrap;
 }
 
 .css-11xur9t-MuiPaper-root-MuiTableContainer-root {

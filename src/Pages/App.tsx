@@ -19,13 +19,15 @@ function SetMusic(): JSX.Element {
         const album = item.albums[0];
         const art = item.artist;
         return (
-            <AlbumView
-                key={index}
-                albumSrc={album.dirname}
-                albumName={album.album}
-                artist={art}
-                awsutill={aws}
-            ></AlbumView>
+            <div className="albumItem">
+                <AlbumView
+                    key={index}
+                    albumSrc={album.dirname}
+                    albumName={album.album}
+                    artist={art}
+                    awsutill={aws}
+                ></AlbumView>
+            </div>
         );
     });
 
@@ -36,7 +38,7 @@ function SetMusic(): JSX.Element {
 
 function App(): JSX.Element {
     return (
-        <div>
+        <div style={{height: "100%"}}>
             <constValue.SetMusicMemo></constValue.SetMusicMemo>
         </div>
     );

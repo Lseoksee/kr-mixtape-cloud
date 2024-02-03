@@ -10,6 +10,6 @@
             "runtimeArgs": ["start"],
             "runtimeExecutable": "pnpm",
             "type": "node"
-        },
+        }
     ]
 }
