@@ -6,7 +6,8 @@ import { connect } from "react-redux";
 const AsyncSafeData: {
     LoadAlbum: AlbumCompType.album[];
     LoadSong: AlbumCompType.songCache[];
-} = { LoadAlbum: [], LoadSong: [] };
+    SaveAlbumArt: AlbumCompType.album[];
+} = { LoadAlbum: [], LoadSong: [], SaveAlbumArt: [] };
 
 /** Slice 를 이용한 Reducer 구현   */
 const mainSlice = createSlice({
@@ -34,10 +35,15 @@ const mainSlice = createSlice({
         SongLoadEvent(state, action: PayloadAction<{ LoadSong: AlbumCompType.songCache }>) {
             AsyncSafeData.LoadSong.push(action.payload.LoadSong!!);
 
-            if (state.AlbumConunt === AsyncSafeData.LoadSong.length) {
+            if (state.AlbumConunt === AsyncSafeData.LoadSong.length) {         
                 SongCache.applyCache(AsyncSafeData.LoadSong);
                 AsyncSafeData.LoadSong = [];
             }
+        },
+
+        /** 앨범 아트 blob 주소 보관용 */
+        SaveAlbumInfo(state, action: PayloadAction<{ SaveAlbumArt: AlbumCompType.album }>) {
+            AsyncSafeData.SaveAlbumArt.push(action.payload.SaveAlbumArt!!);
         },
     },
 });
@@ -51,9 +57,15 @@ class ConfingRedux {
         reduxResponce: state,
     }));
 
+    /** 앨범 아트 경로 얻기 */
+    static getAlbumArt(albumName: string, albumArtist: string) {
+        return AsyncSafeData.SaveAlbumArt.find((itme) => itme.album === albumName && itme.artist === albumArtist)?.art;
+        // 이건 이미지 blob 주소를 넘김
+    }
+
     static ReduxActions = mainSlice.actions;
 
     static mainReducer = mainSlice.reducer;
 }
 
-export const { ReduxActions, mainReducer, reduxConnect } = ConfingRedux;
+export const { ReduxActions, mainReducer, reduxConnect, getAlbumArt } = ConfingRedux;

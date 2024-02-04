@@ -1,6 +1,6 @@
 import { Component, ReactNode } from "react";
 import "../Style/MusicPlayerComponet.css";
-import { reduxConnect } from "../Contexts/ConfingRedux";
+import { getAlbumArt, reduxConnect } from "../Contexts/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 
 type MusicPlayerProp = {
@@ -9,6 +9,17 @@ type MusicPlayerProp = {
 
 class MusicPlayerComponet extends Component<MusicPlayerProp & ConnectedProps<typeof reduxConnect>, any> {
     render(): ReactNode {
+        let artUrl: MediaImage[] | undefined;
+        const albumArt = getAlbumArt(this.props.musicInfo?.albumName!!, this.props.musicInfo?.albumArtist!!);
+
+        if (albumArt) {
+            artUrl = [
+                {
+                    src: albumArt,
+                },
+            ];
+        }
+
         return (
             <div className="musicPlayerDiv">
                 <audio
@@ -24,6 +35,7 @@ class MusicPlayerComponet extends Component<MusicPlayerProp & ConnectedProps<typ
                             album: this.props.musicInfo?.albumName,
                             artist: this.props.musicInfo?.musicMeta.artist,
                             title: this.props.musicInfo?.musicMeta.title!!,
+                            artwork: artUrl,
                         });
                     }}
                     autoPlay

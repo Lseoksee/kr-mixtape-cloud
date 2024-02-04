@@ -7,7 +7,6 @@ import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Contexts/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
-
 import {
     Paper,
     StyledEngineProvider,
@@ -34,6 +33,7 @@ type AlbumViewState = {
     playerElement: Array<AlbumCompType.musicMeta>;
     albumInfo: AlbumCompType.album;
     songHover: number;
+    key: string;
 };
 
 class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
@@ -46,6 +46,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             count: 0,
         },
         songHover: -1,
+        key: "",
     };
 
     appData: { albumArt: string } = {
@@ -57,12 +58,25 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 
     // state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
-        // TODO: 중복갱신 문제 해결할것
-        if (this.state.playerElement?.length && this.state.albumInfo.album) {
-            const redux = ReduxActions.SongLoadEvent({
-                LoadSong: this.songCache.saveStorage!!,
-            });
-            this.props.dispatch(redux);
+        const key = this.state.key;
+
+        if (key === "albumart" || key === "song") {
+            if (this.state.playerElement?.length && this.state.albumInfo.album) {
+                // 음악 케싱
+                const songLoadredux = ReduxActions.SongLoadEvent({
+                    LoadSong: this.songCache.saveStorage!!,
+                });
+                this.props.dispatch(songLoadredux);
+
+                // 전역으로 앨범아트 저장
+                const saveAlbumredux = ReduxActions.SaveAlbumInfo({
+                    SaveAlbumArt: {
+                        ...this.state.albumInfo,
+                        art: this.appData.albumArt,
+                    },
+                });
+                this.props.dispatch(saveAlbumredux);
+            }
         }
     }
 
@@ -77,13 +91,13 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             if (albumCached) {
                 // 앨범 아트 설정
                 this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
-                this.setState({ albumInfo: albumCached });
+                this.setState({ albumInfo: albumCached, key: "albumart" });
             } else {
                 this.props.awsutill.getAlbumTag(item, this.props.albumName, this.props.artist).then((res) => {
                     // 앨범 아트 설정
                     this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
 
-                    this.setState({ albumInfo: res });
+                    this.setState({ albumInfo: res, key: "albumart" });
                     const redux = ReduxActions.albumArtLoadEvent({
                         LoadAlbum: res,
                     });
@@ -99,19 +113,17 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                 if (songCached.addEelment) {
                     this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
                         const cachedSort = this.songCache.insertSongCache(item);
-                        this.setState({ playerElement: cachedSort!! });
+                        this.setState({ playerElement: cachedSort!!, key: "song" });
                     });
                 }
 
                 // 없으면 그냥 setState
-                else {
-                    this.setState({ playerElement: songCached.album });
-                }
+                else this.setState({ playerElement: songCached.album, key: "song" });
             } else {
                 // 최초 로드시 앨범 전체 요청
                 this.props.awsutill.getMusicID3Tag(item).then((item) => {
                     this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
-                    this.setState({ playerElement: item });
+                    this.setState({ playerElement: item, key: "song" });
                 });
             }
         });
@@ -183,7 +195,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 key={index}
                                                 hover
                                                 onMouseOver={() => {
-                                                    this.setState({ songHover: index });
+                                                    this.setState({ songHover: index, key: "hover" });
                                                 }}
                                                 onDoubleClick={() => {
                                                     this.loadUrl(item);

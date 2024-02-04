@@ -30,7 +30,7 @@ function SetMusic(): JSX.Element {
     return <div id="albumDiv">{element}</div>;
 }
 
-function App(): JSX.Element {   
+function App(): JSX.Element {
     return (
         <div style={{ height: "100%", overflow: "scroll" }}>
             <constValue.SetMusicMemo></constValue.SetMusicMemo>
