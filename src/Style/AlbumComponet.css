@@ -36,10 +36,7 @@
     gap: var(--elment-margin);
 }
 
-.css-rqglhn-MuiTable-root {
-    white-space: nowrap;
-}
-
 .css-11xur9t-MuiPaper-root-MuiTableContainer-root {
     height: 70%;
+    white-space: nowrap;
 }

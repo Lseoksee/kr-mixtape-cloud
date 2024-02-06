@@ -1,0 +1,14 @@
+#albumDiv {
+    width: 100%;
+}
+
+.albumItem {
+    height: 700px;
+}
+
+.aritstInfo {
+    height: 100%;
+    padding: 0px 100px 0px 100px;
+    overflow: overlay;
+    flex-grow: 1;
+}

@@ -1,10 +1,11 @@
 .musicPlayerDiv {
     position: fixed;
+    text-align: center;
     top: 90vh;
-    width: 70vw;
+    width: 100%;
     z-index: 2;
 }
 
 .musicPlayer {
-    width: 100%;
+    width: 70%;
 }

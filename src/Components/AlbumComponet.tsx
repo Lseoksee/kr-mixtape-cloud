@@ -197,11 +197,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 onMouseOver={() => {
                                                     this.setState({ songHover: index, key: "hover" });
                                                 }}
-                                                onDoubleClick={() => {
-                                                    this.loadUrl(item);
-                                                }}
+                                                onDoubleClick={() => this.loadUrl(item)}
                                             >
-                                                <TableCell sx={MUIStyle.songNum}>
+                                                <TableCell sx={MUIStyle.songNum} onClick={() => this.loadUrl(item)}>
                                                     {index === stateData.songHover ? (
                                                         <PlayArrowOutlinedIcon />
                                                     ) : (
