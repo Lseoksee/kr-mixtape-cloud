@@ -42,7 +42,7 @@ declare namespace AlbumCompType {
     /** 음악 재생 타입 */
     type loadMusicInfo = {
         musicMeta: AlbumCompType.musicMeta;
-        albumArtist: string;
+        albumArtUrl: string;
         albumName: string;
         url: string;
     };
@@ -52,8 +52,10 @@ declare namespace AlbumCompType {
 declare namespace ReduxType {
     /** Redux 결과값 타입 */
     type state = {
-        /** 로드해야 하는 앨범 개수 */
-        AlbumConunt?: number;
+        musicPlayState: {
+            startIndex: number;
+            queue: AlbumCompType.loadMusicInfo[];
+        };
     };
 
     /** Redux 요청 데이터들 */
@@ -66,7 +68,6 @@ declare namespace ReduxType {
 
 // react-router 타입
 declare namespace RouterType {
-
     /** URL 파라미타 */
     type RouterParams = {
         artistName: string;

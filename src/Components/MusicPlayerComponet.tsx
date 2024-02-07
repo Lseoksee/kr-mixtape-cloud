@@ -1,24 +1,22 @@
 import { Component, ReactNode } from "react";
 import "../Style/MusicPlayerComponet.css";
-import { getAlbumArt, reduxConnect } from "../Contexts/ConfingRedux";
+import { reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 
 type MusicPlayerProp = {
-    musicInfo?: AlbumCompType.loadMusicInfo;
-};
 
-class MusicPlayerComponet extends Component<MusicPlayerProp & ConnectedProps<typeof reduxConnect>, any> {
+} & ConnectedProps<typeof reduxConnect>;
+
+
+class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
+
+    currItem?: AlbumCompType.loadMusicInfo
+    currIndex : number = -1;
+
     render(): ReactNode {
-        let artUrl: MediaImage[] | undefined;
-        const albumArt = getAlbumArt(this.props.musicInfo?.albumName!!, this.props.musicInfo?.albumArtist!!);
-
-        if (albumArt) {
-            artUrl = [
-                {
-                    src: albumArt,
-                },
-            ];
-        }
+        const musicPlayState = this.props.reduxResponce.musicPlayState;
+        this.currIndex = musicPlayState.startIndex;
+        this.currItem = musicPlayState.queue[this.currIndex];
 
         return (
             <div className="musicPlayerDiv">
@@ -26,21 +24,22 @@ class MusicPlayerComponet extends Component<MusicPlayerProp & ConnectedProps<typ
                     controls
                     className="musicPlayer"
                     ref={(target) => {
-                        if (this.props.musicInfo?.url) {
-                            target?.load();
+                        if (!this.currItem) {
+                            return;
                         }
+                        target?.load();
 
                         // 크롬에 미디어 정보 날리기
                         navigator.mediaSession.metadata = new MediaMetadata({
-                            album: this.props.musicInfo?.albumName,
-                            artist: this.props.musicInfo?.musicMeta.artist,
-                            title: this.props.musicInfo?.musicMeta.title!!,
-                            artwork: artUrl,
+                            album: this.currItem.albumName,
+                            artist: this.currItem.musicMeta.artist!!,
+                            title: this.currItem.musicMeta.title!!,
+                            artwork: [{ src: this.currItem.albumArtUrl }],
                         });
                     }}
                     autoPlay
                 >
-                    <source src={this.props.musicInfo?.url}></source>
+                    <source src={this.currItem?.url}></source>
                 </audio>
             </div>
         );

@@ -4,7 +4,7 @@ import AWSUtiil from "../Utils/AWSUtill";
 import "../Style/AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
-import { ReduxActions, reduxConnect } from "../Contexts/ConfingRedux";
+import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import {
@@ -20,13 +20,13 @@ import {
 } from "@mui/material";
 import Utils from "../Utils/Utils";
 import { MUITheme, MUIStyle } from "./MUICustum";
-import ContextStore, { ContextType } from "../Contexts/ConfingContext";
+import { AlbumCacheManager } from "../GlobalAppData";
 
 type AlbumViewProp = {
     albumSrc: string; //앨범경로
     albumName: string; //앨범명
     artist: string; //아티스트명
-    awsutill: AWSUtiil;
+    albumCacheManager: AlbumCacheManager;
 } & ConnectedProps<typeof reduxConnect>;
 
 type AlbumViewState = {
@@ -37,9 +37,6 @@ type AlbumViewState = {
 };
 
 class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
-    // context 사용을 위한
-    static contextType = ContextStore;
-
     state: Readonly<AlbumViewState> = {
         playerElement: [],
         albumInfo: {
@@ -63,19 +60,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         if (key === "albumart" || key === "song") {
             if (this.state.playerElement?.length && this.state.albumInfo.album) {
                 // 음악 케싱
-                const songLoadredux = ReduxActions.SongLoadEvent({
-                    LoadSong: this.songCache.saveStorage!!,
-                });
-                this.props.dispatch(songLoadredux);
-
-                // 전역으로 앨범아트 저장
-                const saveAlbumredux = ReduxActions.SaveAlbumInfo({
-                    SaveAlbumArt: {
-                        ...this.state.albumInfo,
-                        art: this.appData.albumArt,
-                    },
-                });
-                this.props.dispatch(saveAlbumredux);
+                this.props.albumCacheManager.songLoadEvent(this.songCache.saveStorage!!);
             }
         }
     }
@@ -83,7 +68,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     // 페이지 첫 로딩시 실행
     componentDidMount(): void {
         // 앨범 곡 리스트 불러오기
-        const getAlbumList = this.props.awsutill.getFilelist(this.props.albumSrc);
+        const getAlbumList = AWSUtiil.getAWSUtiil().getFilelist(this.props.albumSrc);
 
         getAlbumList.then((item) => {
             //앨범 정보 불러오기
@@ -93,16 +78,16 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                 this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
                 this.setState({ albumInfo: albumCached, key: "albumart" });
             } else {
-                this.props.awsutill.getAlbumTag(item, this.props.albumName, this.props.artist).then((res) => {
-                    // 앨범 아트 설정
-                    this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
+                AWSUtiil.getAWSUtiil()
+                    .getAlbumTag(item, this.props.albumName, this.props.artist)
+                    .then((res) => {
+                        // 앨범 아트 설정
+                        this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
 
-                    this.setState({ albumInfo: res, key: "albumart" });
-                    const redux = ReduxActions.albumArtLoadEvent({
-                        LoadAlbum: res,
+                        this.setState({ albumInfo: res, key: "albumart" });
+                        // 앨범 케싱
+                        this.props.albumCacheManager.albumLoadEvent(res);
                     });
-                    this.props.dispatch(redux);
-                });
             }
 
             // 곡정보 불러오기
@@ -111,35 +96,47 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             if (songCached) {
                 // 캐싱된 데이터에서 추가된 값이 있는지
                 if (songCached.addEelment) {
-                    this.props.awsutill.getMusicID3Tag(songCached.addEelment).then((item) => {
-                        const cachedSort = this.songCache.insertSongCache(item);
-                        this.setState({ playerElement: cachedSort!!, key: "song" });
-                    });
+                    AWSUtiil.getAWSUtiil()
+                        .getMusicID3Tag(songCached.addEelment)
+                        .then((item) => {
+                            const cachedSort = this.songCache.insertSongCache(item);
+                            this.setState({ playerElement: cachedSort!!, key: "song" });
+                        });
                 }
 
                 // 없으면 그냥 setState
                 else this.setState({ playerElement: songCached.album, key: "song" });
             } else {
                 // 최초 로드시 앨범 전체 요청
-                this.props.awsutill.getMusicID3Tag(item).then((item) => {
-                    this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
-                    this.setState({ playerElement: item, key: "song" });
-                });
+                AWSUtiil.getAWSUtiil()
+                    .getMusicID3Tag(item)
+                    .then((item) => {
+                        this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
+                        this.setState({ playerElement: item, key: "song" });
+                    });
             }
         });
     }
 
     // 클릭시 url로드하여 들을 수 있게
-    private async loadUrl(musicMeta: AlbumCompType.musicMeta) {
-        const context = this.context as ContextType;
-        const url = await this.props.awsutill.getFileURL(musicMeta.file);
+    private async loadUrl(musicList: AlbumCompType.musicMeta[], myIndex: number) {
+        const loadMusicInfo = Promise.all(
+            musicList.map(async (itme) => {
+                return {
+                    musicMeta: itme,
+                    albumArtUrl: this.appData.albumArt,
+                    albumName: this.props.albumName,
+                    url: await AWSUtiil.getAWSUtiil().getFileURL(itme.file),
+                } as AlbumCompType.loadMusicInfo;
+            })
+        );
 
-        context.setMusicState({
-            musicMeta: musicMeta,
-            albumArtist: this.props.artist,
-            albumName: this.props.albumName,
-            url: url,
+        /** 결과를 Redux로 넘겨 MusicPlayerComponet가 갱신되도록 */
+        const setStartMusic = ReduxActions.setStartMusic({
+            loadMusicInfo: await loadMusicInfo,
+            startIndex: myIndex,
         });
+        this.props.dispatch(setStartMusic);
     }
 
     render(): React.ReactNode {
@@ -197,9 +194,16 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 onMouseOver={() => {
                                                     this.setState({ songHover: index, key: "hover" });
                                                 }}
-                                                onDoubleClick={() => this.loadUrl(item)}
+                                                onDoubleClick={() => {
+                                                    this.loadUrl(this.state.playerElement, index);
+                                                }}
                                             >
-                                                <TableCell sx={MUIStyle.songNum} onClick={() => this.loadUrl(item)}>
+                                                <TableCell
+                                                    sx={MUIStyle.songNum}
+                                                    onClick={() => {
+                                                        this.loadUrl(this.state.playerElement, index);
+                                                    }}
+                                                >
                                                     {index === stateData.songHover ? (
                                                         <PlayArrowOutlinedIcon />
                                                     ) : (

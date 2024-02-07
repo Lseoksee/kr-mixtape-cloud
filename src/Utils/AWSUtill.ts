@@ -4,14 +4,25 @@ import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import { parseReadableStream } from "music-metadata-browser";
+import constants from "../constants";
 
 class AWSUtiil {
-    static Bytes = 500 * 1000;
+    private static thisObject?: AWSUtiil;
+    private static Bytes = 500 * 1000;
+    
     private clinet: S3Client;
     private devMode: boolean;
 
-    /** @param devMode 임시 데이터 값을 사용해 디버깅시 불필요한 api요청 줄이기 */
-    constructor(devMode = false) {
+    /** AWSUtiil 객체를 획득 합니다. 해당 메소들를 통해 AWSUtiil 객체에 접근하시오.  */
+    public static getAWSUtiil() {
+        if (!this.thisObject) {
+            this.thisObject = new this(constants.ENV_DEVMODE);
+        }
+        return this.thisObject;
+    }
+
+    // 생성자는 getAWSUtiil를 통해 접근하도록 제한
+    private constructor(devMode: boolean) {
         this.devMode = devMode;
 
         this.clinet = new S3Client({
