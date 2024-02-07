@@ -18,7 +18,7 @@ import {
     TableRow,
     ThemeProvider,
 } from "@mui/material";
-import { Utils } from "../Utils/Utils";
+import Utils from "../Utils/Utils";
 import { MUITheme, MUIStyle } from "./MUICustum";
 import ContextStore, { ContextType } from "../Contexts/ConfingContext";
 
@@ -226,6 +226,4 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 }
 
 // 클래스 컴포넌트에서 redux 재어를 위한
-const useClassRedux = reduxConnect(AlbumView);
-
-export default useClassRedux;
+export default reduxConnect(AlbumView);

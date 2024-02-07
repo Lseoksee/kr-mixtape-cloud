@@ -1,5 +1,5 @@
 /** 앱에 필요한 각종 유틸목록 */
-export class Utils {
+class Utils {
     /** 초단위를 [분:초] 로 */
     static secToMin(sec: number) {
         const min = Math.floor(sec / 60);
@@ -23,3 +23,5 @@ export class Utils {
         return URL.createObjectURL(blob);
     }
 }
+
+export default Utils;

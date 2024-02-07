@@ -1,13 +1,22 @@
 import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
+import constants from "../constants";
 
-class SearchSideBarComponet extends Component {
+type SearchSideBarProp = {
+    router: RouterType.RouterHook;
+};
+
+class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
     render(): ReactNode {
+        const router = this.props.router;
+
         return (
             <div className="SearchSideBarDiv">
-                <Button variant="contained">홈 버튼</Button>
-                <Button variant="contained">E SENS</Button>
+                <Button variant="contained" onClick={() => router.navigate(`${constants.MAIN_PAGE}`)}>홈 버튼</Button>
+                <Button variant="contained" onClick={() => router.navigate(`${constants.ARTIST_PAGE}/E SENS`)}>
+                    E SENS
+                </Button>
                 <Button variant="contained">San E</Button>
             </div>
         );

@@ -48,6 +48,4 @@ class MusicPlayerComponet extends Component<MusicPlayerProp & ConnectedProps<typ
 }
 
 // 클래스 컴포넌트에서 redux 재어를 위한
-const useClassRedux = reduxConnect(MusicPlayerComponet);
-
-export default useClassRedux;
+export default reduxConnect(MusicPlayerComponet);

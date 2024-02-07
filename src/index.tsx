@@ -9,9 +9,10 @@ import MusicPlayerComponet from "./Components/MusicPlayerComponet";
 import ContextStore, { ContextType } from "./Contexts/ConfingContext";
 import SearchSideBarComponet from "./Components/SearchSideBarComponet";
 import ListSideBarComponet from "./Components/ListSideBarComponet";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import App from "./Pages/App";
 import ArtistPage from "./Pages/ArtistPage";
+import constants from "./constants";
 
 window.process = require("process");
 window.Buffer = Buffer;
@@ -28,9 +29,15 @@ function AppComp(): JSX.Element {
         },
     };
 
+    // Class 컴포넌트 Props RouterHook 전달
+    const router: RouterType.RouterHook = {
+        navigate: useNavigate(),
+        params: useParams()
+    }
+
     return (
         <ContextStore.Provider value={Provider}>
-            <SearchSideBarComponet />
+            <SearchSideBarComponet router={router} />
             <RoutePage />
             <ListSideBarComponet />
             <MusicPlayerComponet musicInfo={state?.musicInfo} />
@@ -41,18 +48,18 @@ function AppComp(): JSX.Element {
 // 라우팅 페이지 관리
 function RoutePage(): JSX.Element {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<App />}/>
-                <Route path="/artist/:artistName" element={<ArtistPage />}/>
-            </Routes>
-        </BrowserRouter>
-    )
+        <Routes>
+            <Route path={constants.MAIN_PAGE} element={<App />} />
+            <Route path={`${constants.ARTIST_PAGE}/:artistName`} element={<ArtistPage />} />
+        </Routes>
+    );
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
     <Provider store={configureStore({ reducer: mainReducer })}>
-        <AppComp />
+        <BrowserRouter>
+            <AppComp />
+        </BrowserRouter>
     </Provider>
 );

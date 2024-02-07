@@ -63,3 +63,18 @@ declare namespace ReduxType {
         LoadSong?: AlbumCompType.songCache;
     };
 }
+
+// react-router 타입
+declare namespace RouterType {
+
+    /** URL 파라미타 */
+    type RouterParams = {
+        artistName: string;
+    };
+
+    /** Class 컴포넌트용 props 타입  */
+    type RouterHook = {
+        params: Readonly<Params<RouterParams>>;
+        navigate: NavigateFunction;
+    };
+}
