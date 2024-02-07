@@ -1,5 +1,6 @@
 #albumDiv {
-    width: 100%;
+    width: 980px;
+    padding: 0px 15px 0px 15px;
 }
 
 .albumItem {
@@ -8,7 +9,8 @@
 
 .aritstInfo {
     height: 100%;
-    padding: 0px 100px 0px 100px;
+    display: flex;
     overflow: overlay;
     flex-grow: 1;
+    justify-content: center;
 }

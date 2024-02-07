@@ -2,22 +2,39 @@ import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
 import constants from "../constants";
+import albumList from "../albumList.json";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;
 };
 
 class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
+    /** redux 로 인한 갱신 막기 */
+    shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, nextContext: any) {
+        if (this.state === nextState) {
+            return false;
+        }
+
+        return true;
+    }
+
     render(): ReactNode {
         const router = this.props.router;
 
         return (
             <div className="SearchSideBarDiv">
-                <Button variant="contained" onClick={() => router.navigate(`${constants.MAIN_PAGE}`)}>홈 버튼</Button>
-                <Button variant="contained" onClick={() => router.navigate(`${constants.ARTIST_PAGE}/E SENS`)}>
-                    E SENS
+                <Button variant="contained" onClick={() => router.navigate(`${constants.MAIN_PAGE}`)}>
+                    홈 버튼
                 </Button>
-                <Button variant="contained">San E</Button>
+                {albumList.map((itme, index) => (
+                    <Button
+                        variant="contained"
+                        key={index}
+                        onClick={() => router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`)}
+                    >
+                        {itme.artist}
+                    </Button>
+                ))}
             </div>
         );
     }

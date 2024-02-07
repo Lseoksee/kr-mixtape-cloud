@@ -1,25 +1,20 @@
-import React from "react";
 import albumList from "../albumList.json";
 import AlbumView from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../GlobalAppData";
+import { useParams } from "react-router-dom";
+import ErrorPage from "./ErrorPage";
 
-const constValue = {
-    SetMusicMemo: React.memo(SetMusic),
-};
 
-function SetMusic(): JSX.Element {
-    const albumCacheManager = new AlbumCacheManager(albumList.length);
-
-    const element = albumList.map((item, index) => {
-        const album = item.albums[0];
-        const art = item.artist;
+function SetMusic(props: { aritst: typeof albumList[0] }): JSX.Element {
+    const albumCacheManager = new AlbumCacheManager(props.aritst.albums.length);
+    const element = props.aritst.albums.map((item, index) => {
         return (
             <div className="albumItem" key={index}>
                 <AlbumView
-                    albumSrc={album.dirname}
-                    albumName={album.album}
-                    artist={art}
+                    albumSrc={item.dirname}
+                    albumName={item.album}
+                    artist={props.aritst.artist}
                     albumCacheManager={albumCacheManager}
                 ></AlbumView>
             </div>
@@ -30,9 +25,16 @@ function SetMusic(): JSX.Element {
 }
 
 function ArtistPage(): JSX.Element {
+    const { artistName } = useParams<RouterType.RouterParams>();
+    const artist = albumList.find((itme) => itme.artist === artistName);
+
+    if (!artist) {
+        return <ErrorPage />
+    }
+
     return (
         <div className="aritstInfo">
-            <constValue.SetMusicMemo></constValue.SetMusicMemo>
+            <SetMusic aritst={artist} key={artist.artist}></SetMusic>
         </div>
     );
 }

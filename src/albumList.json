@@ -18,5 +18,25 @@
                 "dirname": "San E - Ready To Be Signed"
             }
         ]
+    },
+    {
+        "artist": "Hotclip",
+        "albums": [
+            {
+                "album": "Hotclip Mixtape, Vol.1",
+                "AlbumInfoSrc": "01. Throwback.mp3",
+                "dirname": "Hotclip - Hotclip Mixtape, Vol.1"
+            }
+        ]
+    },
+    {
+        "artist": "Simon Dominic",
+        "albums": [
+            {
+                "album": "I Just Wanna Rhyme, Vol.1",
+                "AlbumInfoSrc": "01. I Just Wanna Rhyme.mp3",
+                "dirname": "Simon Dominic - I Just Wanna Rhyme, Vol.1"
+            }
+        ]
     }
 ]

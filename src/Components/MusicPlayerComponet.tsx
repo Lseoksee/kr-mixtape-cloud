@@ -9,6 +9,7 @@ type MusicPlayerProp = {
 
 
 class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
+    // TODO: 재생 대기열 구현
 
     currItem?: AlbumCompType.loadMusicInfo
     currIndex : number = -1;

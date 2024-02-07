@@ -68,7 +68,7 @@ declare namespace ReduxType {
 
 // react-router 타입
 declare namespace RouterType {
-    /** URL 파라미타 */
+    /** URL 파라미터 */
     type RouterParams = {
         artistName: string;
     };

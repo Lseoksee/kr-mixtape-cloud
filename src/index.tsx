@@ -18,10 +18,12 @@ window.Buffer = Buffer;
 
 // 라우팅 페이지 관리
 function RoutePage(): JSX.Element {
+    //TODO 애러페이지 설정하기
+    
     return (
         <Routes>
             <Route path={constants.MAIN_PAGE} element={<App />} />
-            <Route path={`${constants.ARTIST_PAGE}/:artistName`} element={<ArtistPage />} />
+            <Route path={`${constants.ARTIST_PAGE}/:artistName`} element={<ArtistPage />}/>
         </Routes>
     );
 }
@@ -31,7 +33,7 @@ function AppComp(): JSX.Element {
     // Class 컴포넌트 Props RouterHook 전달
     const router: RouterType.RouterHook = {
         navigate: useNavigate(),
-        params: useParams(),
+        params: useParams<RouterType.RouterParams>(),
     };
 
     return (

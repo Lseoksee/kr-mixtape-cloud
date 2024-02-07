@@ -48,7 +48,6 @@ class SongCache extends BrowserCache {
         const curData = thisAlbum.album.map((item) => item.file.ETag);
 
         if (newData.toString() === curData.toString()) {
-            console.log("같아서 잘 리턴함");
             return { album: thisAlbum.album };
         }
 
