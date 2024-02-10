@@ -3,6 +3,7 @@ import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
 import constants from "../constants";
 import albumList from "../albumList.json";
+import { useNavigate, useParams } from "react-router-dom";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;
@@ -23,7 +24,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
 
         return (
             <div className="SearchSideBarDiv">
-                <Button variant="contained" onClick={() => router.navigate(`${constants.MAIN_PAGE}`)}>
+                <Button variant="contained" onClick={() => router.navigate("/")}>
                     홈 버튼
                 </Button>
                 {albumList.map((itme, index) => (
@@ -39,5 +40,6 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
         );
     }
 }
+
 
 export default SearchSideBarComponet;

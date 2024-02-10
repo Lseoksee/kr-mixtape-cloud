@@ -3,7 +3,6 @@ import AlbumView from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../GlobalAppData";
 import { useParams } from "react-router-dom";
-import ErrorPage from "./ErrorPage";
 
 
 function SetMusic(props: { aritst: typeof albumList[0] }): JSX.Element {
@@ -29,7 +28,7 @@ function ArtistPage(): JSX.Element {
     const artist = albumList.find((itme) => itme.artist === artistName);
 
     if (!artist) {
-        return <ErrorPage />
+        throw new Error("해당 아티스트를 찾을 수 없습니다.");
     }
 
     return (

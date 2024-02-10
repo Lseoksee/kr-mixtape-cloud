@@ -8,47 +8,56 @@ import { mainReducer } from "./Store/ConfingRedux";
 import MusicPlayerComponet from "./Components/MusicPlayerComponet";
 import SearchSideBarComponet from "./Components/SearchSideBarComponet";
 import ListSideBarComponet from "./Components/ListSideBarComponet";
-import { BrowserRouter, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter, useNavigate, useParams } from "react-router-dom";
 import App from "./Pages/App";
 import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
+import ErrorPage from "./Pages/ErrorPage";
 
 window.process = require("process");
 window.Buffer = Buffer;
 
-// 라우팅 페이지 관리
-function RoutePage(): JSX.Element {
-    //TODO 애러페이지 설정하기
-    
-    return (
-        <Routes>
-            <Route path={constants.MAIN_PAGE} element={<App />} />
-            <Route path={`${constants.ARTIST_PAGE}/:artistName`} element={<ArtistPage />}/>
-        </Routes>
-    );
-}
+/* 라우팅 설정 */
+const RoutePage = createBrowserRouter([
+    {
+        path: "/",
+        element: <GlobalPage />,
+        children: [
+            {
+                index: true /* 맨 첫번째 패이지로 지정 */,
+                element: <App />,
+            },
+            {
+                path: `${constants.ARTIST_PAGE}/:artistName`,
+                element: <ArtistPage />,
+                errorElement: <ErrorPage />,
+            },
+        ],
+    },
+]);
 
-// 모든 컴포넌트 모음
-function AppComp(): JSX.Element {
-    // Class 컴포넌트 Props RouterHook 전달
+/* 전역컴포넌트와 같이가는 */
+function GlobalPage() {
+
+    //클래스 컴포넌트 라우팅 훅 사용
     const router: RouterType.RouterHook = {
         navigate: useNavigate(),
-        params: useParams<RouterType.RouterParams>(),
+        params: useParams(),
     };
 
     return (
-        <Provider store={configureStore({ reducer: mainReducer })}>
+        <>
             <SearchSideBarComponet router={router} />
-            <RoutePage />
+            <Outlet /> {/* 여기에 각각 라우팅 페이지 컴포넌트가 랜더링  */}
             <ListSideBarComponet />
             <MusicPlayerComponet />
-        </Provider>
+        </>
     );
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-    <BrowserRouter>
-        <AppComp />
-    </BrowserRouter>
+    <Provider store={configureStore({ reducer: mainReducer })}>
+        <RouterProvider router={RoutePage} />
+    </Provider>
 );
