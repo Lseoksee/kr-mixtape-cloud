@@ -1,6 +1,6 @@
 class BrowserCache {
     /** 캐싱된 사항들을 로컬스토리지에 최종 저장합니다 */
-    static applyCache(caches: any[], saveValue: string, loStorage: any[]) {
+    protected static applyCache(caches: any[], saveValue: string, loStorage: any[]) {
         const addEelment = caches.filter((item) => item);
         if (addEelment.length) {
             if (loStorage.length) {
@@ -13,6 +13,16 @@ class BrowserCache {
                 localStorage.setItem(saveValue, JSON.stringify(loStorage));
             }
         }
+    }
+
+    /** 로컬 스토리지에 볼륨값을 저장합니다. */
+    static saveVolume(value: number) {
+        localStorage.setItem("volume", value.toString());
+    }
+
+    /** 로컬 스토리지에 볼륨값을 가져옵니다. */
+    static getVolume() {
+        return  Number.parseFloat(localStorage.getItem("volume")!!) || 1;
     }
 }
 
@@ -141,4 +151,4 @@ class AlbumCache extends BrowserCache {
     }
 }
 
-export { SongCache, AlbumCache };
+export { SongCache, AlbumCache, BrowserCache };
