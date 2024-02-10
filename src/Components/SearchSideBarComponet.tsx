@@ -3,7 +3,6 @@ import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
 import constants from "../constants";
 import albumList from "../albumList.json";
-import { useNavigate, useParams } from "react-router-dom";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;

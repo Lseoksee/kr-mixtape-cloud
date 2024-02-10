@@ -11,6 +11,8 @@ const mainSlice = createSlice({
             startIndex: -1,
             queue: [],
         },
+        // 강제 re-render가 필요한 경우 해당 값을 업데이트 하자
+        forceUpdate: 0.0,
     } as ReduxType.state,
     reducers: {
         /** 선택된 음악을 재생하고 이전 및 다음 대기열을 설정 합니다. */
@@ -22,9 +24,22 @@ const mainSlice = createSlice({
             state.musicPlayState.startIndex = action.payload.startIndex;
         },
 
-        selectIndexMusic(state, action: PayloadAction<{Index: number }>) {
-            state.musicPlayState.startIndex = action.payload.Index;
-        }
+        /** 해당 인덱스로 곡을 바꿉니다. */
+        selectIndexMusic(state, action: PayloadAction<{ index: number }>) {
+            if (action.payload.index <= 0) {
+                // 만일 설정하려는 인덱스가 가장 처음 곡인경우
+                state.musicPlayState.startIndex = 0;
+                state.forceUpdate -= 0.001;
+                return;
+            } else if (action.payload.index >= state.musicPlayState.queue.length) {
+                // 만일 설정하려는 인덱스가 가장 끝 곡인 경우
+                state.forceUpdate += 0.001;
+                state.forceUpdate++;
+                return;
+            }
+
+            state.musicPlayState.startIndex = action.payload.index;
+        },
     },
 });
 

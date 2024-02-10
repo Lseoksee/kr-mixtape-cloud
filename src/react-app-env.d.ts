@@ -56,6 +56,7 @@ declare namespace ReduxType {
             startIndex: number;
             queue: AlbumCompType.loadMusicInfo[];
         };
+        forceUpdate: number;
     };
 
     /** Redux 요청 데이터들 */

@@ -1,6 +1,6 @@
 import { Component, ReactNode } from "react";
 import "../Style/MusicPlayerComponet.css";
-import { reduxConnect } from "../Store/ConfingRedux";
+import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 import { BrowserCache } from "../Utils/BrowserCache";
 
@@ -18,6 +18,19 @@ class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
             return;
         }
         this.audioRef.volume = BrowserCache.getVolume();
+
+        /* Media Session API를 통한 미디어 컨트롤 */
+        navigator.mediaSession.setActionHandler("nexttrack", () => {
+            //다음곡
+            const selectIndexMusic = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
+            this.props.dispatch(selectIndexMusic);
+        });
+
+        navigator.mediaSession.setActionHandler("previoustrack", () => {
+            // 이전 곡
+            const selectIndexMusic = ReduxActions.selectIndexMusic({ index: this.currIndex - 1 });
+            this.props.dispatch(selectIndexMusic);
+        });
     }
 
     componentDidUpdate(prevProps: Readonly<MusicPlayerProp>, prevState: Readonly<any>, snapshot?: any): void {
