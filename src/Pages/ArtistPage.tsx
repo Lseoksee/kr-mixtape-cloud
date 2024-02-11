@@ -11,7 +11,6 @@ function SetMusic(props: { aritst: typeof albumList[0] }): JSX.Element {
         return (
             <div className="albumItem" key={index}>
                 <AlbumView
-                    albumSrc={item.dirname}
                     albumName={item.album}
                     artist={props.aritst.artist}
                     albumCacheManager={albumCacheManager}

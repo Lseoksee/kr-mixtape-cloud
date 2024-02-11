@@ -4,13 +4,11 @@
         "albums": [
             {
                 "album": "New Blood Rapper, Vol.1",
-                "AlbumInfoSrc": "01. Still Rappin'.mp3",
-                "dirname": "E SENS - New Blood Rapper, Vol.1"
+                "AlbumInfoSrc": "01. Still Rappin'.mp3"
             },
             {
                 "album": "Ready To Be Signed",
-                "AlbumInfoSrc": "01. 산선생님(랩의진수).mp3",
-                "dirname": "San E - Ready To Be Signed"
+                "AlbumInfoSrc": "01. 산선생님(랩의진수).mp3"
             }
         ]
     },
@@ -19,8 +17,7 @@
         "albums": [
             {
                 "album": "Hotclip Mixtape, Vol.1",
-                "AlbumInfoSrc": "01. Throwback.mp3",
-                "dirname": "Hotclip - Hotclip Mixtape, Vol.1"
+                "AlbumInfoSrc": "01. Throwback.mp3"
             }
         ]
     },
@@ -29,8 +26,7 @@
         "albums": [
             {
                 "album": "I Just Wanna Rhyme, Vol.1",
-                "AlbumInfoSrc": "01. I Just Wanna Rhyme.mp3",
-                "dirname": "Simon Dominic - I Just Wanna Rhyme, Vol.1"
+                "AlbumInfoSrc": "01. I Just Wanna Rhyme.mp3"
             }
         ]
     }

@@ -23,7 +23,6 @@ import { MUITheme, MUIStyle } from "./MUICustum";
 import { AlbumCacheManager } from "../GlobalAppData";
 
 type AlbumViewProp = {
-    albumSrc: string; //앨범경로
     albumName: string; //앨범명
     artist: string; //아티스트명
     albumCacheManager: AlbumCacheManager;
@@ -68,7 +67,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     // 페이지 첫 로딩시 실행
     componentDidMount(): void {
         // 앨범 곡 리스트 불러오기
-        const getAlbumList = AWSUtiil.getAWSUtiil().getFilelist(this.props.albumSrc);
+        const getAlbumList = AWSUtiil.getAWSUtiil().getFilelist(this.props.artist, this.props.albumName);
 
         getAlbumList.then((item) => {
             //앨범 정보 불러오기

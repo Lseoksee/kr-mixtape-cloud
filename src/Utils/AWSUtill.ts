@@ -9,7 +9,7 @@ import constants from "../constants";
 class AWSUtiil {
     private static thisObject?: AWSUtiil;
     private static Bytes = 500 * 1000;
-    
+
     private clinet: S3Client;
     private devMode: boolean;
 
@@ -36,8 +36,8 @@ class AWSUtiil {
         });
     }
 
-    /** S3 에서 해당 폴더에 파일목록을 리턴합니다. */
-    public async getFilelist(loc: string): Promise<AlbumCompType.file[]> {
+    /** S3 에서 파일목록을 리턴합니다. */
+    public async getFilelist(artist: string, albumName: string): Promise<AlbumCompType.file[]> {
         // 개발 모드 활성화 시
         if (this.devMode) {
             return [
@@ -68,10 +68,15 @@ class AWSUtiil {
             ];
         }
 
-        // 파일 목록 얻기
+        //TODO: 앨범뷰 레이아웃 만들어 지면 삭제할것!!!
+        if (albumName === "Ready To Be Signed") {
+            artist = "San E";
+        }
+
+        // 파일 목록 얻기 (S3에 앨범을 저장할때 [아티스트명] - [앨범명] 이렇게 저장되야함)
         const getlist = new ListObjectsV2Command({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
-            Prefix: loc,
+            Prefix: `${artist} - ${albumName}`,
         });
 
         const res = await this.clinet.send(getlist);
