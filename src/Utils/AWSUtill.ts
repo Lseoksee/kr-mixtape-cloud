@@ -76,11 +76,11 @@ class AWSUtiil {
         // 파일 목록 얻기 (S3에 앨범을 저장할때 [아티스트명] - [앨범명] 이렇게 저장되야함)
         const getlist = new ListObjectsV2Command({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
-            Prefix: `${artist} - ${albumName}`,
+            Prefix: artist,
         });
 
         const res = await this.clinet.send(getlist);
-        const result = res.Contents?.map((item) => {
+        const result = res.Contents?.filter((itme) => itme.Key?.includes(albumName)).map((item) => {
             return {
                 ETag: item.ETag!!, //파일 무결성 식별용
                 fileName: item.Key!!,
