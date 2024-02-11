@@ -12,6 +12,10 @@ class AWSUtiil {
 
     private clinet: S3Client;
     private devMode: boolean;
+    private listAlbum: Array<{
+        artist: string;
+        albums: AlbumCompType.file[];
+    }> = [];
 
     /** AWSUtiil 객체를 획득 합니다. 해당 메소들를 통해 AWSUtiil 객체에 접근하시오.  */
     public static getAWSUtiil() {
@@ -36,8 +40,8 @@ class AWSUtiil {
         });
     }
 
-    /** S3 에서 파일목록을 리턴합니다. */
-    public async getFilelist(artist: string, albumName: string): Promise<AlbumCompType.file[]> {
+    /** S3 에서 해당 아티스트와 앨범에대한 파일들을 리턴합니다. */
+    public async getFilelist(artist: string): Promise<AlbumCompType.file[]> {
         // 개발 모드 활성화 시
         if (this.devMode) {
             return [
@@ -68,9 +72,9 @@ class AWSUtiil {
             ];
         }
 
-        //TODO: 앨범뷰 레이아웃 만들어 지면 삭제할것!!!
-        if (albumName === "Ready To Be Signed") {
-            artist = "San E";
+        const memoryLoad = this.listAlbum.find((itme) => itme.artist === artist);
+        if (memoryLoad) {
+            return memoryLoad.albums;
         }
 
         // 파일 목록 얻기 (S3에 앨범을 저장할때 [아티스트명] - [앨범명] 이렇게 저장되야함)
@@ -80,14 +84,15 @@ class AWSUtiil {
         });
 
         const res = await this.clinet.send(getlist);
-        const result = res.Contents?.filter((itme) => itme.Key?.includes(albumName)).map((item) => {
+        const results = res.Contents?.filter((item) => item.Key?.split("/").slice(-1)[0]).map((item) => {
             return {
                 ETag: item.ETag!!, //파일 무결성 식별용
                 fileName: item.Key!!,
             };
-        });
+        })!!;
 
-        return result!!;
+        this.listAlbum.push({ artist: artist, albums: results });
+        return results;
     }
 
     /** 다운로드와 스트리밍이 가능한 url 주소를 리턴합니다. */

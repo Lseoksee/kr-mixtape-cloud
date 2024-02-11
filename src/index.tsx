@@ -13,6 +13,7 @@ import App from "./Pages/App";
 import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
 import ErrorPage from "./Pages/ErrorPage";
+import AWSUtiil from "./Utils/AWSUtill";
 
 window.process = require("process");
 window.Buffer = Buffer;
@@ -30,6 +31,10 @@ const RoutePage = createBrowserRouter([
             {
                 path: `${constants.ARTIST_PAGE}/:artistName`,
                 element: <ArtistPage />,
+                loader: async ({params}) => {
+                    //페이지 로딩시 앨범 리스트 얻기
+                    return AWSUtiil.getAWSUtiil().getFilelist(params.artistName!!);
+                },
                 errorElement: <ErrorPage />,
             },
         ],
