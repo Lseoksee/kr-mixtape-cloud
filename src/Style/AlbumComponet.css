@@ -12,7 +12,6 @@
 }
 
 .albumTextDiv {
-
 }
 
 .artistImage {
@@ -36,7 +35,66 @@
     gap: var(--elment-margin);
 }
 
-.css-11xur9t-MuiPaper-root-MuiTableContainer-root {
-    height: 70%;
+.tableDiv {
+    max-height: 70%;
+    height: 100%;
     white-space: nowrap;
+    overflow: hidden;
+}
+
+.tableBodyRow > td,
+.tableHeadRow > th {
+    padding: 0;
+}
+
+.thead {
+    height: 7%;
+    box-sizing: border-box;
+}
+
+.tbody {
+    height: 91%;
+    overflow: auto;
+    overflow-y: overlay;
+}
+
+.tbody::-webkit-scrollbar {
+    width: 10px;
+    padding: 0px;
+}
+
+.tbody::-webkit-scrollbar-track {
+    background-color: darkgrey;
+    border-radius: 20px;
+}
+
+.tbody::-webkit-scrollbar-thumb {
+    background-color: blueviolet;
+    border-radius: 20px;
+}
+
+.tableBodyRow {
+    height: 11%;
+}
+
+.tableBodyRow > td,
+.tableHeadRow > th {
+    padding: 0px 10px 0px 10px;
+}
+
+.tableBodyRow > td {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.tableHeadRow > th {
+    height: 100%;
+    display: flex;
+    border: 0;
+}
+
+.songNum {
+    padding: 0;
+    text-align: center;
 }

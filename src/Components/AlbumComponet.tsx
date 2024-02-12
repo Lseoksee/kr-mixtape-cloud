@@ -19,8 +19,9 @@ import {
     ThemeProvider,
 } from "@mui/material";
 import Utils from "../Utils/Utils";
-import { MUITheme, MUIStyle } from "./MUICustum";
+import { MUITheme } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../GlobalAppData";
+import GlobalStyle from "../Style/StyleComponents/GlobalStyle";
 
 type AlbumViewProp = {
     albumName: string; //앨범명
@@ -134,6 +135,14 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         this.props.dispatch(setStartMusic);
     }
 
+    /* 각행 표시 퍼센트 */
+    tdStyle: Array<React.CSSProperties> = [
+        {width: "2%"},
+        {width: "58%"},
+        {width: "35%"},
+        {width: "5%"},
+    ]
+
     render(): React.ReactNode {
         if (this.state.playerElement?.length) {
             const stateData = this.state;
@@ -165,53 +174,52 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     {/* 사용자 스타일시트 우선순위 올리기 */}
                     <StyledEngineProvider injectFirst>
                         <ThemeProvider theme={MUITheme.defaultTheme}>
-                            <TableContainer component={Paper}>
-                                <Table stickyHeader>
-                                    <colgroup>
-                                        <col width="1%" />
-                                        <col width="55%" />
-                                        <col width="25%" />
-                                        <col width="1%" />
-                                    </colgroup>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell sx={MUIStyle.songNum}>#</TableCell>
-                                            <TableCell>제목</TableCell>
-                                            <TableCell>아티스트</TableCell>
-                                            <TableCell>길이</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {this.state.playerElement.map((item, index) => (
-                                            <TableRow
-                                                key={index}
-                                                hover
-                                                onMouseOver={() => {
-                                                    this.setState({ songHover: index, key: "hover" });
-                                                }}
-                                                onDoubleClick={() => {
-                                                    this.loadUrl(this.state.playerElement, index);
-                                                }}
-                                            >
-                                                <TableCell
-                                                    sx={MUIStyle.songNum}
-                                                    onClick={() => {
+                            <TableContainer component={Paper} className="tableDiv">
+                                    <Table stickyHeader>
+                                        <TableHead className="thead">
+                                            <TableRow className="tableHeadRow">
+                                                <TableCell className="songNum" style={this.tdStyle[0]}>#</TableCell>
+                                                <TableCell style={this.tdStyle[1]}>제목</TableCell>
+                                                <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
+                                                <TableCell style={this.tdStyle[3]}>길이</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody className="tbody">
+                                            {this.state.playerElement.map((item, index) => (
+                                                <TableRow
+                                                    className="tableBodyRow"
+                                                    key={index}
+                                                    hover
+                                                    onMouseOver={() => {
+                                                        this.setState({ songHover: index, key: "hover" });
+                                                    }}
+                                                    onDoubleClick={() => {
                                                         this.loadUrl(this.state.playerElement, index);
                                                     }}
                                                 >
-                                                    {index === stateData.songHover ? (
-                                                        <PlayArrowOutlinedIcon />
-                                                    ) : (
-                                                        item.track.no
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>{item.title}</TableCell>
-                                                <TableCell>{item.artist}</TableCell>
-                                                <TableCell>{Utils.secToMin(item.duration)}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                                    <TableCell
+                                                        className="songNum"
+                                                        style={{
+                                                            ...GlobalStyle.hintText,
+                                                            ...this.tdStyle[0]
+                                                        }}
+                                                        onClick={() => {
+                                                            this.loadUrl(this.state.playerElement, index);
+                                                        }}
+                                                    >
+                                                        {index === stateData.songHover ? (
+                                                            <PlayArrowOutlinedIcon />
+                                                        ) : (
+                                                            item.track.no
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
+                                                    <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
+                                                    <TableCell style={this.tdStyle[3]}>{Utils.secToMin(item.duration)}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
                             </TableContainer>
                         </ThemeProvider>
                     </StyledEngineProvider>

@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 :root {
-    --main-font-size: 1em;
+    --main-font-size: 1rem;
     --elment-margin: 5px;
     --side-bar-size: 360px;
 }
@@ -27,6 +27,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
     width: 100%;
+    overflow: overlay;
 }
 
 #root {
@@ -35,4 +36,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+table, thead, tbody {
+    display: block !important;
+    width: 100% !important;
+}
+
+table {
+    height: 100% !important;
+}
+
+tr {
+    width: 100% !important;
+    display: flex !important;
 }
