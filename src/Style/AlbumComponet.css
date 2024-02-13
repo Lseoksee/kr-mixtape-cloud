@@ -40,6 +40,9 @@
     height: 100%;
     white-space: nowrap;
     overflow: hidden;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    border: 1px solid #919191;
+    box-shadow: inherit;
 }
 
 .tableBodyRow > td,
@@ -54,22 +57,19 @@
 
 .tbody {
     height: 91%;
-    overflow: auto;
     overflow-y: overlay;
 }
 
 .tbody::-webkit-scrollbar {
-    width: 10px;
-    padding: 0px;
+    width: 6px;
 }
 
 .tbody::-webkit-scrollbar-track {
-    background-color: darkgrey;
-    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .tbody::-webkit-scrollbar-thumb {
-    background-color: blueviolet;
+    background-color: var(--primary-color);
     border-radius: 20px;
 }
 
@@ -80,21 +80,32 @@
 .tableBodyRow > td,
 .tableHeadRow > th {
     padding: 0px 10px 0px 10px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .tableBodyRow > td {
     height: 100%;
     display: flex;
+    flex-shrink: 0;
+    font-size: 0.95rem;
     align-items: center;
 }
 
 .tableHeadRow > th {
     height: 100%;
     display: flex;
+    font-weight: 600;
+    font-size: 0.9rem;
     border: 0;
 }
 
 .songNum {
     padding: 0;
     text-align: center;
+}
+
+.timeRow {
+    justify-content: flex-end;
+    text-align: right;
 }

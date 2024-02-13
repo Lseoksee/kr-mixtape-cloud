@@ -6,6 +6,10 @@
     --side-bar-size: 360px;
 }
 
+:root {
+    --primary-color: #9C6DFF
+}
+
 p {
     margin: 0;
     padding: 0;
