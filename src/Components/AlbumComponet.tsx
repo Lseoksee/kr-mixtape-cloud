@@ -185,7 +185,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                         } = { noItem: item.track.no };
 
                                         if (index === stateData.songHover) {
-                                            hover.noItem = <MUIComponet.PlayIcon />;
+                                            hover.noItem = <MUIComponet.PlayIcon size={"50%"}  />;
                                             hover.style = { padding: 0 };
                                         }
 
