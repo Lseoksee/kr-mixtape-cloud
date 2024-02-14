@@ -14,6 +14,7 @@ import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
 import ErrorPage from "./Pages/ErrorPage";
 import AWSUtiil from "./Utils/AWSUtill";
+import { StyledEngineProvider } from "@mui/material";
 
 window.process = require("process");
 window.Buffer = Buffer;
@@ -31,7 +32,7 @@ const RoutePage = createBrowserRouter([
             {
                 path: `${constants.ARTIST_PAGE}/:artistName`,
                 element: <ArtistPage />,
-                loader: async ({params}) => {
+                loader: async ({ params }) => {
                     //페이지 로딩시 앨범 리스트 얻기
                     return AWSUtiil.getAWSUtiil().getFilelist(params.artistName!!);
                 },
@@ -43,7 +44,6 @@ const RoutePage = createBrowserRouter([
 
 /* 전역컴포넌트와 같이가는 */
 function GlobalPage() {
-
     //클래스 컴포넌트 라우팅 훅 사용
     const router: RouterType.RouterHook = {
         navigate: useNavigate(),
@@ -62,7 +62,9 @@ function GlobalPage() {
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-    <Provider store={configureStore({ reducer: mainReducer })}>
-        <RouterProvider router={RoutePage} />
-    </Provider>
+    <StyledEngineProvider injectFirst>
+        <Provider store={configureStore({ reducer: mainReducer })}>
+            <RouterProvider router={RoutePage} />
+        </Provider>
+    </StyledEngineProvider>
 );

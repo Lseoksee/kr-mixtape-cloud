@@ -7,17 +7,7 @@ import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
-import {
-    Paper,
-    StyledEngineProvider,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    ThemeProvider,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, ThemeProvider } from "@mui/material";
 import Utils from "../Utils/Utils";
 import { MUITheme } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../GlobalAppData";
@@ -26,6 +16,7 @@ import Gc from "../Style/StyleComponents/GlobalStyleComponet";
 type AlbumViewProp = {
     albumName: string; //앨범명
     artist: string; //아티스트명
+    tableSize: string;
     songList: AlbumCompType.file[];
     albumCacheManager: AlbumCacheManager;
 } & ConnectedProps<typeof reduxConnect>;
@@ -166,61 +157,58 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                             </div>
                         </div>
                     </div>
-                    {/* 사용자 스타일시트 우선순위 올리기 */}
-                    <StyledEngineProvider injectFirst>
-                        <ThemeProvider theme={MUITheme.defaultTheme}>
-                            <Gc.ShadowDiv className="tableDiv">
-                                <Table stickyHeader>
-                                    <TableHead className="thead">
-                                        <TableRow className="tableHeadRow">
-                                            <TableCell className="songNum" style={this.tdStyle[0]}>
-                                                #
-                                            </TableCell>
-                                            <TableCell style={this.tdStyle[1]}>제목</TableCell>
-                                            <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
-                                            <TableCell style={this.tdStyle[3]} className="timeCellHead">
-                                                길이
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody className="tbody">
-                                        {this.state.playerElement.map((item, index) => (
-                                            <TableRow
-                                                className="tableBodyRow"
-                                                key={index}
-                                                hover
-                                                onMouseOver={() => {
-                                                    this.setState({ songHover: index, key: "hover" });
-                                                }}
-                                                onDoubleClick={() => {
+                    <ThemeProvider theme={MUITheme.defaultTheme}>
+                        <Gc.ShadowDiv className="tableDiv">
+                            <Table stickyHeader>
+                                <TableHead className="thead">
+                                    <TableRow className="tableHeadRow">
+                                        <TableCell className="songNum" style={this.tdStyle[0]}>
+                                            #
+                                        </TableCell>
+                                        <TableCell style={this.tdStyle[1]}>제목</TableCell>
+                                        <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
+                                        <TableCell style={this.tdStyle[3]} className="timeCellHead">
+                                            길이
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody className="tbody" style={{ maxHeight: this.props.tableSize }}>
+                                    {this.state.playerElement.map((item, index) => (
+                                        <TableRow
+                                            className="tableBodyRow"
+                                            key={index}
+                                            hover
+                                            onMouseOver={() => {
+                                                this.setState({ songHover: index, key: "hover" });
+                                            }}
+                                            onDoubleClick={() => {
+                                                this.loadUrl(this.state.playerElement, index);
+                                            }}
+                                        >
+                                            <TableCell
+                                                className="songCell"
+                                                style={this.tdStyle[0]}
+                                                onClick={() => {
                                                     this.loadUrl(this.state.playerElement, index);
                                                 }}
                                             >
-                                                <TableCell
-                                                    className="songCell"
-                                                    style={this.tdStyle[0]}
-                                                    onClick={() => {
-                                                        this.loadUrl(this.state.playerElement, index);
-                                                    }}
-                                                >
-                                                    {index === stateData.songHover ? (
-                                                        <PlayArrowOutlinedIcon />
-                                                    ) : (
-                                                        item.track.no
-                                                    )}
-                                                </TableCell>
-                                                <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
-                                                <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
-                                                <TableCell style={this.tdStyle[3]} className="timeCell">
-                                                    {Utils.secToMin(item.duration)}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Gc.ShadowDiv>
-                        </ThemeProvider>
-                    </StyledEngineProvider>
+                                                {index === stateData.songHover ? (
+                                                    <PlayArrowOutlinedIcon />
+                                                ) : (
+                                                    item.track.no
+                                                )}
+                                            </TableCell>
+                                            <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
+                                            <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
+                                            <TableCell style={this.tdStyle[3]} className="timeCell">
+                                                {Utils.secToMin(item.duration)}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Gc.ShadowDiv>
+                    </ThemeProvider>
                 </div>
             );
         } else {

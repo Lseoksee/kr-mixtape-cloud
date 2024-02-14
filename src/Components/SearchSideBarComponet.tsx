@@ -22,7 +22,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
         const router = this.props.router;
 
         return (
-            <div className="SearchSideBarDiv">
+            <aside className="SearchSideBarDiv">
                 <Button variant="contained" onClick={() => router.navigate("/")}>
                     홈 버튼
                 </Button>
@@ -35,7 +35,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                         {itme.artist}
                     </Button>
                 ))}
-            </div>
+            </aside>
         );
     }
 }

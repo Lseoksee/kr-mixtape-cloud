@@ -9,7 +9,7 @@ const ConstUtills = {
     SetMusicMemo: React.memo(SetMusic),
 };
 
-function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {    
+function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {
     const albumCacheManager = new AlbumCacheManager(props.aritst.albums.length);
 
     //loader로 받은거 얻기
@@ -20,14 +20,14 @@ function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {
         const songList = albums.filter((list) => list.fileName.includes(item.album));
 
         return (
-            <div className="albumItem" key={index}>
-                <AlbumView
-                    albumName={item.album}
-                    songList={songList}
-                    artist={props.aritst.artist}
-                    albumCacheManager={albumCacheManager}
-                ></AlbumView>
-            </div>
+            <AlbumView
+                key={index}
+                albumName={item.album}
+                tableSize={"490px"}
+                songList={songList}
+                artist={props.aritst.artist}
+                albumCacheManager={albumCacheManager}
+            ></AlbumView>
         );
     });
 

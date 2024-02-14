@@ -1,10 +1,8 @@
 #albumDiv {
     width: 980px;
+    margin-bottom: 120px;
     padding: 0px 15px 0px 15px;
-}
-
-.albumItem {
-    height: 700px;
+    display: table;
 }
 
 .aritstInfo {
