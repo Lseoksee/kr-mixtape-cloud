@@ -4,7 +4,8 @@
     --main-font-size: 1rem;
     --elment-margin: 5px;
     --border-radius: 15px;
-    --side-bar-size: 360px;
+    --side-bar-size: 19.8%;
+    --side-min-size: 280px;
 }
 
 :root {

@@ -64,6 +64,16 @@ class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
                         // 볼륨 바뀔때 마다 localstorge에 저장
                         BrowserCache.saveVolume(e.currentTarget.volume);
                     }}
+                    onEnded={() => {
+                        //다음곡
+                        if (this.currIndex + 1 === musicPlayState.queue.length) {
+                            //막곡인 경우 중단
+                            return;
+                        }
+                        
+                        const selectIndexMusic = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
+                        this.props.dispatch(selectIndexMusic);
+                    }}
                 >
                     <source src={this.currItem?.url}></source>
                 </audio>

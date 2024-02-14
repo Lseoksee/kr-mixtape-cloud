@@ -1,6 +1,7 @@
 import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
+import Gs from "../Style/StyleComponents/GlobalStyleComponet";
 import constants from "../constants";
 import albumList from "../albumList.json";
 
@@ -22,7 +23,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
         const router = this.props.router;
 
         return (
-            <aside className="SearchSideBarDiv">
+            <Gs.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
                 <Button variant="contained" onClick={() => router.navigate("/")}>
                     홈 버튼
                 </Button>
@@ -35,10 +36,9 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                         {itme.artist}
                     </Button>
                 ))}
-            </aside>
+            </Gs.ShadowDiv>
         );
     }
 }
-
 
 export default SearchSideBarComponet;

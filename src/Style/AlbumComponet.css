@@ -57,6 +57,7 @@
 
 .tbody {
     overflow-y: overlay;
+    overflow-x: hidden;
 }
 
 .tbody::-webkit-scrollbar {

@@ -1,6 +1,5 @@
-import {  TableContainer, TableContainerProps, createTheme } from "@mui/material";
-import styled from "styled-components";
-
+import {  SvgIconProps, createTheme, styled } from "@mui/material";
+import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 // 테마
 export const MUITheme = {
     defaultTheme: createTheme({
@@ -16,5 +15,8 @@ export const MUITheme = {
 
 // 커스텀 컴포넌트
 export const MUIComponet = {
-
+    PlayIcon: styled(PlayArrowOutlinedIcon)<SvgIconProps>(({theme}) => ({
+        fill: "#00E39F",
+        fontSize: "40px",
+    }))
 };

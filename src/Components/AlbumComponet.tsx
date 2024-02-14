@@ -1,17 +1,17 @@
 import React, { Component } from "react";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
+import tempArtist from "../Assets/tempArtist.svg";
 import AWSUtiil from "../Utils/AWSUtill";
 import "../Style/AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import { Table, TableBody, TableCell, TableHead, TableRow, ThemeProvider } from "@mui/material";
 import Utils from "../Utils/Utils";
-import { MUITheme } from "../Style/StyleComponents/MUICustum";
+import { MUITheme, MUIComponet } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../GlobalAppData";
-import Gc from "../Style/StyleComponents/GlobalStyleComponet";
+import Gs from "../Style/StyleComponents/GlobalStyleComponet";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 type AlbumViewProp = {
     albumName: string; //앨범명
@@ -127,7 +127,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     }
 
     /* 각행 표시 퍼센트 */
-    tdStyle: Array<React.CSSProperties> = [{ width: "4%" }, { width: "56%" }, { width: "30%" }, { width: "10%" }];
+    tdStyle: Array<React.CSSProperties> = [{ width: "5%" }, { width: "55%" }, { width: "30%" }, { width: "10%" }];
 
     render(): React.ReactNode {
         if (this.state.playerElement?.length) {
@@ -142,6 +142,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                             <div className="artistDiv">
                                 <img
                                     src={`/artistimage/${this.props.artist}.png`}
+                                    onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
                                     alt={this.props.artist}
                                     className="artistImage InfoIcon"
                                     width="36px"
@@ -158,7 +159,11 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                         </div>
                     </div>
                     <ThemeProvider theme={MUITheme.defaultTheme}>
-                        <Gc.ShadowDiv className="tableDiv">
+                        <Gs.ShadowDiv
+                            shadowloc="bottom"
+                            className="tableDiv"
+                            onMouseOut={() => this.setState({ songHover: -1, key: "hover" })}
+                        >
                             <Table stickyHeader>
                                 <TableHead className="thead">
                                     <TableRow className="tableHeadRow">
@@ -173,41 +178,52 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className="tbody" style={{ maxHeight: this.props.tableSize }}>
-                                    {this.state.playerElement.map((item, index) => (
-                                        <TableRow
-                                            className="tableBodyRow"
-                                            key={index}
-                                            hover
-                                            onMouseOver={() => {
-                                                this.setState({ songHover: index, key: "hover" });
-                                            }}
-                                            onDoubleClick={() => {
-                                                this.loadUrl(this.state.playerElement, index);
-                                            }}
-                                        >
-                                            <TableCell
-                                                className="songCell"
-                                                style={this.tdStyle[0]}
-                                                onClick={() => {
+                                    {this.state.playerElement.map((item, index) => {
+                                        const hover: {
+                                            noItem: any;
+                                            style?: React.CSSProperties;
+                                        } = { noItem: item.track.no };
+
+                                        if (index === stateData.songHover) {
+                                            hover.noItem = <MUIComponet.PlayIcon />;
+                                            hover.style = { padding: 0 };
+                                        }
+
+                                        return (
+                                            <TableRow
+                                                className="tableBodyRow"
+                                                key={index}
+                                                hover
+                                                onMouseOver={() => {
+                                                    this.setState({ songHover: index, key: "hover" });
+                                                }}
+                                                onDoubleClick={() => {
                                                     this.loadUrl(this.state.playerElement, index);
                                                 }}
                                             >
-                                                {index === stateData.songHover ? (
-                                                    <PlayArrowOutlinedIcon />
-                                                ) : (
-                                                    item.track.no
-                                                )}
-                                            </TableCell>
-                                            <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
-                                            <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
-                                            <TableCell style={this.tdStyle[3]} className="timeCell">
-                                                {Utils.secToMin(item.duration)}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                                <TableCell
+                                                    className="songCell"
+                                                    style={{
+                                                        ...this.tdStyle[0],
+                                                        ...hover.style,
+                                                    }}
+                                                    onClick={() => {
+                                                        this.loadUrl(this.state.playerElement, index);
+                                                    }}
+                                                >
+                                                    {hover.noItem}
+                                                </TableCell>
+                                                <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
+                                                <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
+                                                <TableCell style={this.tdStyle[3]} className="timeCell">
+                                                    {Utils.secToMin(item.duration)}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
-                        </Gc.ShadowDiv>
+                        </Gs.ShadowDiv>
                     </ThemeProvider>
                 </div>
             );

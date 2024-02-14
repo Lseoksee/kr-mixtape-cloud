@@ -23,7 +23,7 @@ function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {
             <AlbumView
                 key={index}
                 albumName={item.album}
-                tableSize={"490px"}
+                tableSize={"54vh"}
                 songList={songList}
                 artist={props.aritst.artist}
                 albumCacheManager={albumCacheManager}
@@ -31,16 +31,17 @@ function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {
         );
     });
 
-    return <div id="albumDiv">{element}</div>;
+    return <div className="albumDiv">{element}</div>;
 }
 
 function ArtistPage(): JSX.Element {
     const { artistName } = useParams<RouterType.RouterParams>();
-
     const artist = albumList.find((itme) => itme.artist === artistName)!!;
 
     return (
-        <div className="aritstInfo">
+        <div className="aritstInfo" ref={(ref) => (ref?.scrollTo(0, 0))}>
+            <div className="aritstFirst">
+            </div>
             <ConstUtills.SetMusicMemo aritst={artist} key={artist.artist}></ConstUtills.SetMusicMemo>
         </div>
     );
