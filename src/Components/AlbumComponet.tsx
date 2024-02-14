@@ -21,7 +21,7 @@ import {
 import Utils from "../Utils/Utils";
 import { MUITheme } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../GlobalAppData";
-import GlobalStyle from "../Style/StyleComponents/GlobalStyle";
+import Gc from "../Style/StyleComponents/GlobalStyleComponet";
 
 type AlbumViewProp = {
     albumName: string; //앨범명
@@ -136,7 +136,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     }
 
     /* 각행 표시 퍼센트 */
-    tdStyle: Array<React.CSSProperties> = [{ width: "5%" }, { width: "55%" }, { width: "30%" }, { width: "10%" }];
+    tdStyle: Array<React.CSSProperties> = [{ width: "4%" }, { width: "56%" }, { width: "30%" }, { width: "10%" }];
 
     render(): React.ReactNode {
         if (this.state.playerElement?.length) {
@@ -169,7 +169,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     {/* 사용자 스타일시트 우선순위 올리기 */}
                     <StyledEngineProvider injectFirst>
                         <ThemeProvider theme={MUITheme.defaultTheme}>
-                            <TableContainer component={Paper} className="tableDiv">
+                            <Gc.ShadowDiv className="tableDiv">
                                 <Table stickyHeader>
                                     <TableHead className="thead">
                                         <TableRow className="tableHeadRow">
@@ -178,7 +178,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                             </TableCell>
                                             <TableCell style={this.tdStyle[1]}>제목</TableCell>
                                             <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
-                                            <TableCell style={this.tdStyle[3]} className="timeRow">
+                                            <TableCell style={this.tdStyle[3]} className="timeCellHead">
                                                 길이
                                             </TableCell>
                                         </TableRow>
@@ -197,11 +197,8 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 }}
                                             >
                                                 <TableCell
-                                                    className="songNum"
-                                                    style={{
-                                                        ...GlobalStyle.hintText,
-                                                        ...this.tdStyle[0],
-                                                    }}
+                                                    className="songCell"
+                                                    style={this.tdStyle[0]}
                                                     onClick={() => {
                                                         this.loadUrl(this.state.playerElement, index);
                                                     }}
@@ -214,20 +211,14 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                                 </TableCell>
                                                 <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
                                                 <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
-                                                <TableCell
-                                                    style={{
-                                                        ...GlobalStyle.hintText,
-                                                        ...this.tdStyle[3],
-                                                    }}
-                                                    className="timeRow"
-                                                >
+                                                <TableCell style={this.tdStyle[3]} className="timeCell">
                                                     {Utils.secToMin(item.duration)}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </TableContainer>
+                            </Gc.ShadowDiv>
                         </ThemeProvider>
                     </StyledEngineProvider>
                 </div>

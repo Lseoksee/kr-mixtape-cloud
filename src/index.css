@@ -3,11 +3,13 @@
 :root {
     --main-font-size: 1rem;
     --elment-margin: 5px;
+    --border-radius: 15px;
     --side-bar-size: 360px;
 }
 
 :root {
-    --primary-color: #9C6DFF
+    --primary-color: #9C6DFF;
+    --hint-color: #888888;
 }
 
 p {
