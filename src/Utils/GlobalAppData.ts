@@ -1,4 +1,4 @@
-import { AlbumCache, SongCache } from "./Utils/BrowserCache";
+import { AlbumCache, SongCache } from "./BrowserCache";
 
 /* 전역으로 관리되는 데이터들 */
 export class AlbumCacheManager{

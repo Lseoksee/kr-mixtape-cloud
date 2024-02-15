@@ -9,7 +9,7 @@ import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { Table, TableBody, TableCell, TableHead, TableRow, ThemeProvider } from "@mui/material";
 import Utils from "../Utils/Utils";
 import { MUITheme, MUIComponet } from "../Style/StyleComponents/MUICustum";
-import { AlbumCacheManager } from "../GlobalAppData";
+import { AlbumCacheManager } from "../Utils/GlobalAppData";
 import Gs from "../Style/StyleComponents/GlobalStyleComponet";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
@@ -185,7 +185,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                         } = { noItem: item.track.no };
 
                                         if (index === stateData.songHover) {
-                                            hover.noItem = <MUIComponet.PlayIcon size={"50%"}  />;
+                                            hover.noItem = <MUIComponet.PlayIcon height={"50%"}/>;
                                             hover.style = { padding: 0 };
                                         }
 

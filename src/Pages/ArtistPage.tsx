@@ -1,7 +1,7 @@
 import albumList from "../albumList.json";
 import AlbumView from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
-import { AlbumCacheManager } from "../GlobalAppData";
+import { AlbumCacheManager } from "../Utils/GlobalAppData";
 import { useLoaderData, useParams } from "react-router-dom";
 import React from "react";
 
