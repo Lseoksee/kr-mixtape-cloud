@@ -1,11 +1,32 @@
+.aritstFirst {
+    padding: 0px 80px 0px 80px;
+    box-sizing: border-box;
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    height: 280px;
+    background: linear-gradient(180deg, #000000 0%, rgba(81, 81, 81, 0.93) 0.01%, rgba(255, 255, 255, 0) 100%);
+    align-items: center;
+    flex-direction: row;
+}
+
 .aritstInfo {
     height: 100%;
     display: flex;
-    overflow: auto;
-    min-width: 800px;
+    overflow: overlay;
+    min-width: 700px;
     z-index: 0;
     flex-grow: 1;
     flex-direction: column;
+    align-items: center;
+}
+
+.aritstPlay {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
     align-items: center;
 }
 
@@ -14,10 +35,27 @@
     width: 80%;
 }
 
-.aritstFirst {
-    width: 100%;
+.infoArtistImg {
+    filter: drop-shadow(4px 0px 4px rgba(0, 0, 0, 0.25));
+    object-fit: cover;
     flex-shrink: 0;
-    min-height: 200px;
-    height: 33%;
-    background: linear-gradient(180deg, #000000 0%, rgba(81, 81, 81, 0.93) 0.01%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 100px;
+}
+
+.artistName {
+    font-weight: 600;
+    font-size: 4rem;
+}
+
+.artistAlbumlist {
+    width: 40%;
+    height: 50%;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+.playDiv {
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }

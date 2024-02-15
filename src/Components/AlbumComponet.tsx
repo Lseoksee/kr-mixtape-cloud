@@ -141,7 +141,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                             <p className="albumName">{stateData.albumInfo.album || "앨범명"}</p>
                             <div className="artistDiv">
                                 <img
-                                    src={`/artistimage/${this.props.artist}.png`}
+                                    src={Utils.getArtistImg(this.props.artist)}
                                     onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
                                     alt={this.props.artist}
                                     className="artistImage InfoIcon"
@@ -185,7 +185,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                         } = { noItem: item.track.no };
 
                                         if (index === stateData.songHover) {
-                                            hover.noItem = <MUIComponet.PlayIcon style={{ height: "50%" }} />;
+                                            hover.noItem = <MUIComponet.PlayIcon sx={{ height: "50%" }} />;
                                             hover.style = { padding: 0 };
                                         }
 
