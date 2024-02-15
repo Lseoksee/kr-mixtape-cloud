@@ -52,6 +52,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         if (key === "albumart" || key === "song") {
             if (this.state.playerElement?.length && this.state.albumInfo.album) {
                 // 음악 케싱
+                this.props.albumCacheManager.completeLoadEvent();
                 this.props.albumCacheManager.songLoadEvent(this.songCache.saveStorage!!);
             }
         }

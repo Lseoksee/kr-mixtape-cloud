@@ -10,10 +10,14 @@ import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 
 const ConstUtills = {
     SetMusicMemo: React.memo(SetMusic),
+    /* 아티스트 페이지 전체 로드 시 건네는 이벤트 */
+    albumComplete() {
+        console.log("전체 로드 완료");
+    },
 };
 
 function SetMusic(props: { aritst: (typeof albumList)[0] }): JSX.Element {
-    const albumCacheManager = new AlbumCacheManager(props.aritst.albums.length);
+    const albumCacheManager = new AlbumCacheManager(props.aritst.albums.length, ConstUtills.albumComplete);
 
     //loader로 받은거 얻기
     const albums = useLoaderData() as AlbumCompType.file[];
@@ -56,7 +60,9 @@ function ArtistPage(): JSX.Element {
                     <div>
                         <p className="artistName">{artist.artist}</p>
                         <div className="playDiv">
-                            <MUIComponet.PlayIconFill sx={{width: "initial", height: "2rem"}}></MUIComponet.PlayIconFill>
+                            <MUIComponet.PlayIconFill
+                                sx={{ width: "initial", height: "2rem" }}
+                            ></MUIComponet.PlayIconFill>
                             <p> 재생하기</p>
                         </div>
                     </div>
