@@ -88,59 +88,63 @@ function ArtistPage(): JSX.Element {
     const artist = albumList.find((itme) => itme.artist === artistName)!!;
     return (
         <div className="aritstInfo" ref={(ref) => ref?.scrollTo(0, 0)}>
-            <div className="aritstFirst">
-                <div className="aritstPlay">
-                    <img
-                        src={Utils.getArtistImg(artist.artist)}
-                        alt={artist.artist}
-                        width={"180px"}
-                        height={"180px"}
-                        className="infoArtistImg"
-                        onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
-                    />
-                    <div>
-                        <p className="artistName">{artist.artist}</p>
-                        <div className="playDiv">
-                            <MUIComponet.PlayIconFill
-                                sx={{ width: "2rem", height: "2rem" }}
-                                onClick={async () => {
-                                    const dispatch = ReduxActions.setStartMusic({
-                                        loadMusicInfo: await ConstUtills.playAllalbumArr(state.loadAlbums),
-                                        startIndex: 0,
-                                    });
-                                    dispatchMusic(dispatch);
-                                }}
-                                onMouseDown={(e) => {
-                                    e.currentTarget.style.padding = "5px";
-                                }}
-                                onMouseUp={(e) => {
-                                    e.currentTarget.style.padding = "inherit";
-                                }}
-                            ></MUIComponet.PlayIconFill>
-                            <p className="playText">재생하기</p>
+            <div className="aritstLayout">
+                <div className="aritstFirst">
+                    <div className="aritstPlay">
+                        <img
+                            src={Utils.getArtistImg(artist.artist)}
+                            alt={artist.artist}
+                            width={"180px"}
+                            height={"180px"}
+                            className="infoArtistImg"
+                            onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
+                        />
+                        <div>
+                            <p className="artistName">{artist.artist}</p>
+                            <div className="playDiv">
+                                <MUIComponet.PlayIconFill
+                                    sx={{ width: "2rem", height: "2rem" }}
+                                    onClick={async () => {
+                                        const dispatch = ReduxActions.setStartMusic({
+                                            loadMusicInfo: await ConstUtills.playAllalbumArr(state.loadAlbums),
+                                            startIndex: 0,
+                                        });
+                                        dispatchMusic(dispatch);
+                                    }}
+                                    onMouseDown={(e) => {
+                                        e.currentTarget.style.padding = "5px";
+                                    }}
+                                    onMouseUp={(e) => {
+                                        e.currentTarget.style.padding = "inherit";
+                                    }}
+                                ></MUIComponet.PlayIconFill>
+                                <p className="playText">재생하기</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="artistAlbumlist">
-                    {state.loadAlbums.map((item, index) => (
-                        <div key={index} className="artistAlbumItem">
-                            <img
-                                src={Utils.byteStringToBlob(item.albumInfo.art)}
-                                className="artistAlbumImg"
-                                alt={item.albumInfo.album}
-                                width={"36px"}
-                            />
-                            <p>{item.albumInfo.album}</p>
-                        </div>
-                    ))}
+                    <div className="artistAlbumlist">
+                        {state.loadAlbums.map((item, index) => (
+                            <div key={index} className="artistAlbumItem">
+                                <img
+                                    src={Utils.byteStringToBlob(item.albumInfo.art)}
+                                    className="artistAlbumImg"
+                                    alt={item.albumInfo.album}
+                                    width={"36px"}
+                                />
+                                <p>{item.albumInfo.album}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-            <ConstUtills.SetMusicMemo
-                aritst={artist}
-                key={artist.artist}
-                albums={albums}
-                pageState={setState}
-            ></ConstUtills.SetMusicMemo>
+            <div className="albumLayout">
+                <ConstUtills.SetMusicMemo
+                    aritst={artist}
+                    key={artist.artist}
+                    albums={albums}
+                    pageState={setState}
+                ></ConstUtills.SetMusicMemo>
+            </div>
         </div>
     );
 }
