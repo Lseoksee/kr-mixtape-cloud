@@ -21,7 +21,7 @@ type AlbumViewProp = {
     albumCacheManager: AlbumCacheManager;
 } & ConnectedProps<typeof reduxConnect>;
 
-type AlbumViewState = {
+export type AlbumViewState = {
     playerElement: Array<AlbumCompType.musicMeta>;
     albumInfo: AlbumCompType.album;
     songHover: number;
@@ -51,9 +51,8 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 
         if (key === "albumart" || key === "song") {
             if (this.state.playerElement?.length && this.state.albumInfo.album) {
-                // 음악 케싱
-                this.props.albumCacheManager.completeLoadEvent();
-                this.props.albumCacheManager.songLoadEvent(this.songCache.saveStorage!!);
+                // 음악 & 앨범 케싱
+                this.props.albumCacheManager.saveLoadData(this.songCache, this.albumCache, this.state);
             }
         }
     }
@@ -74,8 +73,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
 
                     this.setState({ albumInfo: res, key: "albumart" });
-                    // 앨범 케싱
-                    this.props.albumCacheManager.albumLoadEvent(res);
+                    this.albumCache.addAlbumCache(res);
                 });
         }
 
