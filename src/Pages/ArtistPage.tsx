@@ -13,7 +13,7 @@ import AWSUtiil from "../Utils/AWSUtill";
 
 const ConstUtills = {
     SetMusicMemo: React.memo(SetMusic),
-    
+
     /* 전체 재생 하는거 loadMusicInfo 얻어오는 함수  */
     async playAllalbumArr(loadAlbums: AlbumViewState[]) {
         return await Promise.all(
@@ -73,8 +73,6 @@ function SetMusic(props: {
 }
 
 function ArtistPage(): JSX.Element {
-    console.log("상위");
-
     const { artistName } = useParams<RouterType.RouterParams>();
     const [state, setState] = useState<{
         loadAlbums: AlbumViewState[];
@@ -88,7 +86,6 @@ function ArtistPage(): JSX.Element {
     };
 
     const artist = albumList.find((itme) => itme.artist === artistName)!!;
-
     return (
         <div className="aritstInfo" ref={(ref) => ref?.scrollTo(0, 0)}>
             <div className="aritstFirst">
@@ -105,20 +102,38 @@ function ArtistPage(): JSX.Element {
                         <p className="artistName">{artist.artist}</p>
                         <div className="playDiv">
                             <MUIComponet.PlayIconFill
-                                sx={{ width: "initial", height: "2rem" }}
+                                sx={{ width: "2rem", height: "2rem" }}
                                 onClick={async () => {
                                     const dispatch = ReduxActions.setStartMusic({
                                         loadMusicInfo: await ConstUtills.playAllalbumArr(state.loadAlbums),
                                         startIndex: 0,
                                     });
-                                    dispatchMusic(dispatch)
+                                    dispatchMusic(dispatch);
+                                }}
+                                onMouseDown={(e) => {
+                                    e.currentTarget.style.padding = "5px";
+                                }}
+                                onMouseUp={(e) => {
+                                    e.currentTarget.style.padding = "inherit";
                                 }}
                             ></MUIComponet.PlayIconFill>
-                            <p> 재생하기</p>
+                            <p className="playText">재생하기</p>
                         </div>
                     </div>
                 </div>
-                <div className="artistAlbumlist"></div>
+                <div className="artistAlbumlist">
+                    {state.loadAlbums.map((item, index) => (
+                        <div key={index} className="artistAlbumItem">
+                            <img
+                                src={Utils.byteStringToBlob(item.albumInfo.art)}
+                                className="artistAlbumImg"
+                                alt={item.albumInfo.album}
+                                width={"36px"}
+                            />
+                            <p>{item.albumInfo.album}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
             <ConstUtills.SetMusicMemo
                 aritst={artist}
