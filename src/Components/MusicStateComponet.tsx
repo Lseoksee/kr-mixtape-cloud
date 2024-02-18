@@ -1,12 +1,12 @@
 import { Component, ReactNode } from "react";
-import "../Style/MusicPlayerComponet.css";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 import { BrowserCache } from "../Utils/BrowserCache";
 
-type MusicPlayerProp = {} & ConnectedProps<typeof reduxConnect>;
+type MusicStateProp = {} & ConnectedProps<typeof reduxConnect>;
 
-class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
+// 음악상태 전역 관리용 컴포넌트
+class MusicStateComponet extends Component<MusicStateProp, any> {
     currItem?: AlbumCompType.loadMusicInfo;
     currIndex: number = -1;
     audioRef?: HTMLAudioElement;
@@ -31,7 +31,7 @@ class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
         });
     }
 
-    componentDidUpdate(prevProps: Readonly<MusicPlayerProp>, prevState: Readonly<any>, snapshot?: any): void {
+    componentDidUpdate(prevProps: Readonly<MusicStateProp>, prevState: Readonly<any>, snapshot?: any): void {
         if (!this.currItem || !this.audioRef) {
             return;
         }
@@ -52,35 +52,31 @@ class MusicPlayerComponet extends Component<MusicPlayerProp, any> {
         this.currItem = musicPlayState.queue[this.currIndex];
 
         return (
-            <div className="musicPlayerDiv">
-                <audio
-                    controls
-                    className="musicPlayer"
-                    ref={(target) => {
-                        this.audioRef = target!!;
-                    }}
-                    autoPlay
-                    onVolumeChange={(e) => {
-                        // 볼륨 바뀔때 마다 localstorge에 저장
-                        BrowserCache.saveVolume(e.currentTarget.volume);
-                    }}
-                    onEnded={() => {
-                        //다음곡
-                        if (this.currIndex + 1 === musicPlayState.queue.length) {
-                            //막곡인 경우 중단
-                            return;
-                        }
-                        
-                        const selectIndexMusic = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
-                        this.props.dispatch(selectIndexMusic);
-                    }}
-                >
-                    <source src={this.currItem?.url}></source>
-                </audio>
-            </div>
+            <audio
+                ref={(target) => {
+                    this.audioRef = target!!;
+                }}
+                autoPlay
+                onVolumeChange={(e) => {
+                    // 볼륨 바뀔때 마다 localstorge에 저장
+                    BrowserCache.saveVolume(e.currentTarget.volume);
+                }}
+                onEnded={() => {
+                    //다음곡
+                    if (this.currIndex + 1 === musicPlayState.queue.length) {
+                        //막곡인 경우 중단
+                        return;
+                    }
+
+                    const selectIndexMusic = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
+                    this.props.dispatch(selectIndexMusic);
+                }}
+            >
+                <source src={this.currItem?.url}></source>
+            </audio>
         );
     }
 }
 
 // 클래스 컴포넌트에서 redux 재어를 위한
-export default reduxConnect(MusicPlayerComponet);
+export default reduxConnect(MusicStateComponet);

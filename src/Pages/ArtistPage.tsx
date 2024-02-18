@@ -103,19 +103,14 @@ function ArtistPage(): JSX.Element {
                             <p className="artistName">{artist.artist}</p>
                             <div className="playDiv">
                                 <MUIComponet.PlayIconFill
-                                    sx={{ width: "2rem", height: "2rem" }}
+                                    className="playIcon"
+                                    sx={{ width: "2.1rem", height: "2.1rem" }}
                                     onClick={async () => {
                                         const dispatch = ReduxActions.setStartMusic({
                                             loadMusicInfo: await ConstUtills.playAllalbumArr(state.loadAlbums),
                                             startIndex: 0,
                                         });
                                         dispatchMusic(dispatch);
-                                    }}
-                                    onMouseDown={(e) => {
-                                        e.currentTarget.style.padding = "5px";
-                                    }}
-                                    onMouseUp={(e) => {
-                                        e.currentTarget.style.padding = "inherit";
                                     }}
                                 ></MUIComponet.PlayIconFill>
                                 <p className="playText">재생하기</p>

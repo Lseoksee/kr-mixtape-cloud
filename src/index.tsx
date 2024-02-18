@@ -4,7 +4,7 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { mainReducer } from "./Store/ConfingRedux";
-import MusicPlayerComponet from "./Components/MusicPlayerComponet";
+import MusicStateComponet from "./Components/MusicStateComponet";
 import SearchSideBarComponet from "./Components/SearchSideBarComponet";
 import ListSideBarComponet from "./Components/ListSideBarComponet";
 import { Outlet, RouterProvider, createBrowserRouter, useNavigate, useParams } from "react-router-dom";
@@ -14,6 +14,7 @@ import constants from "./constants";
 import ErrorPage from "./Pages/ErrorPage";
 import AWSUtiil from "./Utils/AWSUtill";
 import { StyledEngineProvider } from "@mui/material";
+import MainPlayerComponet from "./Components/MainPlayerComponet";
 
 window.process = require("process");
 window.Buffer = Buffer;
@@ -54,7 +55,8 @@ function GlobalPage() {
             <SearchSideBarComponet router={router} />
             <Outlet /> {/* 여기에 각각 라우팅 페이지 컴포넌트가 랜더링  */}
             <ListSideBarComponet />
-            <MusicPlayerComponet />
+            <MusicStateComponet />
+            <MainPlayerComponet />
         </>
     );
 }

@@ -1,6 +1,7 @@
-import { SvgIconProps, SxProps, Theme, createTheme, styled } from "@mui/material";
+import { Slider, SvgIconProps, createTheme, styled } from "@mui/material";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import PlayArrowTwoToneIcon from "@mui/icons-material/PlayArrowTwoTone";
+
 // 테마
 export const MUITheme = {
     defaultTheme: createTheme({
@@ -42,4 +43,12 @@ export const MUIComponet = {
     PlayIconFill(props: SvgIconProps) {
         return <MUICustumStyle.PlayIconTwoTone {...props} viewBox="6 5 14 14" />;
     },
+
+    ProgressBar() {
+        return <Slider aria-label="Default" />;
+    },
+
+    VolumeSlider() {
+        return <Slider valueLabelDisplay="auto"/>
+    }
 };

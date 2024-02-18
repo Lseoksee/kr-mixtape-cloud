@@ -11,7 +11,8 @@ export class AlbumCacheManager {
     }>;
     private completeCallback?: (stateData: AlbumViewState[]) => void;
 
-    /** @param albumConunt 로드되야하는 앨범 개수를 알립니다. */
+    /** @param albumConunt 로드되야하는 앨범 개수를 알립니다. 
+     * @param completeCallback saveLoadData 함수를 실행할때 콜백 함수로 받습니다.  */
     constructor(albumConunt: number, completeCallback?: (stateData: AlbumViewState[]) => void) {
         this.albumConunt = albumConunt;
         this.complete = [];
