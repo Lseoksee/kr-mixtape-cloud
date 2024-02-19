@@ -53,8 +53,21 @@ declare namespace ReduxType {
     /** Redux 결과값 타입 */
     type state = {
         musicPlayState: {
+            /** 대기열에서 현재 재생중인 곡 인덱스 */
             startIndex: number;
+            /** 재생대기열 */
             queue: AlbumCompType.loadMusicInfo[];
+            /** MusicStateComponet 쪽에서 보내는 데이터 */
+            send: {
+                mode: "pause" | "play"
+                duration: number,
+                nowProgress: number,
+                volume: number
+            },
+            /** MusicStateComponet 쪽에서 받는 데이터 */
+            recv: {
+                updateProgress: number
+            }
         };
         forceUpdate: number;
     };

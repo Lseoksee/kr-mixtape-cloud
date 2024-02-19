@@ -82,17 +82,19 @@
 .progressBar {
     display: flex;
     align-items: center;
-    gap: 12px;
 }
 
 .progressTime {
+    width: 45px;
     color: var(--hint-color);
     font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
-.volumeControl{
+.volumeControl {
     width: 28%;
     height: 100%;
+    min-width: 120px;
     float: right;
     gap: 10px;
     margin-right: 50px;
