@@ -4,7 +4,7 @@ class Utils {
     static getArtistImg(artist: string) {
         return `/artistimage/${artist}.png`;
     }
-    
+
     /** 초단위를 [분:초] 로 */
     static secToMin(sec: number) {
         const min = Math.floor(sec / 60);
@@ -26,6 +26,16 @@ class Utils {
         const buffer = Buffer.from(Array.from(byteString).map((line) => line.charCodeAt(0)));
         const blob = new Blob([buffer]);
         return URL.createObjectURL(blob);
+    }
+
+    /** 소수점 형태로 저장되어있는 볼륨값을 보기좋게 매핑 */
+    static VolumeToInt(value: number) {
+        return Number.parseInt((value * 100).toFixed(0));
+    }
+
+    /** 100단위 볼륨값을 0.0 단위로 바꾸기*/
+    static VolumeToformatt(value: number) {
+        return value / 100;
     }
 }
 

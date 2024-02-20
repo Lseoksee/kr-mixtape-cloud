@@ -57,6 +57,8 @@ declare namespace ReduxType {
             startIndex: number;
             /** 재생대기열 */
             queue: AlbumCompType.loadMusicInfo[];
+            /** 볼륨 기본값 */
+            defaultVolume: number;
             /** MusicStateComponet 쪽에서 보내는 데이터 */
             send: {
                 /** 재생여부 */
@@ -65,7 +67,7 @@ declare namespace ReduxType {
                 duration: number;
                 /** 현재 재생길이 (초) */
                 nowProgress: number;
-                /** 볼륨 */
+                /** 볼륨값 */
                 volume: number;
             };
             /** MusicStateComponet 쪽에서 받는 데이터 */
@@ -74,6 +76,8 @@ declare namespace ReduxType {
                 isPlay: "play" | "pause" | "";
                 /** 업데이트 해야하는 재생길이 */
                 progress: number;
+                /** 업데이트 해야하는 볼륨값 */
+                volume: number;
             };
         };
         forceUpdate: number;

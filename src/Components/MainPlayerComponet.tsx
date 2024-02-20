@@ -13,6 +13,7 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import Utils from "../Utils/Utils";
+import { BrowserCache } from "../Utils/BrowserCache";
 
 type MainPlayerProp = {} & ConnectedProps<typeof reduxConnect>;
 
@@ -21,6 +22,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
     reduxStateRecv = this.reduxState.send;
     currIndex = this.reduxState.startIndex;
     currItem = this.reduxState.queue[this.currIndex] || undefined;
+    volume = this.reduxState.defaultVolume; // 볼륨값
 
     /** redex로 MusicStateComponet에 데이터 보내는 함수들 */
     redexSender = {
@@ -52,6 +54,16 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
         this.props.dispatch(action);
     };
 
+    shouldComponentUpdate(nextProps: Readonly<MainPlayerProp>, nextState: Readonly<any>, nextContext: any): boolean {
+        const before = this.props.reduxResponce.musicPlayState;
+        const next = nextProps.reduxResponce.musicPlayState;
+
+        // recv 데이터만 바뀐경우 갱신안함
+        if (before.recv !== next.recv && before.send === next.send) return false;
+
+        return true;
+    }
+
     render(): ReactNode {
         // 변수들 갱신
         this.reduxState = this.props.reduxResponce.musicPlayState;
@@ -66,6 +78,10 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
             playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
         } else {
             playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
+        }
+
+        if (this.reduxStateRecv.volume !== -1) {
+            this.volume = this.reduxStateRecv.volume;
         }
 
         return (
@@ -86,7 +102,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                     <div className="musicControlDiv">
                         <div className="musicControl">
                             <ShuffleIcon className="controlIcon" />
-                            <SkipPreviousIcon className="controlIcon" onClick={this.playerIconClickEvent} id="prev"/>
+                            <SkipPreviousIcon className="controlIcon" onClick={this.playerIconClickEvent} id="prev" />
                             {playIcon}
                             <SkipNextIcon className="controlIcon" onClick={this.playerIconClickEvent} id="next" />
                             <RepeatIcon className="controlIcon" />
@@ -107,8 +123,17 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                     <div className="volumeControlDiv">
                         <div className="volumeControl">
                             <VolumeUpIcon />
-                            <MUIComponet.VolumeSlider />
-                            <p>0%</p> {/* 바꿀 부분 */}
+                            <MUIComponet.VolumeSlider
+                                value={Utils.VolumeToInt(this.volume)}
+                                onChange={(_, value) => {
+                                    const reqUpdateVolume = ReduxActions.reqUpdateVolume({ value: value as number });
+                                    this.props.dispatch(reqUpdateVolume);
+                                }}
+                                onChangeCommitted={(_, value) => {
+                                    BrowserCache.saveVolume(Utils.VolumeToformatt(value as number));
+                                }}
+                            />
+                            <p className="volumePer">{Utils.VolumeToInt(this.volume)}%</p>
                         </div>
                     </div>
                 </div>

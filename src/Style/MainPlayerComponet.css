@@ -92,12 +92,17 @@
 }
 
 .volumeControl {
-    width: 28%;
+    width: 32%;
     height: 100%;
-    min-width: 120px;
+    min-width: 140px;
     float: right;
     gap: 10px;
     margin-right: 50px;
     display: flex;
     align-items: center;
+}
+
+.volumePer {
+    width: 55px;
+    flex-shrink: 0;
 }

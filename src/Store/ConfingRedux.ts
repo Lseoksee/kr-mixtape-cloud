@@ -1,5 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { connect } from "react-redux";
+import { BrowserCache } from "../Utils/BrowserCache";
+import Utils from "../Utils/Utils";
 
 /** 메인 액션 (별일 없으면 여기다 둘듯) */
 const MainActions = {
@@ -49,6 +51,11 @@ const MusicSendActions = {
         state.musicPlayState.recv.isPlay = "";
         state.musicPlayState.send.isPlay = action.payload.isPlay;
     },
+
+    /** 현재 볼륨값을 보냅니다. */
+    sendVolume(state: ReduxType.state, action: PayloadAction<{ value: number }>) {
+        state.musicPlayState.send.volume = Utils.VolumeToformatt(action.payload.value);
+    },
 };
 
 /** MusicStateComponet 쪽에서 받는 액션 */
@@ -62,6 +69,11 @@ const MusicRecvActions = {
     reqUpdatePlayState(state: ReduxType.state, action: PayloadAction<{ isPlay: "play" | "pause" }>) {
         state.musicPlayState.recv.isPlay = action.payload.isPlay;
     },
+
+    /** MusicStateComponet에 오디오 볼륨 업데이트를 요청합니다.   */
+    reqUpdateVolume(state: ReduxType.state, action: PayloadAction<{ value: number }>) {        
+        state.musicPlayState.recv.volume = Utils.VolumeToformatt(action.payload.value);
+    },
 };
 
 class ConfingRedux {
@@ -74,15 +86,17 @@ class ConfingRedux {
             musicPlayState: {
                 startIndex: -1,
                 queue: [],
+                defaultVolume: BrowserCache.getVolume(),
                 send: {
                     isPlay: "",
                     duration: 0, //전체길이
                     nowProgress: 0, //현재 갱신 길이
-                    volume: 0, // 볼륨값
+                    volume: -1,
                 },
                 recv: {
                     isPlay: "",
                     progress: -1,
+                    volume: -1,
                 },
             },
             // 강제 re-render가 필요한 경우 해당 값을 업데이트 하자

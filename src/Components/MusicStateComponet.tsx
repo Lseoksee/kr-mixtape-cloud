@@ -2,6 +2,7 @@ import { Component, ReactNode } from "react";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 import { BrowserCache } from "../Utils/BrowserCache";
+import Utils from "../Utils/Utils";
 
 type MusicStateProp = {} & ConnectedProps<typeof reduxConnect>;
 
@@ -27,14 +28,27 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
             if (after.isPlay === "play") audio.play();
             else audio.pause();
         }
+
+        // 볼륨변화
+        if (before.volume !== after.volume && after.volume !== -1) {
+            audio.volume = after.volume;
+        }
     }
 
     shouldComponentUpdate(nextProps: Readonly<MusicStateProp>, nextState: Readonly<any>, nextContext: any): boolean {
         const before = this.props.reduxResponce.musicPlayState;
         const next = nextProps.reduxResponce.musicPlayState;
 
-        if (before.recv !== next.recv) return true;
-        if (before.queue[before.startIndex] === next.queue[next.startIndex]) return false;
+        if (before.recv !== next.recv) {
+            this.redexRecv(before.recv, next.recv);
+            return false;
+        }
+
+        // send 데이터만 바뀐경우 갱신안함
+        if (next.send !== before.send) {
+            return false
+        }
+
         return true;
     }
 
@@ -57,18 +71,13 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
                 artwork: [{ src: this.currItem.albumArtUrl }],
             });
         }
-        
-        /** recv 업데이트 시  */
-        if (before.recv !== this.reduxStateRecv) {
-            this.redexRecv(before.recv, this.reduxStateRecv);
-        }
     }
 
     componentDidMount(): void {
         if (!this.audioRef) {
             return;
         }
-        this.audioRef.volume = BrowserCache.getVolume();
+        this.audioRef.volume = this.reduxState.defaultVolume;
 
         /* Media Session API를 통한 미디어 컨트롤 */
         navigator.mediaSession.setActionHandler("nexttrack", () => {
@@ -98,8 +107,10 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
                 }}
                 autoPlay
                 onVolumeChange={(e) => {
-                    // 볼륨 바뀔때 마다 localstorge에 저장
-                    BrowserCache.saveVolume(e.currentTarget.volume);
+                    const sendVolume = ReduxActions.sendVolume({
+                        value: Utils.VolumeToInt(e.currentTarget.volume),
+                    });
+                    this.props.dispatch(sendVolume);
                 }}
                 onEnded={() => {
                     //다음곡
