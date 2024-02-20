@@ -59,15 +59,22 @@ declare namespace ReduxType {
             queue: AlbumCompType.loadMusicInfo[];
             /** MusicStateComponet 쪽에서 보내는 데이터 */
             send: {
-                mode: "pause" | "play"
-                duration: number,
-                nowProgress: number,
-                volume: number
-            },
+                /** 재생여부 */
+                isPlay: "play" | "pause" | "";
+                /** 길이 (초) */
+                duration: number;
+                /** 현재 재생길이 (초) */
+                nowProgress: number;
+                /** 볼륨 */
+                volume: number;
+            };
             /** MusicStateComponet 쪽에서 받는 데이터 */
             recv: {
-                updateProgress: number
-            }
+                /** 재생여부 */
+                isPlay: "play" | "pause" | "";
+                /** 업데이트 해야하는 재생길이 */
+                progress: number;
+            };
         };
         forceUpdate: number;
     };

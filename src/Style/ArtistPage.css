@@ -20,7 +20,6 @@
     height: 100%;
     display: flex;
     overflow: overlay;
-    min-width: 700px;
     z-index: 0;
     flex-grow: 1;
     flex-direction: column;

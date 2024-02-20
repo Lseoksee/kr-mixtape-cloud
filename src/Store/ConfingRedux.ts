@@ -17,12 +17,9 @@ const MainActions = {
         if (action.payload.index <= 0) {
             // 만일 설정하려는 인덱스가 가장 처음 곡인경우
             state.musicPlayState.startIndex = 0;
-            state.forceUpdate -= 0.001;
             return;
         } else if (action.payload.index >= state.musicPlayState.queue.length) {
             // 만일 설정하려는 인덱스가 가장 끝 곡인 경우
-            state.forceUpdate += 0.001;
-            state.forceUpdate++;
             return;
         }
 
@@ -40,13 +37,32 @@ const MusicSendActions = {
     /** 현재 재생중인 음악에 길이를 보냅니다. */
     sendProgress(state: ReduxType.state, action: PayloadAction<{ progress: number }>) {
         if (state.musicPlayState.send.duration) {
+            // 상태가 겹쳐서 업데이트가 안될 수도 있기 때문에 기본값으로 바꿈
+            state.musicPlayState.recv.progress = -1;
             state.musicPlayState.send.nowProgress = action.payload.progress;
         }
+    },
+
+    /** 현재 재생 상태를 보냅니다. */
+    sendPlayState(state: ReduxType.state, action: PayloadAction<{ isPlay: "play" | "pause" }>) {
+        // 상태가 겹쳐서 업데이트가 안될 수도 있기 때문에 기본값으로 바꿈
+        state.musicPlayState.recv.isPlay = "";
+        state.musicPlayState.send.isPlay = action.payload.isPlay;
     },
 };
 
 /** MusicStateComponet 쪽에서 받는 액션 */
-const MusicRecvActions = {};
+const MusicRecvActions = {
+    /** MusicStateComponet에 현재 재생시간 업데이트를 요청합니다. */
+    reqUpdateProgress(state: ReduxType.state, action: PayloadAction<{ progress: number }>) {
+        state.musicPlayState.recv.progress = action.payload.progress;
+    },
+
+    /** MusicStateComponet에 현재 재생상테 업데이트를 요청합니다.  */
+    reqUpdatePlayState(state: ReduxType.state, action: PayloadAction<{ isPlay: "play" | "pause" }>) {
+        state.musicPlayState.recv.isPlay = action.payload.isPlay;
+    },
+};
 
 class ConfingRedux {
     /** Slice 를 이용한 Reducer 구현
@@ -59,13 +75,14 @@ class ConfingRedux {
                 startIndex: -1,
                 queue: [],
                 send: {
-                    mode: "pause", //재생 상태
+                    isPlay: "",
                     duration: 0, //전체길이
                     nowProgress: 0, //현재 갱신 길이
                     volume: 0, // 볼륨값
                 },
                 recv: {
-                    updateProgress: 0,
+                    isPlay: "",
+                    progress: -1,
                 },
             },
             // 강제 re-render가 필요한 경우 해당 값을 업데이트 하자

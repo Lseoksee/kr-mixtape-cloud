@@ -3,8 +3,8 @@
     display: flex;
     bottom: 0;
     width: 100%;
-    min-width: 850px;
     z-index: 2;
+    min-width: var(--root-min-width);
     height: var(--main-player-size);
     align-items: center;
     justify-content: center;

@@ -1,6 +1,6 @@
 import { Component, ReactNode } from "react";
 import "../Style/MainPlayerComponet.css";
-import { reduxConnect } from "../Store/ConfingRedux";
+import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -22,6 +22,36 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
     currIndex = this.reduxState.startIndex;
     currItem = this.reduxState.queue[this.currIndex] || undefined;
 
+    /** redex로 MusicStateComponet에 데이터 보내는 함수들 */
+    redexSender = {
+        /** 재생시간 갱신요청 */
+        reqUpdateProgress(thisObject: MainPlayerComponet, progress: number) {
+            const reqUpdateProgress = ReduxActions.reqUpdateProgress({ progress: progress });
+            thisObject.props.dispatch(reqUpdateProgress);
+        },
+    };
+
+    // 플레어어 제어 아이콘 클릭 이벤트 처리
+    playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        let action: any;
+
+        if (e.currentTarget.id === "play") {
+            // 재생버튼
+            action = ReduxActions.reqUpdatePlayState({ isPlay: "play" });
+        } else if (e.currentTarget.id === "pause") {
+            // 일시정지 버튼
+            action = ReduxActions.reqUpdatePlayState({ isPlay: "pause" });
+        } else if (e.currentTarget.id === "prev") {
+            // 이전곡 버튼
+            action = ReduxActions.selectIndexMusic({ index: this.currIndex - 1 });
+        } else if (e.currentTarget.id === "next") {
+            // 다음곡 버튼
+            action = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
+        }
+
+        this.props.dispatch(action);
+    };
+
     render(): ReactNode {
         // 변수들 갱신
         this.reduxState = this.props.reduxResponce.musicPlayState;
@@ -30,6 +60,13 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
         this.currItem = this.reduxState.queue[this.currIndex] || undefined;
 
         const progressPer = (this.reduxStateRecv.nowProgress / this.reduxStateRecv.duration) * 100 || 0;
+
+        let playIcon: JSX.Element;
+        if (this.reduxStateRecv.isPlay === "play") {
+            playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
+        } else {
+            playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
+        }
 
         return (
             <div className="playerLayout">
@@ -49,14 +86,19 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                     <div className="musicControlDiv">
                         <div className="musicControl">
                             <ShuffleIcon className="controlIcon" />
-                            <SkipPreviousIcon className="controlIcon" />
-                            <PlayArrowIcon className="controlIcon" />
-                            <SkipNextIcon className="controlIcon" />
+                            <SkipPreviousIcon className="controlIcon" onClick={this.playerIconClickEvent} id="prev"/>
+                            {playIcon}
+                            <SkipNextIcon className="controlIcon" onClick={this.playerIconClickEvent} id="next" />
                             <RepeatIcon className="controlIcon" />
                         </div>
                         <div className="progressBar">
                             <p className="progressTime">{Utils.secToMin(this.reduxStateRecv.nowProgress)}</p>
-                            <MUIComponet.ProgressBar onChangeCommitted={(_, value) => {}} value={progressPer} />
+                            <MUIComponet.ProgressBar
+                                onChangeCommitted={(_, value) => {
+                                    this.redexSender.reqUpdateProgress(this, value as number);
+                                }}
+                                value={progressPer}
+                            />
                             <p className="progressTime" style={{ textAlign: "right" }}>
                                 {Utils.secToMin(this.reduxStateRecv.duration)}
                             </p>

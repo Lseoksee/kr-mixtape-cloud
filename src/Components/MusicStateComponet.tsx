@@ -9,35 +9,59 @@ type MusicStateProp = {} & ConnectedProps<typeof reduxConnect>;
 class MusicStateComponet extends Component<MusicStateProp, any> {
     reduxState = this.props.reduxResponce.musicPlayState;
     reduxStateRecv = this.reduxState.recv;
-    currIndex =  this.reduxState.startIndex;
+    currIndex = this.reduxState.startIndex;
     currItem = this.reduxState.queue[this.currIndex] || undefined;
     audioRef?: HTMLAudioElement;
 
-    /** redex로 뮤직 플레이어 컴포넌트에 데이터 보내는 함수들 */
-    redexSender = {
-        /** 재생시간 정보 보내기 */
-        sendDuration(thisObject: MusicStateComponet, duration: number) {
-            const musicSetDuration = ReduxActions.sendDuration({ duration: duration });
-            thisObject.props.dispatch(musicSetDuration);
-        },
+    /** 뮤직플레이어 쪽에서 온 redux 데이터를 받는 함수 */
+    private redexRecv(before: typeof this.reduxStateRecv, after: typeof this.reduxStateRecv) {
+        const audio = this.audioRef!!;
 
-        /** 현재 진행중인 시간정보 보내기 */
-        sendProgress(thisObject: MusicStateComponet, currentTime: number) {
-            const musicSetNowProgress = ReduxActions.sendProgress({
-                progress: currentTime,
-            });
-            thisObject.props.dispatch(musicSetNowProgress);
-        },
-    };
-
-    shouldComponentUpdate(nextProps: Readonly<MusicStateProp>, nextState: Readonly<any>, nextContext: any): boolean {        
-        const before = this.props.reduxResponce.musicPlayState;
-        const next = nextProps.reduxResponce.musicPlayState;
-        if (before.queue[before.startIndex] === next.queue[next.startIndex]) {
-            return false;
+        // 진행률 변화
+        if (before.progress !== after.progress && after.progress !== -1) {
+            audio.currentTime = (audio.duration * after.progress) / 100;
         }
 
+        // 재생 변화
+        if (before.isPlay !== after.isPlay && after.isPlay !== "") {
+            if (after.isPlay === "play") audio.play();
+            else audio.pause();
+        }
+    }
+
+    shouldComponentUpdate(nextProps: Readonly<MusicStateProp>, nextState: Readonly<any>, nextContext: any): boolean {
+        const before = this.props.reduxResponce.musicPlayState;
+        const next = nextProps.reduxResponce.musicPlayState;
+
+        if (before.recv !== next.recv) return true;
+        if (before.queue[before.startIndex] === next.queue[next.startIndex]) return false;
         return true;
+    }
+
+    componentDidUpdate(prevProps: Readonly<MusicStateProp>, prevState: Readonly<any>, snapshot?: any): void {
+        if (!this.currItem || !this.audioRef) {
+            return;
+        }
+
+        const before = prevProps.reduxResponce.musicPlayState;
+
+        /** 음악 갱신시 */
+        if (before.queue[before.startIndex] !== this.currItem) {
+            this.audioRef.load();
+
+            // 크롬에 미디어 정보 날리기
+            navigator.mediaSession.metadata = new MediaMetadata({
+                album: this.currItem.albumName,
+                artist: this.currItem.musicMeta.artist!!,
+                title: this.currItem.musicMeta.title!!,
+                artwork: [{ src: this.currItem.albumArtUrl }],
+            });
+        }
+        
+        /** recv 업데이트 시  */
+        if (before.recv !== this.reduxStateRecv) {
+            this.redexRecv(before.recv, this.reduxStateRecv);
+        }
     }
 
     componentDidMount(): void {
@@ -60,26 +84,11 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
         });
     }
 
-    componentDidUpdate(prevProps: Readonly<MusicStateProp>, prevState: Readonly<any>, snapshot?: any): void {
-        if (!this.currItem || !this.audioRef) {
-            return;
-        }
-        this.audioRef.load();
-
-        // 크롬에 미디어 정보 날리기
-        navigator.mediaSession.metadata = new MediaMetadata({
-            album: this.currItem.albumName,
-            artist: this.currItem.musicMeta.artist!!,
-            title: this.currItem.musicMeta.title!!,
-            artwork: [{ src: this.currItem.albumArtUrl }],
-        });
-    }
-
     render(): ReactNode {
-        // 변수들 갱신 
+        // 변수들 갱신
         this.reduxState = this.props.reduxResponce.musicPlayState;
         this.reduxStateRecv = this.reduxState.recv;
-        this.currIndex =  this.reduxState.startIndex;
+        this.currIndex = this.reduxState.startIndex;
         this.currItem = this.reduxState.queue[this.currIndex] || undefined;
 
         return (
@@ -103,11 +112,27 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
                     this.props.dispatch(selectIndexMusic);
                 }}
                 onDurationChange={(e) => {
-                    this.redexSender.sendDuration(this, e.currentTarget.duration);
+                    const musicSetDuration = ReduxActions.sendDuration({ duration: e.currentTarget.duration });
+                    this.props.dispatch(musicSetDuration);
                 }}
                 onTimeUpdate={(e) => {
                     // 약 0.5초 마다 갱신
-                    this.redexSender.sendProgress(this, e.currentTarget.currentTime);
+                    const musicSetNowProgress = ReduxActions.sendProgress({
+                        progress: e.currentTarget.currentTime,
+                    });
+                    this.props.dispatch(musicSetNowProgress);
+                }}
+                onPlay={() => {
+                    const sendPlayState = ReduxActions.sendPlayState({
+                        isPlay: "play",
+                    });
+                    this.props.dispatch(sendPlayState);
+                }}
+                onPause={() => {
+                    const sendPlayState = ReduxActions.sendPlayState({
+                        isPlay: "pause",
+                    });
+                    this.props.dispatch(sendPlayState);
                 }}
             >
                 <source src={this.currItem?.url}></source>
