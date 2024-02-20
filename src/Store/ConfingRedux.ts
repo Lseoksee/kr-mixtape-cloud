@@ -62,16 +62,20 @@ const MusicSendActions = {
 const MusicRecvActions = {
     /** MusicStateComponet에 현재 재생시간 업데이트를 요청합니다. */
     reqUpdateProgress(state: ReduxType.state, action: PayloadAction<{ progress: number }>) {
-        state.musicPlayState.recv.progress = action.payload.progress;
+        if (state.musicPlayState.queue.length) {
+            state.musicPlayState.recv.progress = action.payload.progress;
+        }
     },
 
     /** MusicStateComponet에 현재 재생상테 업데이트를 요청합니다.  */
     reqUpdatePlayState(state: ReduxType.state, action: PayloadAction<{ isPlay: "play" | "pause" }>) {
-        state.musicPlayState.recv.isPlay = action.payload.isPlay;
+        if (state.musicPlayState.queue.length) {
+            state.musicPlayState.recv.isPlay = action.payload.isPlay;
+        }
     },
 
     /** MusicStateComponet에 오디오 볼륨 업데이트를 요청합니다.   */
-    reqUpdateVolume(state: ReduxType.state, action: PayloadAction<{ value: number }>) {        
+    reqUpdateVolume(state: ReduxType.state, action: PayloadAction<{ value: number }>) {
         state.musicPlayState.recv.volume = Utils.VolumeToformatt(action.payload.value);
     },
 };

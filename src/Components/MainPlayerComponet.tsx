@@ -24,14 +24,6 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
     currItem = this.reduxState.queue[this.currIndex] || undefined;
     volume = this.reduxState.defaultVolume; // 볼륨값
 
-    /** redex로 MusicStateComponet에 데이터 보내는 함수들 */
-    redexSender = {
-        /** 재생시간 갱신요청 */
-        reqUpdateProgress(thisObject: MainPlayerComponet, progress: number) {
-            const reqUpdateProgress = ReduxActions.reqUpdateProgress({ progress: progress });
-            thisObject.props.dispatch(reqUpdateProgress);
-        },
-    };
 
     // 플레어어 제어 아이콘 클릭 이벤트 처리
     playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -111,7 +103,10 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                             <p className="progressTime">{Utils.secToMin(this.reduxStateRecv.nowProgress)}</p>
                             <MUIComponet.ProgressBar
                                 onChangeCommitted={(_, value) => {
-                                    this.redexSender.reqUpdateProgress(this, value as number);
+                                    const reqUpdateProgress = ReduxActions.reqUpdateProgress({
+                                        progress: value as number,
+                                    });
+                                    this.props.dispatch(reqUpdateProgress);
                                 }}
                                 value={progressPer}
                             />
