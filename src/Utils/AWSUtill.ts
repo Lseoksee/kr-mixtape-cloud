@@ -105,6 +105,7 @@ class AWSUtiil {
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: file.fileName,
+            ResponseContentDisposition: "attachment"    // 다운로드 모드로 로드시키기
         });
 
         return await getSignedUrl(this.clinet, getfile, {

@@ -22,8 +22,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
     reduxStateRecv = this.reduxState.send;
     currIndex = this.reduxState.startIndex;
     currItem = this.reduxState.queue[this.currIndex] || undefined;
-    volume = this.reduxState.defaultVolume; // 볼륨값
-
+    volume = this.reduxState.volume; // 볼륨값
 
     // 플레어어 제어 아이콘 클릭 이벤트 처리
     playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -62,6 +61,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
         this.reduxStateRecv = this.reduxState.send;
         this.currIndex = this.reduxState.startIndex;
         this.currItem = this.reduxState.queue[this.currIndex] || undefined;
+        this.volume = this.reduxState.volume; // 볼륨값
 
         const progressPer = (this.reduxStateRecv.nowProgress / this.reduxStateRecv.duration) * 100 || 0;
 
@@ -70,10 +70,6 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
             playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
         } else {
             playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
-        }
-
-        if (this.reduxStateRecv.volume !== -1) {
-            this.volume = this.reduxStateRecv.volume;
         }
 
         return (
@@ -121,8 +117,8 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                             <MUIComponet.VolumeSlider
                                 value={Utils.VolumeToInt(this.volume)}
                                 onChange={(_, value) => {
-                                    const reqUpdateVolume = ReduxActions.reqUpdateVolume({ value: value as number });
-                                    this.props.dispatch(reqUpdateVolume);
+                                    const setVolume = ReduxActions.setVolume({ value: value as number });
+                                    this.props.dispatch(setVolume);
                                 }}
                                 onChangeCommitted={(_, value) => {
                                     BrowserCache.saveVolume(Utils.VolumeToformatt(value as number));
