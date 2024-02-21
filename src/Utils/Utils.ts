@@ -37,6 +37,21 @@ class Utils {
     static VolumeToformatt(value: number) {
         return value / 100;
     }
+
+    /** inputValue 는 standValue 의 몇 퍼센트 인지 리턴
+     *  @param inputValue 기준값
+     * @param standValue  구하려는 값 */
+    static whatPercent(standValue: number, inputValue: number) {
+        return (standValue / inputValue) * 100 || 0;
+    }
+
+    /** standValue의 percent가 어떤 값인지 리턴
+     * @param standValue 기준값
+     * @param percent 퍼센트
+     */
+    static whatPercentValue(standValue: number, percent: number) {
+        return (standValue * percent) / 100 || 0;
+    }
 }
 
 export default Utils;

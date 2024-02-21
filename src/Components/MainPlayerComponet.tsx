@@ -17,12 +17,26 @@ import { BrowserCache } from "../Utils/BrowserCache";
 
 type MainPlayerProp = {} & ConnectedProps<typeof reduxConnect>;
 
-class MainPlayerComponet extends Component<MainPlayerProp, any> {
+type MainPlayerState = {
+    progressBarHover: {
+        hover: boolean;
+        value: number;
+    };
+};
+
+class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
     reduxState = this.props.reduxResponce.musicPlayState;
     reduxStateRecv = this.reduxState.send;
     currIndex = this.reduxState.startIndex;
     currItem = this.reduxState.queue[this.currIndex] || undefined;
     volume = this.reduxState.volume; // 볼륨값
+
+    state: Readonly<MainPlayerState> = {
+        progressBarHover: {
+            hover: false,
+            value: -1,
+        },
+    };
 
     // 플레어어 제어 아이콘 클릭 이벤트 처리
     playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -63,13 +77,16 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
         this.currItem = this.reduxState.queue[this.currIndex] || undefined;
         this.volume = this.reduxState.volume; // 볼륨값
 
-        const progressPer = (this.reduxStateRecv.nowProgress / this.reduxStateRecv.duration) * 100 || 0;
+        let progressPer = Utils.whatPercent(this.reduxStateRecv.nowProgress, this.reduxStateRecv.duration);
+        let nowProgress = this.reduxStateRecv.nowProgress;
+        if (this.state.progressBarHover.hover) {
+            progressPer = this.state.progressBarHover.value;
+            nowProgress = Utils.whatPercentValue(this.reduxStateRecv.duration, progressPer);
+        }
 
-        let playIcon: JSX.Element;
+        let playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
         if (this.reduxStateRecv.isPlay === "play") {
             playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
-        } else {
-            playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
         }
 
         return (
@@ -96,15 +113,20 @@ class MainPlayerComponet extends Component<MainPlayerProp, any> {
                             <RepeatIcon className="controlIcon" />
                         </div>
                         <div className="progressBar">
-                            <p className="progressTime">{Utils.secToMin(this.reduxStateRecv.nowProgress)}</p>
+                            <p className="progressTime">{Utils.secToMin(nowProgress)}</p>
                             <MUIComponet.ProgressBar
+                                onChange={(_, value) => {
+                                    this.setState({ progressBarHover: { hover: true, value: value as number } });
+                                }}
                                 onChangeCommitted={(_, value) => {
+                                    this.setState({ progressBarHover: { hover: false, value: -1 } });
                                     const reqUpdateProgress = ReduxActions.reqUpdateProgress({
                                         progress: value as number,
                                     });
                                     this.props.dispatch(reqUpdateProgress);
                                 }}
                                 value={progressPer}
+                                defaultValue={0}
                             />
                             <p className="progressTime" style={{ textAlign: "right" }}>
                                 {Utils.secToMin(this.reduxStateRecv.duration)}

@@ -25,7 +25,7 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
 
             // 진행률 변화
             if (beforeRecv.progress !== afterRecv.progress && afterRecv.progress !== -1) {
-                audio.currentTime = (audio.duration * afterRecv.progress) / 100;
+                audio.currentTime = Utils.whatPercentValue(audio.duration, afterRecv.progress);
             }
 
             // 재생 변화
