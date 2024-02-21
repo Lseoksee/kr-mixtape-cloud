@@ -31,12 +31,12 @@ body {
     margin: 0;
     font-family: "Inter", sans-serif;
     font-weight: 500;
+    overflow: hidden;
     font-size: var(--main-font-size);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
     width: 100%;
-    overflow: overlay;
 }
 
 #root {

@@ -1,9 +1,9 @@
 import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import { Button } from "@mui/material";
-import Gs from "../Style/StyleComponents/GlobalStyleComponet";
 import constants from "../constants";
 import albumList from "../albumList.json";
+import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;
@@ -23,7 +23,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
         const router = this.props.router;
 
         return (
-            <Gs.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
+            <MUIComponet.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
                 <Button variant="contained" onClick={() => router.navigate("/")}>
                     홈 버튼
                 </Button>
@@ -36,7 +36,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                         {itme.artist}
                     </Button>
                 ))}
-            </Gs.ShadowDiv>
+            </MUIComponet.ShadowDiv>
         );
     }
 }

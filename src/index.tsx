@@ -13,8 +13,9 @@ import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
 import ErrorPage from "./Pages/ErrorPage";
 import AWSUtiil from "./Utils/AWSUtill";
-import { StyledEngineProvider } from "@mui/material";
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import MainPlayerComponet from "./Components/MainPlayerComponet";
+import { MUITheme } from "./Style/StyleComponents/MUICustum";
 
 window.process = require("process");
 window.Buffer = Buffer;
@@ -64,8 +65,10 @@ function GlobalPage() {
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
     <StyledEngineProvider injectFirst>
-        <Provider store={configureStore({ reducer: mainReducer })}>
-            <RouterProvider router={RoutePage} />
-        </Provider>
+        <ThemeProvider theme={MUITheme.defaultTheme}>
+            <Provider store={configureStore({ reducer: mainReducer })}>
+                <RouterProvider router={RoutePage} />
+            </Provider>
+        </ThemeProvider>
     </StyledEngineProvider>
 );

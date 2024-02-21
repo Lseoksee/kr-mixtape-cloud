@@ -1,7 +1,21 @@
 import { Slider, SliderProps, SvgIconProps, createTheme, styled } from "@mui/material";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import PlayArrowTwoToneIcon from "@mui/icons-material/PlayArrowTwoTone";
-import React, { forwardRef } from "react";
+import React, { CSSProperties, forwardRef } from "react";
+
+// 스타일 상수
+export const styleConstants = { 
+
+    /** 플레이어 바 없을때 마진 */
+    noPlayerBar: {
+        marginBottom: "20px",
+    } as CSSProperties,
+
+    /** 플레이어 바 있을때 마진 */
+    viewPlayerBar: {
+        marginBottom: "135px",
+    }as CSSProperties
+}
 
 // 테마
 export const MUITheme = {
@@ -12,6 +26,14 @@ export const MUITheme = {
         typography: {
             fontFamily: "Inter, sans-serif",
             fontWeightRegular: "600",
+        },
+        palette: {
+            primary: {
+                main: "#9C6DFF",
+            },
+            secondary: {
+                main: "#000000",
+            },
         },
     }),
 };
@@ -54,4 +76,32 @@ export const MUIComponet = {
         //ref 사용
         return <Slider {...props} ref={ref} aria-label="Default" valueLabelDisplay="auto" />;
     }),
+
+    /** 그림자있는 div */
+    ShadowDiv(
+        props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+            shadowloc: "left" | "right" | "bottom";
+        }
+    ) {
+        let filter: string;
+        let box: string;
+        switch (props.shadowloc) {
+            case "left":
+                box = "-4px 0px 4px rgba(0, 0, 0, 0.25)";
+                break;
+            case "right":
+                box = "4px 0px 4px rgba(0, 0, 0, 0.25)";
+                break;
+            case "bottom":
+                filter = "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))";
+                break;
+        }
+
+        const style: CSSProperties = {
+            filter: filter!!,
+            boxShadow: box!!,
+        };
+
+        return <div {...props} style={style}></div>;
+    },
 };

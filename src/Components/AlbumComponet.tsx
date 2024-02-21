@@ -6,11 +6,10 @@ import "../Style/AlbumComponet.css";
 import { AlbumCache, SongCache } from "../Utils/BrowserCache";
 import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
-import { Table, TableBody, TableCell, TableHead, TableRow, ThemeProvider } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import Utils from "../Utils/Utils";
-import { MUITheme, MUIComponet } from "../Style/StyleComponents/MUICustum";
+import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
-import Gs from "../Style/StyleComponents/GlobalStyleComponet";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 type AlbumViewProp = {
@@ -157,73 +156,71 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                             </div>
                         </div>
                     </div>
-                    <ThemeProvider theme={MUITheme.defaultTheme}>
-                        <Gs.ShadowDiv
-                            shadowloc="bottom"
-                            className="tableDiv"
-                            onMouseOut={() => this.setState({ songHover: -1, key: "hover" })}
-                        >
-                            <Table stickyHeader>
-                                <TableHead className="thead">
-                                    <TableRow className="tableHeadRow">
-                                        <TableCell className="songNum" style={this.tdStyle[0]}>
-                                            #
-                                        </TableCell>
-                                        <TableCell style={this.tdStyle[1]}>제목</TableCell>
-                                        <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
-                                        <TableCell style={this.tdStyle[3]} className="timeCellHead">
-                                            길이
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody className="tbody" style={{ maxHeight: this.props.tableSize }}>
-                                    {this.state.playerElement.map((item, index) => {
-                                        const hover: {
-                                            noItem: any;
-                                            style?: React.CSSProperties;
-                                        } = { noItem: item.track.no };
+                    <MUIComponet.ShadowDiv
+                        shadowloc="bottom"
+                        className="tableDiv"
+                        onMouseOut={() => this.setState({ songHover: -1, key: "hover" })}
+                    >
+                        <Table stickyHeader>
+                            <TableHead className="thead">
+                                <TableRow className="tableHeadRow">
+                                    <TableCell className="songNum" style={this.tdStyle[0]}>
+                                        #
+                                    </TableCell>
+                                    <TableCell style={this.tdStyle[1]}>제목</TableCell>
+                                    <TableCell style={this.tdStyle[2]}>아티스트</TableCell>
+                                    <TableCell style={this.tdStyle[3]} className="timeCellHead">
+                                        길이
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody className="tbody" style={{ maxHeight: this.props.tableSize }}>
+                                {this.state.playerElement.map((item, index) => {
+                                    const hover: {
+                                        noItem: any;
+                                        style?: React.CSSProperties;
+                                    } = { noItem: item.track.no };
 
-                                        if (index === stateData.songHover) {
-                                            hover.noItem = <MUIComponet.PlayIcon sx={{ height: "50%" }} />;
-                                            hover.style = { padding: 0 };
-                                        }
+                                    if (index === stateData.songHover) {
+                                        hover.noItem = <MUIComponet.PlayIcon sx={{ height: "50%" }} />;
+                                        hover.style = { padding: 0 };
+                                    }
 
-                                        return (
-                                            <TableRow
-                                                className="tableBodyRow"
-                                                key={index}
-                                                hover
-                                                onMouseOver={() => {
-                                                    this.setState({ songHover: index, key: "hover" });
+                                    return (
+                                        <TableRow
+                                            className="tableBodyRow"
+                                            key={index}
+                                            hover
+                                            onMouseOver={() => {
+                                                this.setState({ songHover: index, key: "hover" });
+                                            }}
+                                            onDoubleClick={() => {
+                                                this.loadUrl(this.state.playerElement, index);
+                                            }}
+                                        >
+                                            <TableCell
+                                                className="songCell"
+                                                style={{
+                                                    ...this.tdStyle[0],
+                                                    ...hover.style,
                                                 }}
-                                                onDoubleClick={() => {
+                                                onClick={() => {
                                                     this.loadUrl(this.state.playerElement, index);
                                                 }}
                                             >
-                                                <TableCell
-                                                    className="songCell"
-                                                    style={{
-                                                        ...this.tdStyle[0],
-                                                        ...hover.style,
-                                                    }}
-                                                    onClick={() => {
-                                                        this.loadUrl(this.state.playerElement, index);
-                                                    }}
-                                                >
-                                                    {hover.noItem}
-                                                </TableCell>
-                                                <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
-                                                <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
-                                                <TableCell style={this.tdStyle[3]} className="timeCell">
-                                                    {Utils.secToMin(item.duration)}
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </Gs.ShadowDiv>
-                    </ThemeProvider>
+                                                {hover.noItem}
+                                            </TableCell>
+                                            <TableCell style={this.tdStyle[1]}>{item.title}</TableCell>
+                                            <TableCell style={this.tdStyle[2]}>{item.artist}</TableCell>
+                                            <TableCell style={this.tdStyle[3]} className="timeCell">
+                                                {Utils.secToMin(item.duration)}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </MUIComponet.ShadowDiv>
                 </div>
             );
         } else {

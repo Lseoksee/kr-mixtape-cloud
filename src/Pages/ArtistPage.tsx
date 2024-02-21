@@ -3,13 +3,18 @@ import AlbumView, { AlbumViewState } from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
 import { useLoaderData, useParams } from "react-router-dom";
-import React, { useState } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import Utils from "../Utils/Utils";
 import tempArtist from "../Assets/tempArtist.svg";
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
-import { useDispatch } from "react-redux";
+import { MUIComponet, styleConstants } from "../Style/StyleComponents/MUICustum";
+import { useDispatch, useSelector } from "react-redux";
 import { ReduxActions } from "../Store/ConfingRedux";
 import AWSUtiil from "../Utils/AWSUtill";
+
+type ArtistPageState = {
+    loadAlbums: AlbumViewState[];
+    bottomMargin: CSSProperties;
+};
 
 const ConstUtills = {
     SetMusicMemo: React.memo(SetMusic),
@@ -36,18 +41,14 @@ const ConstUtills = {
 function SetMusic(props: {
     aritst: (typeof albumList)[0];
     albums: AlbumCompType.file[];
-    pageState: React.Dispatch<
-        React.SetStateAction<{
-            loadAlbums: AlbumViewState[];
-        }>
-    >;
+    pageState: React.Dispatch<React.SetStateAction<ArtistPageState>>;
 }): JSX.Element {
     const albumCacheManager = new AlbumCacheManager(props.aritst.albums.length, (stateData) => {
         /* 아티스트 페이지 전체 로드 시 건네는 이벤트 */
         console.log("모든 앨범로드");
         props.pageState((prev) => {
             if (prev.loadAlbums !== stateData) {
-                return { loadAlbums: stateData };
+                return { ...prev, loadAlbums: stateData };
             }
             return prev;
         });
@@ -74,12 +75,22 @@ function SetMusic(props: {
 
 function ArtistPage(): JSX.Element {
     const { artistName } = useParams<RouterType.RouterParams>();
-    const [state, setState] = useState<{
-        loadAlbums: AlbumViewState[];
-    }>({ loadAlbums: [] });
+    const [state, setState] = useState<ArtistPageState>({ loadAlbums: [], bottomMargin: styleConstants.noPlayerBar });
     //loader로 받은거 얻기
     const albums = useLoaderData() as AlbumCompType.file[];
     const dispatch = useDispatch();
+    const aritstInfoRef = useRef<HTMLDivElement>(null);
+    const queue = useSelector<ReduxType.state>((state) => state.musicPlayState.queue) as [];
+
+    useEffect(() => {
+        aritstInfoRef.current?.scrollTo(0, 0);
+    }, [artistName]);
+
+    useEffect(() => {
+        if (queue.length) {
+            setState((prev) => ({ ...prev, bottomMargin: styleConstants.viewPlayerBar }));
+        }
+    }, [queue.length]);
 
     const dispatchMusic = (actions: any) => {
         dispatch(actions);
@@ -87,7 +98,7 @@ function ArtistPage(): JSX.Element {
 
     const artist = albumList.find((itme) => itme.artist === artistName)!!;
     return (
-        <div className="aritstInfo" ref={(ref) => ref?.scrollTo(0, 0)}>
+        <div className="aritstInfo" ref={aritstInfoRef}>
             <div className="aritstLayout">
                 <div className="aritstFirst">
                     <div className="aritstPlay">
@@ -132,7 +143,7 @@ function ArtistPage(): JSX.Element {
                     </div>
                 </div>
             </div>
-            <div className="albumLayout">
+            <div className="albumLayout" style={state.bottomMargin}>
                 <ConstUtills.SetMusicMemo
                     aritst={artist}
                     key={artist.artist}
