@@ -23,7 +23,7 @@ export const MUITheme = {
                 main: "#9C6DFF",
             },
             secondary: {
-                main: "#000000",
+                main: "#f3f3f3",
             },
         },
     }),

@@ -24,6 +24,8 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
 
         return (
             <MUIComponet.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
+                <div className="logoDiv"><p>(로고 들어갈자리)</p></div>
+                <p className="title">한국 힙합 믹스테입 저장소</p>
                 <Button variant="contained" onClick={() => router.navigate("/")}>
                     홈 버튼
                 </Button>
