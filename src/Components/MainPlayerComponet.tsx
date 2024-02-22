@@ -3,7 +3,6 @@ import "../Style/MainPlayerComponet.css";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
 import { MUIComponet } from "../Style/StyleComponents/MUICustum";
-import Slide from "@mui/material/Slide";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
@@ -91,77 +90,70 @@ class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
         }
 
         return (
-            <Slide in={this.currItem !== undefined} direction="up">
-                <div className="playerLayout">
-                    <div className="playerDiv">
-                        <div className="musicInfoDiv">
-                            <img
-                                src={this.currItem?.albumArtUrl || tempAlbumArt}
-                                alt="앨범아트"
-                                height="100%"
-                                className="albumArt"
-                            />
-                            <div className="infoText">
-                                <p className="songName">{this.currItem?.musicMeta.title || "제목"}</p>
-                                <p className="songArtist">{this.currItem?.musicMeta.artist || "아티스트"}</p>
-                            </div>
+            <div className="playerLayout">
+                <div className="playerDiv">
+                    <div className="musicInfoDiv">
+                        <img
+                            src={this.currItem?.albumArtUrl || tempAlbumArt}
+                            alt="앨범아트"
+                            height="100%"
+                            className="albumArt"
+                        />
+                        <div className="infoText">
+                            <p className="songName">{this.currItem?.musicMeta.title}</p>
+                            <p className="songArtist">{this.currItem?.musicMeta.artist}</p>
                         </div>
-                        <div className="musicControlDiv">
-                            <div className="musicControl">
-                                <ShuffleIcon className="controlIcon" />
-                                <SkipPreviousIcon
-                                    className="controlIcon"
-                                    onClick={this.playerIconClickEvent}
-                                    id="prev"
-                                />
-                                {playIcon}
-                                <SkipNextIcon className="controlIcon" onClick={this.playerIconClickEvent} id="next" />
-                                <RepeatIcon className="controlIcon" />
-                            </div>
-                            <div className="progressBar">
-                                <p className="progressTime">{Utils.secToMin(nowProgress)}</p>
-                                <MUIComponet.ProgressBar
-                                    onChange={(_, value) => {
-                                        if (this.currItem) {
-                                            this.setState({
-                                                progressBarHover: { hover: true, value: value as number },
-                                            });
-                                        }
-                                    }}
-                                    onChangeCommitted={(_, value) => {
-                                        this.setState({ progressBarHover: { hover: false, value: -1 } });
-                                        const reqUpdateProgress = ReduxActions.reqUpdateProgress({
-                                            progress: value as number,
+                    </div>
+                    <div className="musicControlDiv">
+                        <div className="musicControl">
+                            <ShuffleIcon className="controlIcon" />
+                            <SkipPreviousIcon className="controlIcon" onClick={this.playerIconClickEvent} id="prev" />
+                            {playIcon}
+                            <SkipNextIcon className="controlIcon" onClick={this.playerIconClickEvent} id="next" />
+                            <RepeatIcon className="controlIcon" />
+                        </div>
+                        <div className="progressBar">
+                            <p className="progressTime">{Utils.secToMin(nowProgress)}</p>
+                            <MUIComponet.ProgressBar
+                                onChange={(_, value) => {
+                                    if (this.currItem) {
+                                        this.setState({
+                                            progressBarHover: { hover: true, value: value as number },
                                         });
-                                        this.props.dispatch(reqUpdateProgress);
-                                    }}
-                                    value={progressPer}
-                                    defaultValue={0}
-                                />
-                                <p className="progressTime" style={{ textAlign: "right" }}>
-                                    {Utils.secToMin(this.reduxStateRecv.duration)}
-                                </p>
-                            </div>
+                                    }
+                                }}
+                                onChangeCommitted={(_, value) => {
+                                    this.setState({ progressBarHover: { hover: false, value: -1 } });
+                                    const reqUpdateProgress = ReduxActions.reqUpdateProgress({
+                                        progress: value as number,
+                                    });
+                                    this.props.dispatch(reqUpdateProgress);
+                                }}
+                                value={progressPer}
+                            />
+                            <p className="progressTime" style={{ textAlign: "right" }}>
+                                {Utils.secToMin(this.reduxStateRecv.duration)}
+                            </p>
                         </div>
-                        <div className="volumeControlDiv">
-                            <div className="volumeControl">
-                                <VolumeUpIcon />
-                                <MUIComponet.VolumeSlider
-                                    value={Utils.VolumeToInt(this.volume)}
-                                    onChange={(_, value) => {
-                                        const setVolume = ReduxActions.setVolume({ value: value as number });
-                                        this.props.dispatch(setVolume);
-                                    }}
-                                    onChangeCommitted={(_, value) => {
-                                        BrowserCache.saveVolume(Utils.VolumeToformatt(value as number));
-                                    }}
-                                />
-                                <p className="volumePer">{Utils.VolumeToInt(this.volume)}%</p>
-                            </div>
+                    </div>
+                    <div className="volumeControlDiv">
+                        <div className="volumeControl">
+                            <VolumeUpIcon />
+                            <MUIComponet.VolumeSlider
+                                value={Utils.VolumeToInt(this.volume)}
+                                onChange={(_, value) => {
+                                    const setVolume = ReduxActions.setVolume({ value: value as number });
+                                    this.props.dispatch(setVolume);
+                                }}
+                                onChangeCommitted={(_, value) => {
+                                    BrowserCache.saveVolume(Utils.VolumeToformatt(value as number));
+                                }}
+                            />
+                            <p className="volumePer">{Utils.VolumeToInt(this.volume)}%</p>
                         </div>
                     </div>
                 </div>
-            </Slide>
+            </div>
         );
     }
 }

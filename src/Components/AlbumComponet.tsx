@@ -125,7 +125,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     }
 
     /* 각행 표시 퍼센트 */
-    tdStyle: Array<React.CSSProperties> = [{ width: "5%" }, { width: "55%" }, { width: "30%" }, { width: "10%" }];
+    tdStyle = [{ width: "5%" }, { width: "55%" }, { width: "30%" }, { width: "10%" }];
 
     render(): React.ReactNode {
         if (this.state.playerElement?.length) {

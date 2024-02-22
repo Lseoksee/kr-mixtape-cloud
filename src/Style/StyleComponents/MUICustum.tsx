@@ -6,15 +6,6 @@ import React, { CSSProperties, forwardRef } from "react";
 // 스타일 상수
 export const styleConstants = { 
 
-    /** 플레이어 바 없을때 마진 */
-    noPlayerBar: {
-        marginBottom: "20px",
-    } as CSSProperties,
-
-    /** 플레이어 바 있을때 마진 */
-    viewPlayerBar: {
-        marginBottom: "135px",
-    }as CSSProperties
 }
 
 // 테마

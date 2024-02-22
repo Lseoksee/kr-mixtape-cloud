@@ -3,17 +3,16 @@ import AlbumView, { AlbumViewState } from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
 import { useLoaderData, useParams } from "react-router-dom";
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Utils from "../Utils/Utils";
 import tempArtist from "../Assets/tempArtist.svg";
-import { MUIComponet, styleConstants } from "../Style/StyleComponents/MUICustum";
-import { useDispatch, useSelector } from "react-redux";
+import { MUIComponet } from "../Style/StyleComponents/MUICustum";
+import { useDispatch } from "react-redux";
 import { ReduxActions } from "../Store/ConfingRedux";
 import AWSUtiil from "../Utils/AWSUtill";
 
 type ArtistPageState = {
     loadAlbums: AlbumViewState[];
-    bottomMargin: CSSProperties;
 };
 
 const ConstUtills = {
@@ -75,22 +74,15 @@ function SetMusic(props: {
 
 function ArtistPage(): JSX.Element {
     const { artistName } = useParams<RouterType.RouterParams>();
-    const [state, setState] = useState<ArtistPageState>({ loadAlbums: [], bottomMargin: styleConstants.noPlayerBar });
+    const [state, setState] = useState<ArtistPageState>({ loadAlbums: [] });
     //loader로 받은거 얻기
     const albums = useLoaderData() as AlbumCompType.file[];
     const dispatch = useDispatch();
     const aritstInfoRef = useRef<HTMLDivElement>(null);
-    const queue = useSelector<ReduxType.state>((state) => state.musicPlayState.queue) as [];
 
     useEffect(() => {
         aritstInfoRef.current?.scrollTo(0, 0);
     }, [artistName]);
-
-    useEffect(() => {
-        if (queue.length) {
-            setState((prev) => ({ ...prev, bottomMargin: styleConstants.viewPlayerBar }));
-        }
-    }, [queue.length]);
 
     const dispatchMusic = (actions: any) => {
         dispatch(actions);
@@ -143,7 +135,7 @@ function ArtistPage(): JSX.Element {
                     </div>
                 </div>
             </div>
-            <div className="albumLayout" style={state.bottomMargin}>
+            <div className="albumLayout">
                 <ConstUtills.SetMusicMemo
                     aritst={artist}
                     key={artist.artist}
