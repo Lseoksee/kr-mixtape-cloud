@@ -30,13 +30,13 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                     홈 버튼
                 </Button>
                 {albumList.map((itme, index) => (
-                    <Button
-                        variant="contained"
+                    <MUIComponet.ListButton
                         key={index}
+                        color="primary"
                         onClick={() => router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`)}
                     >
                         {itme.artist}
-                    </Button>
+                    </MUIComponet.ListButton>
                 ))}
             </MUIComponet.ShadowDiv>
         );
