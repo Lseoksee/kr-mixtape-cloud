@@ -51,11 +51,11 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                         <input type="text" className="searchBar" placeholder="앨범명, 아티스트 검색" />
                     </div>
                 </div>
-
+                <div className="artistList">
                 {albumList.map((itme, index) => (
                     <MUIComponet.NestedListButton
                         key={index}
-                        isopen={"false"}
+                        mode="close"
                         color="primary"
                         className="navigateArtist"
                         onClick={() => router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`)}
@@ -64,8 +64,8 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                             <img
                                 src={Utils.getArtistImg(itme.artist)}
                                 alt={itme.artist}
-                                width="40px"
-                                height="40px"
+                                width="38px"
+                                height="38px"
                                 className="artistImg"
                                 onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
                             />
@@ -74,6 +74,8 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
                         <ExpandMoreIcon className="icons" />
                     </MUIComponet.NestedListButton>
                 ))}
+                </div>
+
             </MUIComponet.ShadowDiv>
         );
     }

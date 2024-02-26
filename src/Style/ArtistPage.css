@@ -67,6 +67,10 @@
     overflow: overlay;
 }
 
+.artistAlbumlist::-webkit-scrollbar {
+    display: none;
+}
+
 .artistAlbumItem {
     display: flex;
     user-select: none;

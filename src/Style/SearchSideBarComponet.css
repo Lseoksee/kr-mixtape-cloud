@@ -1,6 +1,5 @@
 .SearchSideBarDiv {
-    padding: 15px;
-    padding-bottom: var(--main-player-size);
+    padding: 15px 15px 0px 15px;
     height: 100%;
     display: flex;
     width: var(--side-bar-size);
@@ -13,6 +12,7 @@
 
 .logoDiv {
     display: flex;
+    flex-shrink: 0;
     width: 100%;
     border-radius: var(--border-radius);
     height: 15%;
@@ -43,7 +43,8 @@
     font-size: 1.2rem;
 }
 
-.menuIcons, .menuIcons {
+.menuIcons,
+.menuIcons {
     height: 100%;
 }
 
@@ -100,6 +101,17 @@
     color: var(--hint-color);
 }
 
+.artistList {
+    width: 100%;
+    display: flex;
+    overflow: overlay;
+    max-height: 100%;
+    box-sizing: border-box;
+    padding-bottom: var(--main-player-size);
+    gap: 10px;
+    flex-direction: column;
+}
+
 .navigateArtist {
     width: 100%;
     font-size: 1rem;
@@ -116,9 +128,10 @@
     gap: 10px;
     align-items: center;
     flex-direction: row;
-} 
+}
 
 .artistImg {
+    flex-shrink: 0;
     object-fit: cover;
     border-radius: 25px;
 }

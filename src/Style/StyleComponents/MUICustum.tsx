@@ -111,7 +111,7 @@ export const MUIComponet = {
     }),
 
     /** 슬라이드형 리스트 버튼 */
-    NestedListButton: forwardRef<HTMLButtonElement, ButtonProps & { isopen: string }>((props, ref) => {
+    NestedListButton: forwardRef<HTMLButtonElement, ButtonProps & { mode: "open" | "close" }>((props, ref) => {
         //ref 사용
         return (
             <MUICustumStyle.ListButton
