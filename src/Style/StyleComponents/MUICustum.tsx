@@ -44,9 +44,13 @@ const MUICustumStyle = {
     })),
 
     ListButton: styled(Button)<ButtonProps>(() => ({
-        width: "100%",
         border: "1px solid #C6C6C6",
         borderRadius: "10px",
+        color: "black",
+        fontSize: "1rem",
+        justifyContent: "flex-start",
+        whiteSpace: "nowrap",
+        fontWeight: "600",
         boxShadow: "initial",
     })),
 
@@ -104,6 +108,21 @@ export const MUIComponet = {
     ListButton: forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         //ref 사용
         return <MUICustumStyle.ListButton {...props} ref={ref} variant="contained" />;
+    }),
+
+    /** 슬라이드형 리스트 버튼 */
+    NestedListButton: forwardRef<HTMLButtonElement, ButtonProps & { isopen: string }>((props, ref) => {
+        //ref 사용
+        return (
+            <MUICustumStyle.ListButton
+                {...props}
+                ref={ref}
+                variant="contained"
+                sx={{
+                    justifyContent: "space-between",
+                }}
+            />
+        );
     }),
 
     /** 그림자있는 div */

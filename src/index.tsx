@@ -13,7 +13,7 @@ import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
 import ErrorPage from "./Pages/ErrorPage";
 import AWSUtiil from "./Utils/AWSUtill";
-import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import MainPlayerComponet from "./Components/MainPlayerComponet";
 import { MUITheme } from "./Style/StyleComponents/MUICustum";
 

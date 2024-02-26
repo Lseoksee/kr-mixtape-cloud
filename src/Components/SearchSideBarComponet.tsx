@@ -1,9 +1,14 @@
 import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
-import { Button } from "@mui/material";
 import constants from "../constants";
 import albumList from "../albumList.json";
 import { MUIComponet } from "../Style/StyleComponents/MUICustum";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import searchIcon from "../Assets/searchIcon.png";
+import tempArtist from "../Assets/tempArtist.svg";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Utils from "../Utils/Utils";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;
@@ -24,19 +29,50 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, any> {
 
         return (
             <MUIComponet.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
-                <div className="logoDiv"><p>(로고 들어갈자리)</p></div>
+                <div className="logoDiv">
+                    <p>(로고 들어갈자리)</p>
+                </div>
                 <p className="title">한국 힙합 믹스테입 저장소</p>
-                <Button variant="contained" onClick={() => router.navigate("/")}>
-                    홈 버튼
-                </Button>
-                {albumList.map((itme, index) => (
+                <div className="menu">
                     <MUIComponet.ListButton
-                        key={index}
                         color="primary"
+                        onClick={() => router.navigate("/")}
+                        className="navigateHome"
+                    >
+                        <HomeRoundedIcon className="menuIcons" />
+                        <p className="menuTitle">홈 화면</p>
+                    </MUIComponet.ListButton>
+                </div>
+                <div className="searchLayout">
+                    <p className="categoryText">믹스테잎 탐색</p>
+                    <hr className="categoryBar" />
+                    <div className="searchBarDiv">
+                        <img src={searchIcon} alt="검색아이콘" width="32px" />
+                        <input type="text" className="searchBar" placeholder="앨범명, 아티스트 검색" />
+                    </div>
+                </div>
+
+                {albumList.map((itme, index) => (
+                    <MUIComponet.NestedListButton
+                        key={index}
+                        isopen={"false"}
+                        color="primary"
+                        className="navigateArtist"
                         onClick={() => router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`)}
                     >
-                        {itme.artist}
-                    </MUIComponet.ListButton>
+                        <div className="artist">
+                            <img
+                                src={Utils.getArtistImg(itme.artist)}
+                                alt={itme.artist}
+                                width="40px"
+                                height="40px"
+                                className="artistImg"
+                                onError={(e) => (e.currentTarget.src = `${tempArtist}`)}
+                            />
+                            <p>{itme.artist}</p>
+                        </div>
+                        <ExpandMoreIcon className="icons" />
+                    </MUIComponet.NestedListButton>
                 ))}
             </MUIComponet.ShadowDiv>
         );
