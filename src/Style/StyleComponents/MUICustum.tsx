@@ -2,6 +2,7 @@ import { Button, ButtonProps, Slider, SliderProps, SvgIconProps, createTheme, st
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import PlayArrowTwoToneIcon from "@mui/icons-material/PlayArrowTwoTone";
 import React, { forwardRef } from "react";
+import { CSSProperties } from "@mui/material/styles/createMixins";
 
 // 스타일 상수
 export const styleConstants = {};
@@ -47,11 +48,27 @@ const MUICustumStyle = {
         border: "1px solid #C6C6C6",
         borderRadius: "10px",
         color: "black",
+        textTransform: "inherit",
         fontSize: "1rem",
         justifyContent: "flex-start",
         whiteSpace: "nowrap",
         fontWeight: "600",
         boxShadow: "initial",
+    })),
+
+    NestedListItem: styled(Button)<ButtonProps>(() => ({
+        borderRadius: "15px",
+        color: "black",
+        width: "100%",
+        textTransform: "initial",
+        fontSize: "1rem",
+        whiteSpace: "nowrap",
+        fontWeight: "600",
+        boxShadow: "initial",
+        justifyContent: "space-between",
+        ":hover": {
+            boxShadow: "initial",
+        } as CSSProperties,
     })),
 
     ShadowDiv: styled("div", {
@@ -110,19 +127,10 @@ export const MUIComponet = {
         return <MUICustumStyle.ListButton {...props} ref={ref} variant="contained" />;
     }),
 
-    /** 슬라이드형 리스트 버튼 */
-    NestedListButton: forwardRef<HTMLButtonElement, ButtonProps & { mode: "open" | "close" }>((props, ref) => {
+    /** ListButton과 쓸수있는 슬라이드형 중첩 List */
+    NestedListItem: forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         //ref 사용
-        return (
-            <MUICustumStyle.ListButton
-                {...props}
-                ref={ref}
-                variant="contained"
-                sx={{
-                    justifyContent: "space-between",
-                }}
-            />
-        );
+        return <MUICustumStyle.NestedListItem {...props} ref={ref} variant="contained" />;
     }),
 
     /** 그림자있는 div */

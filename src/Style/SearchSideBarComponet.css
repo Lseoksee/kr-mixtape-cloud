@@ -112,9 +112,17 @@
     flex-direction: column;
 }
 
+.navigateArtistLayout {
+    width: 100%;
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+}
+
 .navigateArtist {
     width: 100%;
     font-size: 1rem;
+    z-index: 1;
+    justify-content: space-between;
 }
 
 .icons {
@@ -134,4 +142,34 @@
     flex-shrink: 0;
     object-fit: cover;
     border-radius: 25px;
+}
+
+.nestedListDiv {
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.nestedListDiv:not(:first-of-type) {
+    border-top: 1px solid #626262;
+}
+
+.nestedListItem {
+    padding: 5px 10px;
+}
+
+.albumInfo {
+    overflow: hidden;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.year {
+    color: var(--light-hint-color);
+    font-size: 0.9rem;
+}
+
+.albumInfo > .albumArt {
+    border-radius: 5px;
 }

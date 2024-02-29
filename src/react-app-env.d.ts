@@ -98,5 +98,6 @@ declare namespace RouterType {
     type RouterHook = {
         params: Readonly<Params<RouterParams>>;
         navigate: NavigateFunction;
+        location: import("react-router-dom").Location;
     };
 }

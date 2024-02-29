@@ -7,7 +7,7 @@ import { mainReducer } from "./Store/ConfingRedux";
 import MusicStateComponet from "./Components/MusicStateComponet";
 import SearchSideBarComponet from "./Components/SearchSideBarComponet";
 import ListSideBarComponet from "./Components/ListSideBarComponet";
-import { Outlet, RouterProvider, createBrowserRouter, useNavigate, useParams } from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter, useLocation, useNavigate, useParams } from "react-router-dom";
 import App from "./Pages/App";
 import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
@@ -49,6 +49,7 @@ function GlobalPage() {
     const router: RouterType.RouterHook = {
         navigate: useNavigate(),
         params: useParams(),
+        location: useLocation(),
     };
 
     return (

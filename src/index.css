@@ -11,8 +11,10 @@
 }
 
 :root {
-    --primary-color: #9C6DFF;
+    --primary-color: #9c6dff;
+    --secondary-color: #f3f3f3;
     --hint-color: #888888;
+    --light-hint-color: #525252
 }
 
 p {
@@ -48,7 +50,9 @@ body {
     justify-content: space-between;
 }
 
-table, thead, tbody {
+table,
+thead,
+tbody {
     display: block !important;
     width: 100% !important;
 }
