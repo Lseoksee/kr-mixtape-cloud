@@ -16,11 +16,46 @@ type SearchSideBarProp = {
     router: RouterType.RouterHook;
 };
 
-class SearchSideBarComponet extends Component<SearchSideBarProp> {
-    shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, nextContext: any) {
-        if (this.props.router.location.pathname === nextProps.router.location.pathname) return false;
+type SearchSideBarState = {
+    openObj: {
+        [key: string]: any;
+    };
+};
 
-        return true;
+class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarState> {
+    state: Readonly<SearchSideBarState> = {
+        openObj: {},
+    };
+
+    // 컴포넌트가 마운트 됬는지 여부
+    isLoaded = false;
+
+    componentDidUpdate(
+        prevProps: Readonly<SearchSideBarProp>,
+        prevState: Readonly<SearchSideBarState>,
+        snapshot?: any
+    ): void {
+        if (this.props.router.location.pathname !== prevProps.router.location.pathname) {
+            // 페이지가 바뀔때 아티스트 앨범 목록을 반드시 활성화 하도록 하기 위한 작업
+            const router = this.props.router;
+            const location = decodeURI(router.location.pathname);
+
+            this.setState((prev) => {
+                prev.openObj[location] = true;
+                return prev;
+            });
+        }
+    }
+
+    componentDidMount(): void {
+        this.isLoaded = true;
+    }
+
+    shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, nextContext: any) {
+        if (this.state !== nextState) return true;
+        if (this.props.router.location.pathname !== nextProps.router.location.pathname) return true;
+
+        return false;
     }
 
     render(): ReactNode {
@@ -53,14 +88,21 @@ class SearchSideBarComponet extends Component<SearchSideBarProp> {
                 </div>
                 <div className="artistList">
                     {albumList.map((itme, index) => {
+                        //현제 패이지인지 여부
                         const isView = location === `${constants.ARTIST_PAGE}/${itme.artist}`;
+                        // 아티스트 앨범 목록 펼쳐진 여부
+                        // 처음 컴포넌트가 마운트 된경우 componentDidUpdate가 작동하지 않아 처음로드 된경우 처리 
+                        const open =
+                            this.state.openObj[`${constants.ARTIST_PAGE}/${itme.artist}`] || (isView && !this.isLoaded);
 
                         return (
                             <div key={index} className="navigateArtistLayout">
                                 <MUIComponet.ListButton
                                     color={isView ? "primary" : "secondary"}
                                     className="navigateArtist"
-                                    onClick={() => router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`)}
+                                    onClick={() => {
+                                        router.navigate(`${constants.ARTIST_PAGE}/${itme.artist}`);
+                                    }}
                                 >
                                     <div className="artist">
                                         <img
@@ -73,15 +115,35 @@ class SearchSideBarComponet extends Component<SearchSideBarProp> {
                                         />
                                         <p>{itme.artist}</p>
                                     </div>
-                                    {isView ? (
-                                        <ExpandLessIcon className="icons" />
+                                    {open ? (
+                                        <ExpandLessIcon
+                                            className="icons"
+                                            onClick={(e) => {
+                                                this.setState((prev) => {
+                                                    prev.openObj[`${constants.ARTIST_PAGE}/${itme.artist}`] = false;
+                                                    return prev;
+                                                });
+                                                // 이벤트 버블링 막기
+                                                e.stopPropagation();
+                                            }}
+                                        />
                                     ) : (
-                                        <ExpandMoreIcon className="icons" />
+                                        <ExpandMoreIcon
+                                            className="icons"
+                                            onClick={(e) => {
+                                                this.setState((prev) => {
+                                                    prev.openObj[`${constants.ARTIST_PAGE}/${itme.artist}`] = true;
+                                                    return prev;
+                                                });
+                                                // 이벤트 버블링 막기
+                                                e.stopPropagation();
+                                            }}
+                                        />
                                     )}
                                 </MUIComponet.ListButton>
-                                <Collapse in={isView} unmountOnExit>
+                                <Collapse in={open} unmountOnExit>
                                     {itme.albums.map((album, index) => (
-                                        <div className="nestedListDiv">
+                                        <div className="nestedListDiv" key={index}>
                                             <MUIComponet.NestedListItem
                                                 key={index}
                                                 color="secondary"
