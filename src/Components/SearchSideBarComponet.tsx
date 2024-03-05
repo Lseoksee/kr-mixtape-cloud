@@ -27,9 +27,6 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
         openObj: {},
     };
 
-    // 컴포넌트가 마운트 됬는지 여부
-    isLoaded = false;
-
     componentDidUpdate(
         prevProps: Readonly<SearchSideBarProp>,
         prevState: Readonly<SearchSideBarState>,
@@ -56,7 +53,17 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
     }
 
     componentDidMount(): void {
-        this.isLoaded = true;
+        // 처음 컴포넌트가 마운트 된경우 componentDidUpdate가 작동하지 않아 처음로드 된경우 처리
+        const router = this.props.router;
+        const location = decodeURI(router.location.pathname);
+
+        // 아티스트 페이지
+        if (location.startsWith(constants.ARTIST_PAGE)) {
+            this.setState((prev) => {
+                prev.openObj[location] = true;
+                return prev;
+            });
+        }
     }
 
     shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, nextContext: any) {
@@ -100,14 +107,6 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
                         const isView = location === `${constants.ARTIST_PAGE}/${itme.artist}`;
                         // 아티스트 앨범 목록 펼쳐진 여부
                         let open = this.state.openObj[`${constants.ARTIST_PAGE}/${itme.artist}`];
-                        // 처음 컴포넌트가 마운트 된경우 componentDidUpdate가 작동하지 않아 처음로드 된경우 처리
-                        if (isView && !this.isLoaded) {
-                            open = true;
-                            this.setState((prev) => {
-                                prev.openObj[`${constants.ARTIST_PAGE}/${itme.artist}`] = true;
-                                return prev;
-                            });
-                        }
 
                         return (
                             <div key={index} className="navigateArtistLayout">
