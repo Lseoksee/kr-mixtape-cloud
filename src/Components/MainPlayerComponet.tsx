@@ -2,7 +2,6 @@ import { Component, ReactNode } from "react";
 import "../Style/MainPlayerComponet.css";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { ConnectedProps } from "react-redux";
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
@@ -14,6 +13,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import Utils from "../Utils/Utils";
 import { BrowserCache } from "../Utils/BrowserCache";
+import { ProgressBar, VolumeSlider } from "./StyleComponet";
 
 type MainPlayerProp = {} & ConnectedProps<typeof reduxConnect>;
 
@@ -114,7 +114,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
                         </div>
                         <div className="progressBar">
                             <p className="progressTime">{Utils.secToMin(nowProgress)}</p>
-                            <MUIComponet.ProgressBar
+                            <ProgressBar
                                 onChange={(_, value) => {
                                     if (this.currItem) {
                                         this.setState({
@@ -139,7 +139,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
                     <div className="volumeControlDiv">
                         <div className="volumeControl">
                             <VolumeUpIcon />
-                            <MUIComponet.VolumeSlider
+                            <VolumeSlider
                                 value={Utils.VolumeToInt(this.volume)}
                                 onChange={(_, value) => {
                                     const setVolume = ReduxActions.setVolume({ value: value as number });

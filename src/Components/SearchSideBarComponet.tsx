@@ -2,7 +2,6 @@ import { Component, ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import constants from "../constants";
 import albumList from "../albumList.json";
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import searchIcon from "../Assets/searchIcon.png";
 import tempArtist from "../Assets/tempArtist.svg";
@@ -11,6 +10,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Utils from "../Utils/Utils";
 import { Collapse } from "@mui/material";
+import { ListButton, NestedListItem, ShadowDiv } from "./StyleComponet";
 
 type SearchSideBarProp = {
     router: RouterType.RouterHook;
@@ -78,20 +78,20 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
         const location = decodeURI(router.location.pathname);
 
         return (
-            <MUIComponet.ShadowDiv className="SearchSideBarDiv" shadowloc="right">
+            <ShadowDiv className="SearchSideBarDiv" shadowloc="right">
                 <div className="logoDiv">
                     <p>(로고 들어갈자리)</p>
                 </div>
                 <p className="title">한국 힙합 믹스테입 저장소</p>
                 <div className="menu">
-                    <MUIComponet.ListButton
+                    <ListButton
                         color={location === "/" ? "primary" : "secondary"}
                         onClick={() => router.navigate("/")}
                         className="navigateHome"
                     >
                         <HomeRoundedIcon className="menuIcons" />
                         <p className="menuTitle">홈 화면</p>
-                    </MUIComponet.ListButton>
+                    </ListButton>
                 </div>
                 <div className="searchLayout">
                     <p className="categoryText">믹스테잎 탐색</p>
@@ -110,7 +110,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
 
                         return (
                             <div key={index} className="navigateArtistLayout">
-                                <MUIComponet.ListButton
+                                <ListButton
                                     color={isView ? "primary" : "secondary"}
                                     className="navigateArtist"
                                     onClick={() => {
@@ -153,11 +153,14 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
                                             }}
                                         />
                                     )}
-                                </MUIComponet.ListButton>
-                                <Collapse in={open} unmountOnExit>
+                                </ListButton>
+                                <Collapse
+                                    in={open}
+                                    unmountOnExit
+                                >
                                     {itme.albums.map((album, index) => (
                                         <div className="nestedListDiv" key={index}>
-                                            <MUIComponet.NestedListItem
+                                            <NestedListItem
                                                 key={index}
                                                 color="secondary"
                                                 className="nestedListItem"
@@ -172,7 +175,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
                                                     <p>{album.album}</p>
                                                 </div>
                                                 <p className="year">2008</p>
-                                            </MUIComponet.NestedListItem>
+                                            </NestedListItem>
                                         </div>
                                     ))}
                                 </Collapse>
@@ -180,7 +183,7 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
                         );
                     })}
                 </div>
-            </MUIComponet.ShadowDiv>
+            </ShadowDiv>
         );
     }
 }

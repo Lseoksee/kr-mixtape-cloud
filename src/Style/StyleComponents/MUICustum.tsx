@@ -1,11 +1,7 @@
-import { Button, ButtonProps, Slider, SliderProps, SvgIconProps, createTheme, styled } from "@mui/material";
+import { Button, ButtonProps, SvgIconProps, createTheme, styled } from "@mui/material";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import PlayArrowTwoToneIcon from "@mui/icons-material/PlayArrowTwoTone";
-import React, { forwardRef } from "react";
 import { CSSProperties } from "@mui/material/styles/createMixins";
-
-// 스타일 상수
-export const styleConstants = {};
 
 // 테마
 export const MUITheme = {
@@ -29,7 +25,7 @@ export const MUITheme = {
 };
 
 // 커스텀 스타일
-const MUICustumStyle = {
+export const MUICustumStyle = {
     PlayIcon: styled(PlayArrowOutlinedIcon)<SvgIconProps>(() => ({
         width: "100%",
         fill: "#00E39F",
@@ -93,52 +89,4 @@ const MUICustumStyle = {
             boxShadow: box!!,
         };
     }),
-};
-
-// 커스텀 컴포넌트
-export const MUIComponet = {
-    /** 플레이 아이콘 */
-    PlayIcon: forwardRef<HTMLOrSVGElement, SvgIconProps>((props, ref) => {
-        // ref 사용
-        return <MUICustumStyle.PlayIcon {...props} viewBox="6 5 14 14" />;
-    }),
-
-    /** 플레이 아이콘 내부 색 들어간거 */
-    PlayIconFill: forwardRef<HTMLOrSVGElement, SvgIconProps>((props, ref) => {
-        // ref 사용
-        return <MUICustumStyle.PlayIconTwoTone {...props} viewBox="6 5 14 14" />;
-    }),
-
-    /** 진행바  */
-    ProgressBar: forwardRef<HTMLSpanElement, SliderProps>((props, ref) => {
-        //ref 사용
-        return <Slider {...props} ref={ref} aria-label="Default" />;
-    }),
-
-    /** 볼륨바 */
-    VolumeSlider: forwardRef<HTMLSpanElement, SliderProps>((props, ref) => {
-        //ref 사용
-        return <Slider {...props} ref={ref} aria-label="Default" valueLabelDisplay="auto" />;
-    }),
-
-    /** 리스트 버튼 */
-    ListButton: forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-        //ref 사용
-        return <MUICustumStyle.ListButton {...props} ref={ref} variant="contained" />;
-    }),
-
-    /** ListButton과 쓸수있는 슬라이드형 중첩 List */
-    NestedListItem: forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-        //ref 사용
-        return <MUICustumStyle.NestedListItem {...props} ref={ref} variant="contained" />;
-    }),
-
-    /** 그림자있는 div */
-    ShadowDiv(
-        props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-            shadowloc: "left" | "right" | "bottom";
-        }
-    ) {
-        return <MUICustumStyle.ShadowDiv {...props}></MUICustumStyle.ShadowDiv>;
-    },
 };

@@ -6,10 +6,10 @@ import { useLoaderData, useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import Utils from "../Utils/Utils";
 import tempArtist from "../Assets/tempArtist.svg";
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import { useDispatch } from "react-redux";
 import { ReduxActions } from "../Store/ConfingRedux";
 import AWSUtiil from "../Utils/AWSUtill";
+import { PlayIconFill } from "../Components/StyleComponet";
 
 type ArtistPageState = {
     loadAlbums: AlbumViewState[];
@@ -105,7 +105,7 @@ function ArtistPage(): JSX.Element {
                         <div>
                             <p className="artistName">{artist.artist}</p>
                             <div className="playDiv">
-                                <MUIComponet.PlayIconFill
+                                <PlayIconFill
                                     className="playIcon"
                                     sx={{ width: "2.1rem", height: "2.1rem" }}
                                     onClick={async () => {
@@ -115,7 +115,7 @@ function ArtistPage(): JSX.Element {
                                         });
                                         dispatchMusic(dispatch);
                                     }}
-                                ></MUIComponet.PlayIconFill>
+                                ></PlayIconFill>
                                 <p className="playText">재생하기</p>
                             </div>
                         </div>

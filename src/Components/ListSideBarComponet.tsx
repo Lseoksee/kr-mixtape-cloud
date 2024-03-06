@@ -1,13 +1,13 @@
 import { Component, ReactNode } from "react";
 import "../Style/ListSideBarComponet.css"
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
+import { ShadowDiv } from "./StyleComponet";
 
 class ListSideBarComponet extends Component {
     render(): ReactNode {
         return (
-            <MUIComponet.ShadowDiv shadowloc="left" className="ListSideBarDiv">
+            <ShadowDiv shadowloc="left" className="ListSideBarDiv">
                 <p>재생목록/가사 사이드 바</p>
-            </MUIComponet.ShadowDiv>
+            </ShadowDiv>
         );
     }
 }

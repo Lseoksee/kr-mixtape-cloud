@@ -8,9 +8,9 @@ import { ConnectedProps } from "react-redux";
 import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import Utils from "../Utils/Utils";
-import { MUIComponet } from "../Style/StyleComponents/MUICustum";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { PlayIcon, ShadowDiv } from "./StyleComponet";
 
 type AlbumViewProp = {
     albumName: string; //앨범명
@@ -156,7 +156,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                             </div>
                         </div>
                     </div>
-                    <MUIComponet.ShadowDiv
+                    <ShadowDiv
                         shadowloc="bottom"
                         className="tableDiv"
                         onMouseOut={() => this.setState({ songHover: -1, key: "hover" })}
@@ -182,7 +182,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                     } = { noItem: item.track.no };
 
                                     if (index === stateData.songHover) {
-                                        hover.noItem = <MUIComponet.PlayIcon sx={{ height: "50%" }} />;
+                                        hover.noItem = <PlayIcon sx={{ height: "50%" }} />;
                                         hover.style = { padding: 0 };
                                     }
 
@@ -220,7 +220,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                                 })}
                             </TableBody>
                         </Table>
-                    </MUIComponet.ShadowDiv>
+                    </ShadowDiv>
                 </div>
             );
         } else {
