@@ -1,4 +1,4 @@
-name: Build
+name: page Build 
 
 on: 
   - push
@@ -6,10 +6,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Make .env
+      - run: 
+          echo "REACT_APP_AWS_IDENTITYPOOLLD=${{ secrets.REACT_APP_AWS_IDENTITYPOOLLD }} >> .env
+          echo "REACT_APP_AWS_S3_BUCKET=${{ secrets.REACT_APP_AWS_S3_BUCKET }}" >> .env
+          echo "REACT_APP_AWS_S3_REGION=${{ secrets.REACT_APP_AWS_S3_REGION }}" >> .env
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -19,14 +24,14 @@ jobs:
       - name: Setup Pnpm
         uses: pnpm/action-setup@v3 
 
-      - name: Install Dependencies
-        run: pnpm i
-
-      - name: Build Docs
-        run: pnpm run build
+      - name: Dependencies Install & build
+        run: | 
+        pnpm i
+        pnpm build
 
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.ACTIONS_TOKEN  }}
+          publish_branch: "release-page"
           publish_dir: ./build
