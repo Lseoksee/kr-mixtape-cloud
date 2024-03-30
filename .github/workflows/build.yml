@@ -1,4 +1,4 @@
-name: page Build
+name: Build
 
 on:
     push:
