@@ -1,8 +1,6 @@
 name: Build
 
-on:
-	release:
-    	branches: [ "kr-mixtape-cloud" ]
+on: [push]
 
 jobs:
   deploy:
