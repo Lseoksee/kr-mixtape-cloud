@@ -7,7 +7,6 @@ import PauseIcon from "@mui/icons-material/Pause";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import RepeatIcon from "@mui/icons-material/Repeat";
-import RepeatOneIcon from "@mui/icons-material/RepeatOne";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
