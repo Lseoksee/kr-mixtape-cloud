@@ -1,37 +1,37 @@
-name: page Build 
+name: page Build
 
-on: 
-  - push
+on:
+    - push
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: Make .env
-      - run: 
-          echo "REACT_APP_AWS_IDENTITYPOOLLD=${{ secrets.REACT_APP_AWS_IDENTITYPOOLLD }} >> .env
-          echo "REACT_APP_AWS_S3_BUCKET=${{ secrets.REACT_APP_AWS_S3_BUCKET }}" >> .env
-          echo "REACT_APP_AWS_S3_REGION=${{ secrets.REACT_APP_AWS_S3_REGION }}" >> .env
+            - name: Make .env
+            - run: |
+                  echo "REACT_APP_AWS_IDENTITYPOOLLD=${{ secrets.REACT_APP_AWS_IDENTITYPOOLLD }} >> .env
+                  echo "REACT_APP_AWS_S3_BUCKET=${{ secrets.REACT_APP_AWS_S3_BUCKET }}" >> .env
+                  echo "REACT_APP_AWS_S3_REGION=${{ secrets.REACT_APP_AWS_S3_REGION }}" >> .env
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
 
-      - name: Setup Pnpm
-        uses: pnpm/action-setup@v3 
+            - name: Setup Pnpm
+              uses: pnpm/action-setup@v3
 
-      - name: Dependencies Install & build
-        run: | 
-        pnpm i
-        pnpm build
+            - name: Dependencies Install & build
+              run: |
+                  pnpm i
+                  pnpm build
 
-      - name: Deploy Docs
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.ACTIONS_TOKEN  }}
-          publish_branch: "release-page"
-          publish_dir: ./build
+            - name: Deploy Docs
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.ACTIONS_TOKEN  }}
+                  publish_branch: "release-page"
+                  publish_dir: ./build
