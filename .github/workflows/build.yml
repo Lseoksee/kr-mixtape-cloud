@@ -1,6 +1,6 @@
 name: page Build
 
-on: 
+on:
     push:
         branches:
             - master
