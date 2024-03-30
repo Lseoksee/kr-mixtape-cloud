@@ -57,3 +57,4 @@ jobs:
                   github_token: ${{ secrets.ACTIONS_TOKEN  }}
                   publish_branch: "release-page"
                   publish_dir: ./build
+                  cname: kr-mixtape.kro.kr
