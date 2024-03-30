@@ -5,7 +5,12 @@
             {
                 "album": "New Blood Rapper, Vol.1",
                 "AlbumInfoSrc": "01. Still Rappin'.mp3"
-            },
+            }
+        ]
+    },
+    {
+        "artist": "San E",
+        "albums": [
             {
                 "album": "Ready To Be Signed",
                 "AlbumInfoSrc": "01. 산선생님(랩의진수).mp3"
