@@ -1,7 +1,6 @@
 name: page Build
 
-on:
-    - push
+on: push
 
 jobs:
     deploy:
@@ -11,7 +10,7 @@ jobs:
               uses: actions/checkout@v3
 
             - name: Make .env
-            - run: |
+              run: |
                   echo "REACT_APP_AWS_IDENTITYPOOLLD=${{ secrets.REACT_APP_AWS_IDENTITYPOOLLD }} >> .env
                   echo "REACT_APP_AWS_S3_BUCKET=${{ secrets.REACT_APP_AWS_S3_BUCKET }}" >> .env
                   echo "REACT_APP_AWS_S3_REGION=${{ secrets.REACT_APP_AWS_S3_REGION }}" >> .env
