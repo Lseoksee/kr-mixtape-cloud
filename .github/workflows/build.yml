@@ -3,11 +3,12 @@ name: page Build
 on:
     push:
         branches:
-            - master
+            - main
 
 jobs:
     deploy:
         runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
         steps:
             - name: Checkout
               uses: actions/checkout@v3
