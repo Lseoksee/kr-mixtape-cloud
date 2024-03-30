@@ -2,7 +2,7 @@
 class Utils {
     /** 해당 아티스트 이미지 경로반환 (이미지는 반드시 png여야함) */
     static getArtistImg(artist: string) {
-        return `/artistimage/${artist}.png`;
+        return `${process.env.PUBLIC_URL}/artistimage/${artist}.png`;
     }
 
     /** 초단위를 [분:초] 로 */
