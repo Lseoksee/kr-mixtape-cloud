@@ -17,14 +17,31 @@ class AWSUtiil {
         albums: AlbumCompType.file[];
     }> = [];
 
+    private async refreshCredentials() {
+        const credentials = await AWSUtiil.newCredentials();
+        this.clinet = new S3Client({
+            region: process.env.REACT_APP_AWS_S3_REGION,
+            credentials: {
+                accessKeyId: credentials.AccessKeyId,
+                secretAccessKey: credentials.SecretKey,
+                sessionToken: credentials.SessionToken,
+            },
+        });
+    }
+
+    private static async newCredentials() {
+        const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
+        const credentials = (await getIdentity.json()) as ConstValType.credentials;
+        BrowserCache.saveCredentials(credentials);
+        return credentials;
+    }
+
     /** AWSUtiil 객체를 획득 합니다. 해당 메소들를 통해 AWSUtiil 객체에 접근하시오.  */
     public static async getAWSUtiil() {
         if (!this.thisObject) {
             let credentials = BrowserCache.getCredentials();
             if (!credentials) {
-                const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
-                credentials = (await getIdentity.json()) as ConstValType.credentials;
-                BrowserCache.saveCredentials(credentials);
+                credentials = await AWSUtiil.newCredentials();
             }
 
             this.thisObject = new this(constants.ENV_DEVMODE, credentials);
@@ -89,7 +106,15 @@ class AWSUtiil {
             Prefix: artist,
         });
 
-        const res = await this.clinet.send(getlist);
+        let res;
+        try {
+            res = await this.clinet.send(getlist);
+        } catch (e) {
+            console.log(e);
+            await this.refreshCredentials();
+            res = await this.clinet.send(getlist);
+        }
+
         const results = res.Contents?.filter((item) => item.Key?.split("/").slice(-1)[0]).map((item) => {
             return {
                 ETag: item.ETag!!, //파일 무결성 식별용
@@ -131,7 +156,15 @@ class AWSUtiil {
                     Range: `bytes=0-${AWSUtiil.Bytes}`,
                 });
 
-                const results = await this.clinet.send(getfile);
+                let results;
+                try {
+                    results = await this.clinet.send(getfile);
+                } catch (e) {
+                    console.log(e);
+                    await this.refreshCredentials();
+                    results = await this.clinet.send(getfile);
+                }
+
                 const metadata = await parseReadableStream(
                     results.Body?.transformToWebStream()!!,
                     {
@@ -166,7 +199,15 @@ class AWSUtiil {
             Range: `bytes=0-${AWSUtiil.Bytes}`,
         });
 
-        const results = await this.clinet.send(getfile);
+        let results;
+        try {
+            results = await this.clinet.send(getfile);
+        } catch (e) {
+            console.log(e);
+            await this.refreshCredentials();
+            results = await this.clinet.send(getfile);
+        }
+
         const metadata = await parseReadableStream(
             results.Body?.transformToWebStream()!!,
             {
