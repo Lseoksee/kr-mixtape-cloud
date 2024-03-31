@@ -1,10 +1,10 @@
 /* aws 관련 유틸 */
 import { ListObjectsV2Command, S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import { parseReadableStream } from "music-metadata-browser";
 import constants from "../constants";
+import { BrowserCache } from "./BrowserCache";
 
 class AWSUtiil {
     private static thisObject?: AWSUtiil;
@@ -18,25 +18,31 @@ class AWSUtiil {
     }> = [];
 
     /** AWSUtiil 객체를 획득 합니다. 해당 메소들를 통해 AWSUtiil 객체에 접근하시오.  */
-    public static getAWSUtiil() {
+    public static async getAWSUtiil() {
         if (!this.thisObject) {
-            this.thisObject = new this(constants.ENV_DEVMODE);
+            let credentials = BrowserCache.getCredentials();
+            if (!credentials) {
+                const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
+                credentials = (await getIdentity.json()) as ConstValType.credentials;
+                BrowserCache.saveCredentials(credentials);
+            }
+
+            this.thisObject = new this(constants.ENV_DEVMODE, credentials);
         }
         return this.thisObject;
     }
 
     // 생성자는 getAWSUtiil를 통해 접근하도록 제한
-    private constructor(devMode: boolean) {
+    private constructor(devMode: boolean, credentials: ConstValType.credentials) {
         this.devMode = devMode;
 
         this.clinet = new S3Client({
             region: process.env.REACT_APP_AWS_S3_REGION,
-            credentials: fromCognitoIdentityPool({
-                clientConfig: {
-                    region: process.env.REACT_APP_AWS_S3_REGION,
-                },
-                identityPoolId: process.env.REACT_APP_AWS_IDENTITYPOOLLD!!,
-            }),
+            credentials: {
+                accessKeyId: credentials.AccessKeyId,
+                secretAccessKey: credentials.SecretKey,
+                sessionToken: credentials.SessionToken,
+            },
         });
     }
 
@@ -105,7 +111,7 @@ class AWSUtiil {
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: file.fileName,
-            ResponseContentDisposition: "attachment"    // 다운로드 모드로 로드시키기
+            ResponseContentDisposition: "attachment", // 다운로드 모드로 로드시키기
         });
 
         return await getSignedUrl(this.clinet, getfile, {

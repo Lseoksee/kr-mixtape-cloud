@@ -22,7 +22,20 @@ class BrowserCache {
 
     /** 로컬 스토리지에 볼륨값을 가져옵니다. */
     static getVolume() {
-        return  Number.parseFloat(localStorage.getItem("volume")!!) || 1;
+        return Number.parseFloat(localStorage.getItem("volume")!!) || 1;
+    }
+
+    /** 로컬 스토리지에 credentials값을 저장합니다 */
+    static saveCredentials(credentials: ConstValType.credentials) {
+        localStorage.setItem("credentials", JSON.stringify(credentials));
+    }
+
+    /** 로컬 스토리지에서 credentials값을 가져옵니다. */
+    static getCredentials() {
+        const storage = localStorage.getItem("credentials");
+        if (storage) {
+            return JSON.parse(storage) as ConstValType.credentials;
+        }
     }
 }
 

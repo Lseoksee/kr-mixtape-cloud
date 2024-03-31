@@ -24,11 +24,12 @@ const ConstUtills = {
             loadAlbums
                 .map((album) =>
                     album.playerElement.map(async (music) => {
+                        const ctor = await AWSUtiil.getAWSUtiil();
                         return {
                             albumName: album.albumInfo.album,
                             musicMeta: music,
                             albumArtUrl: Utils.byteStringToBlob(album.albumInfo.art),
-                            url: await AWSUtiil.getAWSUtiil().getFileURL(music.file),
+                            url: await ctor.getFileURL(music.file),
                         } as AlbumCompType.loadMusicInfo;
                     })
                 )

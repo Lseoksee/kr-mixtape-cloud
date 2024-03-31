@@ -21,27 +21,31 @@ window.process = require("process");
 window.Buffer = Buffer;
 
 /* 라우팅 설정 */
-const RoutePage = createBrowserRouter([
-    {
-        path: "/",
-        element: <GlobalPage />,
-        children: [
-            {
-                index: true /* 맨 첫번째 패이지로 지정 */,
-                element: <App />,
-            },
-            {
-                path: `${constants.ARTIST_PAGE}/:artistName`,
-                element: <ArtistPage />,
-                loader: async ({ params }) => {
-                    //페이지 로딩시 앨범 리스트 얻기
-                    return AWSUtiil.getAWSUtiil().getFilelist(params.artistName!!);
+const RoutePage = createBrowserRouter(
+    [
+        {
+            path: "/",
+            element: <GlobalPage />,
+            children: [
+                {
+                    index: true /* 맨 첫번째 패이지로 지정 */,
+                    element: <App />,
                 },
-                errorElement: <ErrorPage />,
-            },
-        ],
-    },
-], {basename: process.env.PUBLIC_URL});
+                {
+                    path: `${constants.ARTIST_PAGE}/:artistName`,
+                    element: <ArtistPage />,
+                    loader: async ({ params }) => {
+                        //페이지 로딩시 앨범 리스트 얻기
+                        const ctor = await AWSUtiil.getAWSUtiil();
+                        return ctor.getFilelist(params.artistName!!);
+                    },
+                    errorElement: <ErrorPage />,
+                },
+            ],
+        },
+    ],
+    { basename: process.env.PUBLIC_URL }
+);
 
 /* 전역컴포넌트와 같이가는 */
 function GlobalPage() {

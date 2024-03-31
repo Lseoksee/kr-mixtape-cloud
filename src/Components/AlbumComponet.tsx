@@ -65,15 +65,15 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
             this.setState({ albumInfo: albumCached, key: "albumart" });
         } else {
-            AWSUtiil.getAWSUtiil()
-                .getAlbumTag(this.props.songList, this.props.albumName, this.props.artist)
-                .then((res) => {
+            AWSUtiil.getAWSUtiil().then((p) => {
+                p.getAlbumTag(this.props.songList, this.props.albumName, this.props.artist).then((res) => {
                     // 앨범 아트 설정
                     this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
 
                     this.setState({ albumInfo: res, key: "albumart" });
                     this.albumCache.addAlbumCache(res);
                 });
+            });
         }
 
         // 곡정보 불러오기
@@ -82,24 +82,24 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         if (songCached) {
             // 캐싱된 데이터에서 추가된 값이 있는지
             if (songCached.addEelment) {
-                AWSUtiil.getAWSUtiil()
-                    .getMusicID3Tag(songCached.addEelment)
-                    .then((item) => {
+                AWSUtiil.getAWSUtiil().then((p) => {
+                    p.getMusicID3Tag(songCached.addEelment).then((item) => {
                         const cachedSort = this.songCache.insertSongCache(item);
                         this.setState({ playerElement: cachedSort!!, key: "song" });
                     });
+                });
             }
 
             // 없으면 그냥 setState
             else this.setState({ playerElement: songCached.album, key: "song" });
         } else {
             // 최초 로드시 앨범 전체 요청
-            AWSUtiil.getAWSUtiil()
-                .getMusicID3Tag(this.props.songList)
-                .then((item) => {
+            AWSUtiil.getAWSUtiil().then((p) => {
+                p.getMusicID3Tag(this.props.songList).then((item) => {
                     this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
                     this.setState({ playerElement: item, key: "song" });
                 });
+            });
         }
     }
 
@@ -107,11 +107,12 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     private async loadUrl(musicList: AlbumCompType.musicMeta[], myIndex: number) {
         const loadMusicInfo = Promise.all(
             musicList.map(async (itme) => {
+                const ctor = await AWSUtiil.getAWSUtiil();
                 return {
                     musicMeta: itme,
                     albumArtUrl: this.appData.albumArt,
                     albumName: this.props.albumName,
-                    url: await AWSUtiil.getAWSUtiil().getFileURL(itme.file),
+                    url: await ctor.getFileURL(itme.file),
                 } as AlbumCompType.loadMusicInfo;
             })
         );
