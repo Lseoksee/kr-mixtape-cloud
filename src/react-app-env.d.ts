@@ -14,6 +14,7 @@ declare namespace ConstValType {
         AccessKeyId: string,
         SecretKey: string;
         SessionToken: string;
+        exp: number;
     }
 }
 

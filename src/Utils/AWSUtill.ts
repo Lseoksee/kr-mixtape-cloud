@@ -17,6 +17,25 @@ class AWSUtiil {
         albums: AlbumCompType.file[];
     }> = [];
 
+    /** AWS S3 객체의 접근 토클을 발급합니다. */
+    public static async getCredentials() {
+        const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
+        const res = await getIdentity.json();
+
+        // 토큰 만료 기간 설정 (1시간인데 오차 생각해서 59분으로)
+        const expDate = new Date();
+        expDate.setSeconds(expDate.getSeconds() + 3540);
+        const exp = expDate.getTime();
+
+        const credentials = {
+            ...res,
+            exp: exp,
+        } as ConstValType.credentials;
+
+        BrowserCache.saveCredentials(credentials);
+        return credentials;
+    }
+
     private async refreshCredentials() {
         const credentials = await AWSUtiil.newCredentials();
         this.clinet = new S3Client({
