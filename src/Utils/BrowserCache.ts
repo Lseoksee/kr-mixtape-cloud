@@ -1,3 +1,5 @@
+import constants from "../constants";
+
 class BrowserCache {
     /** 캐싱된 사항들을 로컬스토리지에 최종 저장합니다 */
     protected static applyCache(caches: any[], saveValue: string, loStorage: any[]) {
@@ -35,6 +37,18 @@ class BrowserCache {
         const storage = localStorage.getItem("credentials");
         if (storage) {
             return JSON.parse(storage) as ConstValType.credentials;
+        }
+    }
+
+
+    /** 로컬스토리지 버전이 현재 버전과 일치하는지 확인합니다.
+     * 만일 다를시에는 스토리지를 초기화 합니다.
+     */
+    static verifiedStorageVerson() {
+        const verson =  localStorage.getItem("verson");
+        if (verson !== constants.STORAGE_VERSON) {
+            localStorage.clear();
+            localStorage.setItem("verson", constants.STORAGE_VERSON);
         }
     }
 }

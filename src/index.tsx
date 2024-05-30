@@ -28,6 +28,9 @@ const RoutePage = createBrowserRouter(
             path: "/",
             element: <GlobalPage />,
             loader: async () => {
+                // 스토리지 버전 유효성 검사
+                BrowserCache.verifiedStorageVerson();
+
                 /* S3 접근 토큰 발급하기 (페이지 접속시에만 작동) */
                 const now = new Date();
                 const tempCredentials = BrowserCache.getCredentials();
