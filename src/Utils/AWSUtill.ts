@@ -3,21 +3,18 @@ import { ListObjectsV2Command, S3Client, GetObjectCommand } from "@aws-sdk/clien
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import { parseReadableStream } from "music-metadata-browser";
-import constants from "../constants";
 import { BrowserCache } from "./BrowserCache";
 
 class AWSUtiil {
-    private static thisObject?: AWSUtiil;
     private static Bytes = 500 * 1000;
-
-    private clinet: S3Client;
-    private devMode: boolean;
+    private static clinet: S3Client;
     private listAlbum: Array<{
         artist: string;
         albums: AlbumCompType.file[];
     }> = [];
 
-    /** AWS S3 객체의 접근 토클을 발급합니다. */
+
+    /** AWS S3 객체의 접근 토큰을 발급합니다. */
     public static async getCredentials() {
         const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
         const res = await getIdentity.json();
@@ -36,8 +33,10 @@ class AWSUtiil {
         return credentials;
     }
 
-    private async refreshCredentials() {
-        const credentials = await AWSUtiil.newCredentials();
+    /** AWSUtiil 객체를 생성할 수 있게 S3Client 객체를 초기화 합니다.
+     * @param credentials getCredentials() 정적 메소드에서 발급받은 토큰
+    */
+    public static setS3Client(credentials: ConstValType.credentials) {
         this.clinet = new S3Client({
             region: process.env.REACT_APP_AWS_S3_REGION,
             credentials: {
@@ -48,72 +47,18 @@ class AWSUtiil {
         });
     }
 
-    private static async newCredentials() {
-        const getIdentity = await fetch(process.env.REACT_APP_AWS_IDENTITY_URL);
-        const credentials = (await getIdentity.json()) as ConstValType.credentials;
-        BrowserCache.saveCredentials(credentials);
-        return credentials;
-    }
-
-    /** AWSUtiil 객체를 획득 합니다. 해당 메소들를 통해 AWSUtiil 객체에 접근하시오.  */
-    public static async getAWSUtiil() {
-        if (!this.thisObject) {
-            let credentials = BrowserCache.getCredentials();
-            if (!credentials) {
-                credentials = await AWSUtiil.newCredentials();
-            }
-
-            this.thisObject = new this(constants.ENV_DEVMODE, credentials);
+    /** AWSUtiil 객체를 생성합니다.
+     * @throws AWSUtiil.clinet 객체가 초기화 되어 있지 않음
+    */
+    public constructor() {
+        if (!AWSUtiil.clinet) {
+            console.log("AWSUtiil.clinet가 초기화 되어있지 않습니다 setS3Client를 통해 초기화 되어있는지 확인하시오");
+            throw new Error("undefined_AWSUtiil.clinet");
         }
-        return this.thisObject;
-    }
-
-    // 생성자는 getAWSUtiil를 통해 접근하도록 제한
-    private constructor(devMode: boolean, credentials: ConstValType.credentials) {
-        this.devMode = devMode;
-
-        this.clinet = new S3Client({
-            region: process.env.REACT_APP_AWS_S3_REGION,
-            credentials: {
-                accessKeyId: credentials.AccessKeyId,
-                secretAccessKey: credentials.SecretKey,
-                sessionToken: credentials.SessionToken,
-            },
-        });
     }
 
     /** S3 에서 해당 아티스트와 앨범에대한 파일들을 리턴합니다. */
     public async getFilelist(artist: string): Promise<AlbumCompType.file[]> {
-        // 개발 모드 활성화 시
-        if (this.devMode) {
-            return [
-                {
-                    ETag: "1",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/01. Still Rappin'.mp3",
-                },
-                {
-                    ETag: "2",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/02. M.C. (Feat. 개코 of Dynamic Duo).mp3",
-                },
-                {
-                    ETag: "3",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/03. 피똥 (Feat. Simon Dominic).mp3",
-                },
-                {
-                    ETag: "4",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/04. 꽐라 (Remix) (Feat. Swings & Verbal Jint).mp3",
-                },
-                {
-                    ETag: "5",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/05. Make Music (Feat. Absotyle).mp3",
-                },
-                {
-                    ETag: "6",
-                    fileName: "E SENS - New Blood Rapper, Vol.1/06. Rhyme King (Feat. Dok2).mp3",
-                },
-            ];
-        }
-
         const memoryLoad = this.listAlbum.find((itme) => itme.artist === artist);
         if (memoryLoad) {
             return memoryLoad.albums;
@@ -125,14 +70,7 @@ class AWSUtiil {
             Prefix: artist,
         });
 
-        let res;
-        try {
-            res = await this.clinet.send(getlist);
-        } catch (e) {
-            console.log(e);
-            await this.refreshCredentials();
-            res = await this.clinet.send(getlist);
-        }
+        const res = await AWSUtiil.clinet.send(getlist);
 
         const results = res.Contents?.filter((item) => item.Key?.split("/").slice(-1)[0]).map((item) => {
             return {
@@ -147,18 +85,13 @@ class AWSUtiil {
 
     /** 다운로드와 스트리밍이 가능한 url 주소를 리턴합니다. */
     public async getFileURL(file: AlbumCompType.file) {
-        // 개발 모드 활성화 시
-        if (this.devMode) {
-            return "";
-        }
-
         const getfile = new GetObjectCommand({
             Bucket: process.env.REACT_APP_AWS_S3_BUCKET,
             Key: file.fileName,
             ResponseContentDisposition: "attachment", // 다운로드 모드로 로드시키기
         });
 
-        return await getSignedUrl(this.clinet, getfile, {
+        return await getSignedUrl(AWSUtiil.clinet, getfile, {
             expiresIn: 3600,
         });
     }
@@ -175,14 +108,7 @@ class AWSUtiil {
                     Range: `bytes=0-${AWSUtiil.Bytes}`,
                 });
 
-                let results;
-                try {
-                    results = await this.clinet.send(getfile);
-                } catch (e) {
-                    console.log(e);
-                    await this.refreshCredentials();
-                    results = await this.clinet.send(getfile);
-                }
+                const results = await AWSUtiil.clinet.send(getfile);
 
                 const metadata = await parseReadableStream(
                     results.Body?.transformToWebStream()!!,
@@ -218,14 +144,7 @@ class AWSUtiil {
             Range: `bytes=0-${AWSUtiil.Bytes}`,
         });
 
-        let results;
-        try {
-            results = await this.clinet.send(getfile);
-        } catch (e) {
-            console.log(e);
-            await this.refreshCredentials();
-            results = await this.clinet.send(getfile);
-        }
+        const results = await AWSUtiil.clinet.send(getfile);
 
         const metadata = await parseReadableStream(
             results.Body?.transformToWebStream()!!,

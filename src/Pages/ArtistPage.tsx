@@ -2,7 +2,7 @@ import albumList from "../albumList.json";
 import AlbumView, { AlbumViewState } from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import Utils from "../Utils/Utils";
 import tempArtist from "../Assets/tempArtist.svg";
@@ -13,6 +13,7 @@ import { PlayIconFill } from "../Components/StyleComponet";
 
 type ArtistPageState = {
     loadAlbums: AlbumViewState[];
+    albums: AlbumCompType.file[];
 };
 
 const ConstUtills = {
@@ -24,12 +25,11 @@ const ConstUtills = {
             loadAlbums
                 .map((album) =>
                     album.playerElement.map(async (music) => {
-                        const ctor = await AWSUtiil.getAWSUtiil();
                         return {
                             albumName: album.albumInfo.album,
                             musicMeta: music,
                             albumArtUrl: Utils.byteStringToBlob(album.albumInfo.art),
-                            url: await ctor.getFileURL(music.file),
+                            url: await new AWSUtiil().getFileURL(music.file),
                         } as AlbumCompType.loadMusicInfo;
                     })
                 )
@@ -53,7 +53,7 @@ function SetMusic(props: {
             return prev;
         });
     });
-
+    
     const element = props.aritst.albums.map((item, index) => {
         // 해당 아티스트에 전체앨범 곡중 현재 로드중인 앨법에 곡만
         const songList = props.albums.filter((list) => list.fileName.includes(item.album));
@@ -75,13 +75,18 @@ function SetMusic(props: {
 
 function ArtistPage(): JSX.Element {
     const { artistName } = useParams<RouterType.RouterParams>();
-    const [state, setState] = useState<ArtistPageState>({ loadAlbums: [] });
+    const [state, setState] = useState<ArtistPageState>({ loadAlbums: [], albums: [] });
     //loader로 받은거 얻기
-    const albums = useLoaderData() as AlbumCompType.file[];
     const dispatch = useDispatch();
     const aritstInfoRef = useRef<HTMLDivElement>(null);
 
+
     useEffect(() => {
+        // 파일 리스트 구하기
+        new AWSUtiil().getFilelist(artistName!!).then((item) => {
+            setState((prev) => ({ ...prev, albums: item }));
+        });
+
         aritstInfoRef.current?.scrollTo(0, 0);
     }, [artistName]);
 
@@ -137,12 +142,16 @@ function ArtistPage(): JSX.Element {
                 </div>
             </div>
             <div className="albumLayout">
-                <ConstUtills.SetMusicMemo
-                    aritst={artist}
-                    key={artist.artist}
-                    albums={albums}
-                    pageState={setState}
-                ></ConstUtills.SetMusicMemo>
+                {state.albums.length ? (
+                    <ConstUtills.SetMusicMemo
+                        aritst={artist}
+                        key={state.albums[0]?.ETag}
+                        albums={state.albums}
+                        pageState={setState}
+                    ></ConstUtills.SetMusicMemo>
+                ) : (
+                    <></>
+                )}
             </div>
         </div>
     );

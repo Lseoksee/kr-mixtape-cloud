@@ -7,7 +7,7 @@ import { mainReducer } from "./Store/ConfingRedux";
 import MusicStateComponet from "./Components/MusicStateComponet";
 import SearchSideBarComponet from "./Components/SearchSideBarComponet";
 import ListSideBarComponet from "./Components/ListSideBarComponet";
-import { Outlet, RouterProvider, createBrowserRouter, useLoaderData, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter, useLocation, useNavigate, useParams } from "react-router-dom";
 import App from "./Pages/App";
 import ArtistPage from "./Pages/ArtistPage";
 import constants from "./constants";
@@ -33,8 +33,11 @@ const RoutePage = createBrowserRouter(
                 const tempCredentials = BrowserCache.getCredentials();
 
                 if (!tempCredentials || now.getTime() > tempCredentials.exp) {
-                    return AWSUtiil.getCredentials();
+                    const credentials = await AWSUtiil.getCredentials();
+                    AWSUtiil.setS3Client(credentials);
+                    return credentials;
                 } else {
+                    AWSUtiil.setS3Client(tempCredentials);
                     return tempCredentials;
                 }
             },
@@ -46,11 +49,6 @@ const RoutePage = createBrowserRouter(
                 {
                     path: `${constants.ARTIST_PAGE}/:artistName`,
                     element: <ArtistPage />,
-                    loader: async ({ params }) => {
-                        //페이지 로딩시 앨범 리스트 얻기
-                        const ctor = await AWSUtiil.getAWSUtiil();
-                        return ctor.getFilelist(params.artistName!!);
-                    },
                     errorElement: <ErrorPage />,
                 },
             ],
@@ -68,16 +66,11 @@ function GlobalPage() {
         location: useLocation(),
     };
 
-    const loder = useLoaderData() as ConstValType.credentials;
+    /*     const loder = useLoaderData() as ConstValType.credentials;
     const now = new Date();
     const outTime = loder.exp - now.getTime();
     console.log(outTime);
-    
-    
-    // 만료 되기 1분전 갱신 요청
-    setInterval(() => {
-        AWSUtiil.getCredentials();
-    }, outTime)
+ */
 
     return (
         <>

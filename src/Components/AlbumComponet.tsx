@@ -43,6 +43,7 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 
     songCache = new SongCache();
     albumCache = new AlbumCache();
+    S3 = new AWSUtiil();
 
     // state 값 업데이트 시 실행
     componentDidUpdate(prevProps: Readonly<AlbumViewProp>, prevState: Readonly<AlbumViewState>, snapshot?: any): void {
@@ -65,14 +66,12 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
             this.setState({ albumInfo: albumCached, key: "albumart" });
         } else {
-            AWSUtiil.getAWSUtiil().then((p) => {
-                p.getAlbumTag(this.props.songList, this.props.albumName, this.props.artist).then((res) => {
-                    // 앨범 아트 설정
-                    this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
+            this.S3.getAlbumTag(this.props.songList, this.props.albumName, this.props.artist).then((res) => {
+                // 앨범 아트 설정
+                this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
 
-                    this.setState({ albumInfo: res, key: "albumart" });
-                    this.albumCache.addAlbumCache(res);
-                });
+                this.setState({ albumInfo: res, key: "albumart" });
+                this.albumCache.addAlbumCache(res);
             });
         }
 
@@ -82,11 +81,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         if (songCached) {
             // 캐싱된 데이터에서 추가된 값이 있는지
             if (songCached.addEelment) {
-                AWSUtiil.getAWSUtiil().then((p) => {
-                    p.getMusicID3Tag(songCached.addEelment).then((item) => {
-                        const cachedSort = this.songCache.insertSongCache(item);
-                        this.setState({ playerElement: cachedSort!!, key: "song" });
-                    });
+                this.S3.getMusicID3Tag(songCached.addEelment).then((item) => {
+                    const cachedSort = this.songCache.insertSongCache(item);
+                    this.setState({ playerElement: cachedSort!!, key: "song" });
                 });
             }
 
@@ -94,11 +91,9 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             else this.setState({ playerElement: songCached.album, key: "song" });
         } else {
             // 최초 로드시 앨범 전체 요청
-            AWSUtiil.getAWSUtiil().then((p) => {
-                p.getMusicID3Tag(this.props.songList).then((item) => {
-                    this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
-                    this.setState({ playerElement: item, key: "song" });
-                });
+            this.S3.getMusicID3Tag(this.props.songList).then((item) => {
+                this.songCache.addSongCache(item, this.props.albumName, this.props.artist);
+                this.setState({ playerElement: item, key: "song" });
             });
         }
     }
@@ -107,12 +102,11 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
     private async loadUrl(musicList: AlbumCompType.musicMeta[], myIndex: number) {
         const loadMusicInfo = Promise.all(
             musicList.map(async (itme) => {
-                const ctor = await AWSUtiil.getAWSUtiil();
                 return {
                     musicMeta: itme,
                     albumArtUrl: this.appData.albumArt,
                     albumName: this.props.albumName,
-                    url: await ctor.getFileURL(itme.file),
+                    url: await this.S3.getFileURL(itme.file),
                 } as AlbumCompType.loadMusicInfo;
             })
         );
