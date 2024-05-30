@@ -4,15 +4,16 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import { parseReadableStream } from "music-metadata-browser";
 import { BrowserCache } from "./BrowserCache";
+import Utils from "./Utils";
 
 class AWSUtiil {
     private static Bytes = 500 * 1000;
     private static clinet: S3Client;
+    private static isListner = false; //자동 갱신 등록되었느냐
     private listAlbum: Array<{
         artist: string;
         albums: AlbumCompType.file[];
     }> = [];
-
 
     /** AWS S3 객체의 접근 토큰을 발급합니다. */
     public static async getCredentials() {
@@ -35,8 +36,8 @@ class AWSUtiil {
 
     /** AWSUtiil 객체를 생성할 수 있게 S3Client 객체를 초기화 합니다.
      * @param credentials getCredentials() 정적 메소드에서 발급받은 토큰
-    */
-    public static setS3Client(credentials: ConstValType.credentials) {
+     */
+    public static async setS3Client(credentials: ConstValType.credentials) {
         this.clinet = new S3Client({
             region: process.env.REACT_APP_AWS_S3_REGION,
             credentials: {
@@ -47,9 +48,37 @@ class AWSUtiil {
         });
     }
 
+    /** 토큰 만료 1분전에 자동으로 S3객체를 초기화 해줍니다.
+     * @param credentials getCredentials() 정적 메소드에서 발급받은 토큰
+     */
+    public static async autoRefreshS3(credentials: ConstValType.credentials) {
+        if (!this.isListner) {
+            this.isListner = true;
+            const now = new Date();
+
+            let outTime = credentials.exp - now.getTime();
+
+            while (true) {
+                await Utils.sleep(outTime);
+                const reCredentials = await this.getCredentials();
+                                
+                this.clinet = new S3Client({
+                    region: process.env.REACT_APP_AWS_S3_REGION,
+                    credentials: {
+                        accessKeyId: reCredentials.AccessKeyId,
+                        secretAccessKey: reCredentials.SecretKey,
+                        sessionToken: reCredentials.SessionToken,
+                    },
+                });
+
+                outTime = reCredentials.exp - now.getTime();
+            }
+        }
+    }
+
     /** AWSUtiil 객체를 생성합니다.
      * @throws AWSUtiil.clinet 객체가 초기화 되어 있지 않음
-    */
+     */
     public constructor() {
         if (!AWSUtiil.clinet) {
             console.log("AWSUtiil.clinet가 초기화 되어있지 않습니다 setS3Client를 통해 초기화 되어있는지 확인하시오");

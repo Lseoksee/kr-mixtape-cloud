@@ -35,9 +35,11 @@ const RoutePage = createBrowserRouter(
                 if (!tempCredentials || now.getTime() > tempCredentials.exp) {
                     const credentials = await AWSUtiil.getCredentials();
                     AWSUtiil.setS3Client(credentials);
+                    AWSUtiil.autoRefreshS3(credentials);
                     return credentials;
                 } else {
                     AWSUtiil.setS3Client(tempCredentials);
+                    AWSUtiil.autoRefreshS3(tempCredentials);
                     return tempCredentials;
                 }
             },
@@ -65,12 +67,6 @@ function GlobalPage() {
         params: useParams(),
         location: useLocation(),
     };
-
-    /*     const loder = useLoaderData() as ConstValType.credentials;
-    const now = new Date();
-    const outTime = loder.exp - now.getTime();
-    console.log(outTime);
- */
 
     return (
         <>

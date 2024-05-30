@@ -52,6 +52,13 @@ class Utils {
     static whatPercentValue(standValue: number, percent: number) {
         return (standValue * percent) / 100 || 0;
     }
+
+    /** 쓰레드를 ms 만큼 일시 정지 합니다
+     * @param ms 밀리초
+     */
+    static sleep(ms: number) {
+        return new Promise((r) => setTimeout(r, ms));
+    }
 }
 
 export default Utils;
