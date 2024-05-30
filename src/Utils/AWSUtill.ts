@@ -10,7 +10,7 @@ class AWSUtiil {
     private static Bytes = 500 * 1000;
     private static clinet: S3Client;
     private static isListner = false; //자동 갱신 등록되었느냐
-    private listAlbum: Array<{
+    private static listAlbum: Array<{
         artist: string;
         albums: AlbumCompType.file[];
     }> = [];
@@ -88,7 +88,7 @@ class AWSUtiil {
 
     /** S3 에서 해당 아티스트와 앨범에대한 파일들을 리턴합니다. */
     public async getFilelist(artist: string): Promise<AlbumCompType.file[]> {
-        const memoryLoad = this.listAlbum.find((itme) => itme.artist === artist);
+        const memoryLoad = AWSUtiil.listAlbum.find((itme) => itme.artist === artist);
         if (memoryLoad) {
             return memoryLoad.albums;
         }
@@ -108,7 +108,7 @@ class AWSUtiil {
             };
         })!!;
 
-        this.listAlbum.push({ artist: artist, albums: results });
+        AWSUtiil.listAlbum.push({ artist: artist, albums: results });
         return results;
     }
 

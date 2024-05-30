@@ -53,7 +53,7 @@ function SetMusic(props: {
             return prev;
         });
     });
-    
+
     const element = props.aritst.albums.map((item, index) => {
         // 해당 아티스트에 전체앨범 곡중 현재 로드중인 앨법에 곡만
         const songList = props.albums.filter((list) => list.fileName.includes(item.album));
@@ -80,8 +80,8 @@ function ArtistPage(): JSX.Element {
     const dispatch = useDispatch();
     const aritstInfoRef = useRef<HTMLDivElement>(null);
 
-
     useEffect(() => {
+        setState({ albums: [], loadAlbums: [] });
         // 파일 리스트 구하기
         new AWSUtiil().getFilelist(artistName!!).then((item) => {
             setState((prev) => ({ ...prev, albums: item }));
