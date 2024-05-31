@@ -129,7 +129,10 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
             return (
                 <div className="trackView">
                     <div className="albuminfoDiv">
-                        <img src={this.appData.albumArt} alt="앨범 아트" className="albumArt" width="180px" />
+                        {/* 이미지 바뀔때 레이아웃 이상해지는거 방지용 div */}
+                        <div className="albumTempDiv">
+                            <img src={this.appData.albumArt} alt="앨범 아트" className="albumArt" width="100%" height="100%" />
+                        </div>
                         <div className="albumTextDiv">
                             <p className="albumName">{stateData.albumInfo.album || "앨범명"}</p>
                             <div className="artistDiv">
