@@ -25,6 +25,7 @@
 .albumTempDiv {
     width: 180px;
     height: 180px;
+    flex-shrink: 0;
 }
 
 .albumName {
