@@ -2,7 +2,7 @@ import albumList from "../albumList.json";
 import AlbumView, { AlbumViewState } from "../Components/AlbumComponet";
 import "../Style/ArtistPage.css";
 import { AlbumCacheManager } from "../Utils/GlobalAppData";
-import { useParams } from "react-router-dom";
+import { useParams, ActionFunction } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import Utils from "../Utils/Utils";
 import tempArtist from "../Assets/tempArtist.svg";
