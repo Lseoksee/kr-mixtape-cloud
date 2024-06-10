@@ -17,14 +17,14 @@ class Utils {
         return `${min}:${secString}`;
     }
 
-    /** string바이트를 Blob URL 로 */
-    static byteStringToBlob(byteString?: string) {
+    /** base64를 Blob URL 로 */
+    static base64ToBlob(byteString?: string) {
         if (!byteString) {
             return;
         }
 
         const buffer = Buffer.from(Array.from(byteString).map((line) => line.charCodeAt(0)));
-        const blob = new Blob([buffer]);
+        const blob = new Blob([buffer], {type: "image/jpeg"});
         return URL.createObjectURL(blob);
     }
 

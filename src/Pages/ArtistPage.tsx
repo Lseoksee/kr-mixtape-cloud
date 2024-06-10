@@ -28,7 +28,7 @@ const ConstUtills = {
                         return {
                             albumName: album.albumInfo.album,
                             musicMeta: music,
-                            albumArtUrl: Utils.byteStringToBlob(album.albumInfo.art),
+                            albumArtUrl: Utils.base64ToBlob(album.albumInfo.art),
                             url: await new AWSUtiil().getFileURL(music.file),
                         } as AlbumCompType.loadMusicInfo;
                     })
@@ -130,7 +130,7 @@ function ArtistPage(): JSX.Element {
                         {state.loadAlbums.map((item, index) => (
                             <div key={index} className="artistAlbumItem">
                                 <img
-                                    src={Utils.byteStringToBlob(item.albumInfo.art)}
+                                    src={Utils.base64ToBlob(item.albumInfo.art)}
                                     className="artistAlbumImg"
                                     alt={item.albumInfo.album}
                                     width={"36px"}

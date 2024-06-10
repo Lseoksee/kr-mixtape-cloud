@@ -63,12 +63,12 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
         const albumCached = this.albumCache.getAlbumCache(this.props.albumName, this.props.artist);
         if (albumCached) {
             // 앨범 아트 설정
-            this.appData.albumArt = Utils.byteStringToBlob(albumCached.art)!!;
+            this.appData.albumArt = Utils.base64ToBlob(albumCached.art)!!;
             this.setState({ albumInfo: albumCached, key: "albumart" });
         } else {
             this.S3.getAlbumTag(this.props.songList, this.props.albumName, this.props.artist).then((res) => {
                 // 앨범 아트 설정
-                this.appData.albumArt = Utils.byteStringToBlob(res.art) || this.appData.albumArt;
+                this.appData.albumArt = Utils.base64ToBlob(res.art) || this.appData.albumArt;
 
                 this.setState({ albumInfo: res, key: "albumart" });
                 this.albumCache.addAlbumCache(res);
@@ -131,7 +131,13 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
                     <div className="albuminfoDiv">
                         {/* 이미지 바뀔때 레이아웃 이상해지는거 방지용 div */}
                         <div className="albumTempDiv">
-                            <img src={this.appData.albumArt} alt="앨범 아트" className="albumArt" width="100%" height="100%" />
+                            <img
+                                src={this.appData.albumArt}
+                                alt="앨범 아트"
+                                className="albumArt"
+                                width="100%"
+                                height="100%"
+                            />
                         </div>
                         <div className="albumTextDiv">
                             <p className="albumName">{stateData.albumInfo.album || "앨범명"}</p>
