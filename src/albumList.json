@@ -1,42 +1,42 @@
 [
-    {
-        "artist": "E SENS",
-        "albums": [
-            {
-                "album": "New Blood Rapper, Vol.1",
-                "AlbumInfoSrc": "01. Still Rappin'.mp3"
-            },
-            {
-                "album": "Blanky Munn's Unknown Verses",
-                "AlbumInfoSrc": "01. 가방끈.mp3"
-            }
-        ]
-    },
-    {
-        "artist": "San E",
-        "albums": [
-            {
-                "album": "Ready To Be Signed",
-                "AlbumInfoSrc": "01. 산선생님(랩의진수).mp3"
-            }
-        ]
-    },
-    {
-        "artist": "Hotclip",
-        "albums": [
-            {
-                "album": "Hotclip Mixtape, Vol.1",
-                "AlbumInfoSrc": "01. Throwback.mp3"
-            }
-        ]
-    },
-    {
-        "artist": "Simon Dominic",
-        "albums": [
-            {
-                "album": "I Just Wanna Rhyme, Vol.1",
-                "AlbumInfoSrc": "01. I Just Wanna Rhyme.mp3"
-            }
-        ]
-    }
+	{
+		"artist": "E SENS",
+		"albums": [
+			{
+				"album": "New Blood Rapper, Vol.1",
+				"AlbumInfoSrc": "01. Still Rappin'.mp3"
+			},
+			{
+				"album": "Blanky Munn's Unknown Verses",
+				"AlbumInfoSrc": "01. 가방끈.mp3"
+			}
+		]
+	},
+	{
+		"artist": "San E",
+		"albums": [
+			{
+				"album": "Ready To Be Signed",
+				"AlbumInfoSrc": "01. 산선생님(랩의진수).mp3"
+			}
+		]
+	},
+	{
+		"artist": "Hotclip",
+		"albums": [
+			{
+				"album": "Hotclip Mixtape, Vol.1",
+				"AlbumInfoSrc": "01. Throwback.mp3"
+			}
+		]
+	},
+	{
+		"artist": "Simon Dominic",
+		"albums": [
+			{
+				"album": "I Just Wanna Rhyme, Vol.1",
+				"AlbumInfoSrc": "01. I Just Wanna Rhyme.mp3"
+			}
+		]
+	}
 ]

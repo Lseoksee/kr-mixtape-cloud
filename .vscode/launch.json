@@ -5,9 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "npm 으로 실행",
+            "name": "Run-Vite",
             "request": "launch",
-            "runtimeArgs": ["start"],
+            "runtimeArgs": ["dev"],
             "runtimeExecutable": "pnpm",
             "type": "node"
         },
