@@ -23,45 +23,42 @@ window.process = Process;
 window.Buffer = Buffer;
 
 /* 라우팅 설정 */
-const RoutePage = createBrowserRouter(
-	[
-		{
-			path: "/",
-			element: <GlobalPage />,
-			loader: async () => {
-				// 스토리지 버전 유효성 검사
-				BrowserCache.verifiedStorageVerson();
+const RoutePage = createBrowserRouter([
+	{
+		path: "/",
+		element: <GlobalPage />,
+		loader: async () => {
+			// 스토리지 버전 유효성 검사
+			BrowserCache.verifiedStorageVerson();
 
-				/* S3 접근 토큰 발급하기 (페이지 접속시에만 작동) */
-				const now = new Date();
-				const tempCredentials = BrowserCache.getCredentials();
+			/* S3 접근 토큰 발급하기 (페이지 접속시에만 작동) */
+			const now = new Date();
+			const tempCredentials = BrowserCache.getCredentials();
 
-				if (!tempCredentials || now.getTime() > tempCredentials.exp) {
-					const credentials = await AWSUtiil.getCredentials();
-					AWSUtiil.setS3Client(credentials);
-					AWSUtiil.autoRefreshS3(credentials);
-					return credentials;
-				} else {
-					AWSUtiil.setS3Client(tempCredentials);
-					AWSUtiil.autoRefreshS3(tempCredentials);
-					return tempCredentials;
-				}
-			},
-			children: [
-				{
-					index: true /* 맨 첫번째 패이지로 지정 */,
-					element: <App />,
-				},
-				{
-					path: `${constants.ARTIST_PAGE}/:artistName`,
-					element: <ArtistPage />,
-					errorElement: <ErrorPage />,
-				},
-			],
+			if (!tempCredentials || now.getTime() > tempCredentials.exp) {
+				const credentials = await AWSUtiil.getCredentials();
+				AWSUtiil.setS3Client(credentials);
+				AWSUtiil.autoRefreshS3(credentials);
+				return credentials;
+			} else {
+				AWSUtiil.setS3Client(tempCredentials);
+				AWSUtiil.autoRefreshS3(tempCredentials);
+				return tempCredentials;
+			}
 		},
-	],
-	{ basename: constants.PUBLIC_URL }
-);
+		children: [
+			{
+				index: true /* 맨 첫번째 패이지로 지정 */,
+				element: <App />,
+			},
+			{
+				path: `${constants.ARTIST_PAGE}/:artistName`,
+				element: <ArtistPage />,
+				errorElement: <ErrorPage />,
+			},
+		],
+	},
+]);
 
 /* 전역컴포넌트와 같이가는 */
 function GlobalPage() {
