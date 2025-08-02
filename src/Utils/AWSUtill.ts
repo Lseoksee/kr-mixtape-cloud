@@ -2,7 +2,7 @@
 import { ListObjectsV2Command, S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import { parseReadableStream } from "music-metadata-browser";
+import { parseWebStream } from "music-metadata";
 import { BrowserCache } from "./BrowserCache";
 import Utils from "./Utils";
 
@@ -139,7 +139,7 @@ class AWSUtiil {
 
 				const results = await AWSUtiil.clinet.send(getfile);
 
-				const metadata = await parseReadableStream(
+				const metadata = await parseWebStream(
 					results.Body?.transformToWebStream()!!,
 					{
 						mimeType: "audio/mpeg",
@@ -171,7 +171,7 @@ class AWSUtiil {
 
 		const results = await AWSUtiil.clinet.send(getfile);
 
-		const metadata = await parseReadableStream(
+		const metadata = await parseWebStream(
 			results.Body?.transformToWebStream()!!,
 			{
 				mimeType: "audio/mpeg",
@@ -191,7 +191,7 @@ class AWSUtiil {
 			artist: artist,
 			year: metadata.common.year,
 			count: albumList.length,
-			art: albumart?.toString("binary"),
+			art: albumart?.toString(),
 		};
 	}
 }
