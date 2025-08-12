@@ -63,13 +63,12 @@ class AlbumView extends Component<AlbumViewProp, AlbumViewState> {
 		const albumCached = this.albumCache.getAlbumCache(this.props.albumName, this.props.artist);
 		if (albumCached) {
 			// 앨범 아트 설정
-			this.appData.albumArt = Utils.base64ToBlob(albumCached.art)!!;
+			this.appData.albumArt = albumCached.art!!;
 			this.setState({ albumInfo: albumCached, key: "albumart" });
 		} else {
 			this.S3.getAlbumTag(this.props.songList, this.props.albumName, this.props.artist).then((res) => {
 				// 앨범 아트 설정
-				this.appData.albumArt = Utils.base64ToBlob(res.art) || this.appData.albumArt;
-
+				this.appData.albumArt = res.art!!;
 				this.setState({ albumInfo: res, key: "albumart" });
 				this.albumCache.addAlbumCache(res);
 			});

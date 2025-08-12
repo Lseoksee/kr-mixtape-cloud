@@ -186,12 +186,22 @@ class AWSUtiil {
 			albumart = metadata.common.picture[0].data;
 		}
 
+		const blob = new Blob([albumart as Uint8Array<any>], { type: "image/jpeg" });
+		const reader = new FileReader();
+		reader.readAsDataURL(blob);
+
+		const art = await new Promise<string>((resolve) => {
+			reader.onloadend = () => {
+				resolve(reader.result as string);
+			};
+		});
+
 		return {
 			album: album,
 			artist: artist,
 			year: metadata.common.year,
 			count: albumList.length,
-			art: albumart?.toString(),
+			art: art,
 		};
 	}
 }

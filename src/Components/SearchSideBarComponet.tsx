@@ -1,6 +1,9 @@
 import { Component, type ReactNode } from "react";
 import "../Style/SearchSideBarComponet.css";
 import constants from "../constants";
+import AWSUtiil from "../Utils/AWSUtill";
+import { reduxConnect } from "../Store/ConfingRedux";
+import { AlbumCache } from "../Utils/BrowserCache";
 import albumList from "../albumList.json";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import searchIcon from "../Assets/searchIcon.png";
@@ -11,21 +14,26 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Utils from "../Utils/Utils";
 import { Collapse } from "@mui/material";
 import { ListButton, NestedListItem, ShadowDiv } from "./StyleComponet";
+import type { ConnectedProps } from "react-redux";
 
 type SearchSideBarProp = {
 	router: RouterType.RouterHook;
-};
+} & ConnectedProps<typeof reduxConnect>;
 
 type SearchSideBarState = {
 	openObj: {
 		[key: string]: any;
 	};
+	loadAlbum: AlbumCompType.album[];
 };
 
 class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarState> {
 	state: Readonly<SearchSideBarState> = {
 		openObj: {},
+		loadAlbum: [],
 	};
+	albumCache = new AlbumCache();
+	S3 = new AWSUtiil();
 
 	componentDidUpdate(prevProps: Readonly<SearchSideBarProp>, prevState: Readonly<SearchSideBarState>, snapshot?: any): void {
 		if (this.props.router.location.pathname !== prevProps.router.location.pathname) {
@@ -62,11 +70,35 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
 		}
 	}
 
-	shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, nextContext: any) {
+	shouldComponentUpdate(nextProps: Readonly<SearchSideBarProp>, nextState: Readonly<any>, _: any) {
 		if (this.state !== nextState) return true;
 		if (this.props.router.location.pathname !== nextProps.router.location.pathname) return true;
 
 		return false;
+	}
+
+	private async loadAlbumTag(artist: string, album: string) {
+		//앨범 정보 불러오기
+		const albumCached = this.albumCache.getAlbumCache(album, artist);
+		if (albumCached) {
+			// 앨범 아트 설정
+			this.setState((prev) => {
+				return {
+					...prev,
+					loadAlbum: [...prev.loadAlbum, albumCached],
+				};
+			});
+		} else {
+			const files = await this.S3.getFilelist(artist);
+			const file = files.filter((item) => item.fileName.includes(album));
+			const albumTag = await this.S3.getAlbumTag(file, album, artist);
+			this.setState((prev) => {
+				return {
+					...prev,
+					loadAlbum: [...prev.loadAlbum, albumTag],
+				};
+			});
+		}
 	}
 
 	render(): ReactNode {
@@ -147,17 +179,29 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
 									)}
 								</ListButton>
 								<Collapse in={open} unmountOnExit>
-									{itme.albums.map((album, index) => (
-										<div className="nestedListDiv" key={index}>
-											<NestedListItem key={index} color="secondary" className="nestedListItem">
-												<div className="albumInfo">
-													<img src={tempAlbumArt} alt={album.album} width={"32px"} className="albumArt" />
-													<p>{album.album}</p>
-												</div>
-												<p className="year">2008</p>
-											</NestedListItem>
-										</div>
-									))}
+									{itme.albums.map((album, index) => {
+										const albumTag = this.state.loadAlbum.find((st) => st.album === album.album && st.artist === itme.artist);
+										if (!albumTag) {
+											this.loadAlbumTag(itme.artist, album.album);
+										}
+
+										return (
+											<div className="nestedListDiv" key={index}>
+												<NestedListItem key={index} color="secondary" className="nestedListItem">
+													<div className="albumInfo">
+														<img
+															src={albumTag?.art || tempAlbumArt}
+															alt={albumTag?.art || album.album}
+															width={"32px"}
+															className="albumArt"
+														/>
+														<p>{albumTag?.album || album.album}</p>
+													</div>
+													<p className="year">{albumTag?.year || "0000"}</p>
+												</NestedListItem>
+											</div>
+										);
+									})}
 								</Collapse>
 							</div>
 						);
@@ -168,4 +212,4 @@ class SearchSideBarComponet extends Component<SearchSideBarProp, SearchSideBarSt
 	}
 }
 
-export default SearchSideBarComponet;
+export default reduxConnect(SearchSideBarComponet);
