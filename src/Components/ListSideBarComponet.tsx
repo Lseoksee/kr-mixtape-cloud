@@ -13,11 +13,22 @@ import Utils from "../Utils/Utils";
 import { BrowserCache } from "../Utils/BrowserCache";
 
 type ListSideBarProp = {} & ConnectedProps<typeof reduxConnect>;
-class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarProp> {
+
+type ListSideBarState = {
+	contentType: "playlist" | "lyric";
+};
+
+class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
+	state: Readonly<ListSideBarState> = {
+		contentType: "playlist",
+	};
+
 	reduxState = this.props.reduxResponce.musicPlayState;
 	currIndex = this.reduxState.startIndex;
 	reduxStateRecv = this.reduxState.send;
 	currItem = this.reduxState.queue[this.currIndex] || undefined;
+
+	componentDidMount(): void {}
 
 	// 플레어어 제어 아이콘 클릭 이벤트 처리
 	playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -61,6 +72,10 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarProp> {
 			playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
 		}
 
+		const contentType = this.state.contentType;
+
+		let prevAlbumName = "";
+
 		return (
 			<ShadowDiv shadowloc="left" className="ListSideBarDiv">
 				<ShadowDiv shadowloc="bottom" className="SubPlayViewDiv">
@@ -97,14 +112,50 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarProp> {
 					</div>
 				</ShadowDiv>
 				<div className="ContentChangeButtonDiv">
-					<ListButton className="ContentChangeButton" color="secondary">
+					<ListButton
+						className="ContentChangeButton"
+						color={contentType === "playlist" ? "primary" : "secondary"}
+						onClick={() => this.setState({ contentType: "playlist" })}
+					>
 						재생목록
 					</ListButton>
-					<ListButton className="ContentChangeButton" color="secondary">
+					<ListButton
+						className="ContentChangeButton"
+						color={contentType === "lyric" ? "primary" : "secondary"}
+						onClick={() => this.setState({ contentType: "lyric" })}
+					>
 						가사보기
 					</ListButton>
 				</div>
-				<ShadowDiv shadowloc="bottom" className="ContentDiv"></ShadowDiv>
+				<ShadowDiv shadowloc="bottom" className="ContentDiv">
+					{contentType === "playlist" ? (
+						<div className="PlaylistContentDiv">
+							{this.reduxState.queue.map((item, index) => {
+								const comp = (
+									<div className="PlaylistItem" key={index}>
+										{prevAlbumName !== item.albumName ? <p className="PlaylistAlbumName">{item.albumName}</p> : <></>}
+										<div className="PlaylistItemInfoDiv">
+											<div className="PlaylistAlbumArtDiv">
+												<img src={item.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
+											</div>
+											<div className="PlaylistDesDiv">
+												<p className="PlaylistTrackName">{item.musicMeta.title}</p>
+												<p className="PlaylistArtistName">{item.musicMeta.artist}</p>
+											</div>
+										</div>
+									</div>
+								);
+
+								prevAlbumName = item.albumName;
+
+								return comp;
+							})}
+						</div>
+					) : (
+						<></>
+					)}
+					{contentType === "lyric" ? <div className="LyricContentDiv"></div> : <></>}
+				</ShadowDiv>
 			</ShadowDiv>
 		);
 	}

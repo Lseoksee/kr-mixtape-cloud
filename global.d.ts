@@ -25,7 +25,7 @@ declare namespace AlbumCompType {
 	};
 
 	/** 음악 메타데이터 타입 */
-	type musicMeta = import("music-metadata-browser").IAudioMetadata["common"] & {
+	type musicMeta = import("music-metadata").IAudioMetadata["common"] & {
 		file: file;
 		duration: number;
 	};
