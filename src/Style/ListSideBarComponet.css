@@ -1,9 +1,88 @@
 .ListSideBarDiv {
+	height: 100%;
+	box-sizing: border-box;
+	padding: 20px 15px 20px 15px;
+	gap: 15px;
+	display: flex;
+	width: var(--side-bar-size);
+	flex-shrink: 0;
+	flex-direction: column;
+	align-items: center;
+}
+
+.SubPlayViewDiv {
+	width: 100%;
+	padding: 10px 10px 5px 10px;
+	box-sizing: border-box;
+	display: flex;
+	background-color: white;
+	border-radius: var(--border-radius);
+	flex-direction: row;
+	gap: 5px;
+}
+
+.trackInfoDiv {
+	display: flex;
+	height: 70%;
+	gap: 5px;
+	flex-direction: row;
+}
+
+.albumArtDiv {
+	height: 100px;
+}
+
+.albumInfoControlDiv {
+	width: 100%;
+}
+
+.subInfo {
+	width: 100%;
+	height: 70px;
+}
+
+.subArtistName {
+	font-size: 0.9em;
+	color: var(--hint-color);
+}
+
+.subvolumeControlDiv {
+	display: flex;
+	justify-content: flex-end;
+	padding-right: 20px;
+	align-items: center;
+}
+
+.subvolumeControl {
+	width: 35%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.subPlayControlDiv {
+	height: 28px;
+}
+
+.leftSideBarContent {
+	width: 100%;
+}
+
+.ContentChangeButtonDiv {
+	width: 100%;
+}
+
+.ContentChangeButton {
+	margin-right: 10px;
+	width: 120px;
+	height: 50px;
+	justify-content: center;
+}
+
+.ContentDiv {
+    width: 100%;
     height: 100%;
-    display: flex;
-    width: var(--side-bar-size);
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column; 
+    border: 1px solid var(--hint-color);
+    border-radius: var(--border-radius);
+    background-color: white;
 }

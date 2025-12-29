@@ -1,15 +1,113 @@
 import { Component, type ReactNode } from "react";
 import "../Style/ListSideBarComponet.css";
-import { ShadowDiv } from "./StyleComponet";
+import tempAlbumArt from "../Assets/tempAlbumArt.png";
+import { ListButton, ShadowDiv, VolumeSlider } from "./StyleComponet";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PauseIcon from "@mui/icons-material/Pause";
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
+import type { ConnectedProps } from "react-redux";
+import { ReduxActions, reduxConnect } from "../Store/ConfingRedux";
+import Utils from "../Utils/Utils";
+import { BrowserCache } from "../Utils/BrowserCache";
 
-class ListSideBarComponet extends Component {
+type ListSideBarProp = {} & ConnectedProps<typeof reduxConnect>;
+class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarProp> {
+	reduxState = this.props.reduxResponce.musicPlayState;
+	currIndex = this.reduxState.startIndex;
+	reduxStateRecv = this.reduxState.send;
+	currItem = this.reduxState.queue[this.currIndex] || undefined;
+
+	// 플레어어 제어 아이콘 클릭 이벤트 처리
+	playerIconClickEvent = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+		let action: any;
+
+		if (e.currentTarget.id === "play") {
+			// 재생버튼
+			action = ReduxActions.reqUpdatePlayState({ isPlay: "play" });
+		} else if (e.currentTarget.id === "pause") {
+			// 일시정지 버튼
+			action = ReduxActions.reqUpdatePlayState({ isPlay: "pause" });
+		} else if (e.currentTarget.id === "prev") {
+			// 이전곡 버튼
+			action = ReduxActions.selectIndexMusic({ index: this.currIndex - 1 });
+		} else if (e.currentTarget.id === "next") {
+			// 다음곡 버튼
+			action = ReduxActions.selectIndexMusic({ index: this.currIndex + 1 });
+		}
+
+		this.props.dispatch(action);
+	};
+
+	shouldComponentUpdate(nextProps: Readonly<ListSideBarProp>, nextState: Readonly<any>, nextContext: any): boolean {
+		const before = this.props.reduxResponce.musicPlayState;
+		const next = nextProps.reduxResponce.musicPlayState;
+
+		// recv 데이터만 바뀐경우 갱신안함
+		if (before.recv !== next.recv && before.send === next.send) return false;
+
+		return true;
+	}
+
 	render(): ReactNode {
+		this.reduxState = this.props.reduxResponce.musicPlayState;
+		this.reduxStateRecv = this.reduxState.send;
+		this.currIndex = this.reduxState.startIndex;
+		this.currItem = this.reduxState.queue[this.currIndex] || undefined;
+
+		let playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
+		if (this.reduxStateRecv.isPlay === "play") {
+			playIcon = <PauseIcon className="controlIcon" id="pause" onClick={this.playerIconClickEvent} />;
+		}
+
 		return (
 			<ShadowDiv shadowloc="left" className="ListSideBarDiv">
-				<p>재생목록/가사 사이드 바</p>
+				<ShadowDiv shadowloc="bottom" className="SubPlayViewDiv">
+					<div className="albumArtDiv">
+						<img src={this.currItem?.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
+					</div>
+					<div className="albumInfoControlDiv">
+						<div className="subInfo">
+							<p className="trackName">{this.currItem?.musicMeta.title}</p>
+							<p className="subArtistName">{this.currItem?.musicMeta.artist}</p>
+						</div>
+						<div className="mediaControl">
+							<div className="subvolumeControlDiv">
+								<VolumeUpIcon />
+								<div className="subvolumeControl">
+									<VolumeSlider
+										value={Utils.VolumeToInt(this.reduxState.volume)}
+										onChange={(_, value) => {
+											const setVolume = ReduxActions.setVolume({ value: value as number });
+											this.props.dispatch(setVolume);
+										}}
+										onChangeCommitted={(_, value) => {
+											BrowserCache.saveVolume(Utils.VolumeToformatt(value as number));
+										}}
+									></VolumeSlider>
+								</div>
+							</div>
+							<div className="subPlayControlDiv">
+								<SkipPreviousIcon className="controlIcon" onClick={this.playerIconClickEvent} id="prev" />
+								{playIcon}
+								<SkipNextIcon className="controlIcon" onClick={this.playerIconClickEvent} id="next" />
+							</div>
+						</div>
+					</div>
+				</ShadowDiv>
+				<div className="ContentChangeButtonDiv">
+					<ListButton className="ContentChangeButton" color="secondary">
+						재생목록
+					</ListButton>
+					<ListButton className="ContentChangeButton" color="secondary">
+						가사보기
+					</ListButton>
+				</div>
+				<ShadowDiv shadowloc="bottom" className="ContentDiv"></ShadowDiv>
 			</ShadowDiv>
 		);
 	}
 }
 
-export default ListSideBarComponet;
+export default reduxConnect(ListSideBarComponet);
