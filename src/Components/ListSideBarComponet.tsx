@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from "react";
+import { Component, type JSX, type ReactNode } from "react";
 import "../Style/ListSideBarComponet.css";
 import tempAlbumArt from "../Assets/tempAlbumArt.png";
 import { ListButton, ShadowDiv, VolumeSlider } from "./StyleComponet";
@@ -27,6 +27,41 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 	currIndex = this.reduxState.startIndex;
 	reduxStateRecv = this.reduxState.send;
 	currItem = this.reduxState.queue[this.currIndex] || undefined;
+
+	playlistContentComp(): JSX.Element[] {
+		let prevAlbumName = "";
+
+		return this.reduxState.queue.map((item, index) => {
+			const comp = (
+				<div className="PlaylistItem" key={index}>
+					{prevAlbumName !== item.albumName ? <p className="PlaylistAlbumName">{item.albumName}</p> : <></>}
+					<div
+						className={"PlaylistItemInfoDiv " + (this.currIndex === index ? "PlaylistActive" : "")}
+						onClick={() => {
+							const action = ReduxActions.selectIndexMusic({ index: index });
+							this.props.dispatch(action);
+						}}
+					>
+						<div className="PlaylistAlbumArtDiv">
+							<img src={item.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
+						</div>
+						<div className="PlaylistDesDiv">
+							<p className="PlaylistTrackName">{item.musicMeta.title}</p>
+							<p className="PlaylistArtistName">{item.musicMeta.artist}</p>
+						</div>
+					</div>
+				</div>
+			);
+
+			prevAlbumName = item.albumName;
+
+			return comp;
+		});
+	}
+
+	lyricContentComp(): JSX.Element {
+		return <></>;
+	}
 
 	componentDidMount(): void {}
 
@@ -73,8 +108,6 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 		}
 
 		const contentType = this.state.contentType;
-
-		let prevAlbumName = "";
 
 		return (
 			<ShadowDiv shadowloc="left" className="ListSideBarDiv">
@@ -128,33 +161,8 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 					</ListButton>
 				</div>
 				<ShadowDiv shadowloc="bottom" className="ContentDiv">
-					{contentType === "playlist" ? (
-						<div className="PlaylistContentDiv">
-							{this.reduxState.queue.map((item, index) => {
-								const comp = (
-									<div className="PlaylistItem" key={index}>
-										{prevAlbumName !== item.albumName ? <p className="PlaylistAlbumName">{item.albumName}</p> : <></>}
-										<div className="PlaylistItemInfoDiv">
-											<div className="PlaylistAlbumArtDiv">
-												<img src={item.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
-											</div>
-											<div className="PlaylistDesDiv">
-												<p className="PlaylistTrackName">{item.musicMeta.title}</p>
-												<p className="PlaylistArtistName">{item.musicMeta.artist}</p>
-											</div>
-										</div>
-									</div>
-								);
-
-								prevAlbumName = item.albumName;
-
-								return comp;
-							})}
-						</div>
-					) : (
-						<></>
-					)}
-					{contentType === "lyric" ? <div className="LyricContentDiv"></div> : <></>}
+					{contentType === "playlist" ? <div className="PlaylistContentDiv">{this.playlistContentComp()}</div> : <></>}
+					{contentType === "lyric" ? <div className="LyricContentDiv">{this.lyricContentComp()}</div> : <></>}
 				</ShadowDiv>
 			</ShadowDiv>
 		);
