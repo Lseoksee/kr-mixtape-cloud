@@ -7,7 +7,14 @@ import Utils from "../Utils/Utils";
 const MainActions = {
 	/** 선택된 음악을 재생하고 이전 및 다음 대기열을 설정 합니다. */
 	setStartMusic(state: ReduxType.state, action: PayloadAction<{ loadMusicInfo: AlbumCompType.loadMusicInfo[]; startIndex: number }>) {
-		state.musicPlayState.queue = action.payload.loadMusicInfo;
+		const reMapping = action.payload.loadMusicInfo.map((item, index) => {
+			return {
+				loadAlbum: item,
+				index: index
+			};
+		});
+		
+		state.musicPlayState.queue = reMapping;
 		state.musicPlayState.startIndex = action.payload.startIndex;
 	},
 

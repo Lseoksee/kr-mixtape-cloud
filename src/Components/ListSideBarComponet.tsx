@@ -26,34 +26,43 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 	reduxState = this.props.reduxResponce.musicPlayState;
 	currIndex = this.reduxState.startIndex;
 	reduxStateRecv = this.reduxState.send;
-	currItem = this.reduxState.queue[this.currIndex] || undefined;
+	currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 
 	playlistContentComp(): JSX.Element[] {
 		let prevAlbumName = "";
 
-		return this.reduxState.queue.map((item, index) => {
+		//TODO: 정렬 잘 바꿔야함
+		const cpyQueue = this.reduxState.queue.slice().sort((a, b) => {
+			if (a.index === this.currIndex) return -1;
+			if (a.index < this.currIndex) return 1;
+			return 0;
+		});
+
+		return cpyQueue.map((item) => {
 			const comp = (
-				<div className="PlaylistItem" key={index}>
-					{prevAlbumName !== item.albumName ? <p className="PlaylistAlbumName">{item.albumName}</p> : <></>}
+				<>
+				{prevAlbumName !== item.loadAlbum.albumName ? <p className="PlaylistAlbumName">{item.loadAlbum.albumName}</p> : <></>}
+				<div className="PlaylistItem" key={item.index}>
 					<div
-						className={"PlaylistItemInfoDiv " + (this.currIndex === index ? "PlaylistActive" : "")}
+						className={"PlaylistItemInfoDiv " + (this.currIndex === item.index ? "PlaylistActive" : "")}
 						onClick={() => {
-							const action = ReduxActions.selectIndexMusic({ index: index });
+							const action = ReduxActions.selectIndexMusic({ index: item.index });
 							this.props.dispatch(action);
 						}}
 					>
 						<div className="PlaylistAlbumArtDiv">
-							<img src={item.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
+							<img src={item.loadAlbum.albumArtUrl || tempAlbumArt} alt="앨범아트" height="100%" className="albumArt" />
 						</div>
 						<div className="PlaylistDesDiv">
-							<p className="PlaylistTrackName">{item.musicMeta.title}</p>
-							<p className="PlaylistArtistName">{item.musicMeta.artist}</p>
+							<p className="PlaylistTrackName">{item.loadAlbum.musicMeta.title}</p>
+							<p className="PlaylistArtistName">{item.loadAlbum.musicMeta.artist}</p>
 						</div>
 					</div>
 				</div>
+				</>
 			);
 
-			prevAlbumName = item.albumName;
+			prevAlbumName = item.loadAlbum.albumName;
 
 			return comp;
 		});
@@ -97,10 +106,11 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 	}
 
 	render(): ReactNode {
+		console.log(this.reduxState.queue);
 		this.reduxState = this.props.reduxResponce.musicPlayState;
 		this.reduxStateRecv = this.reduxState.send;
 		this.currIndex = this.reduxState.startIndex;
-		this.currItem = this.reduxState.queue[this.currIndex] || undefined;
+		this.currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 
 		let playIcon = <PlayArrowIcon id="play" className="controlIcon" onClick={this.playerIconClickEvent} />;
 		if (this.reduxStateRecv.isPlay === "play") {

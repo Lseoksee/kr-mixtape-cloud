@@ -10,7 +10,7 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
 	reduxState = this.props.reduxResponce.musicPlayState;
 	reduxStateRecv = this.reduxState.recv;
 	currIndex = this.reduxState.startIndex;
-	currItem = this.reduxState.queue[this.currIndex] || undefined;
+	currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 	audioRef?: HTMLAudioElement;
 
 	shouldComponentUpdate(nextProps: Readonly<MusicStateProp>, nextState: Readonly<any>, nextContext: any): boolean {
@@ -53,7 +53,7 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
 		const before = prevProps.reduxResponce.musicPlayState;
 
 		/** 음악 갱신시 */
-		if (before.queue[before.startIndex] !== this.currItem) {
+		if (before.queue[before.startIndex]?.loadAlbum !== this.currItem) {
 			this.audioRef.load();
 
 			// 크롬에 미디어 정보 날리기
@@ -96,7 +96,7 @@ class MusicStateComponet extends Component<MusicStateProp, any> {
 		this.reduxState = this.props.reduxResponce.musicPlayState;
 		this.reduxStateRecv = this.reduxState.recv;
 		this.currIndex = this.reduxState.startIndex;
-		this.currItem = this.reduxState.queue[this.currIndex] || undefined;
+		this.currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 
 		return (
 			<audio

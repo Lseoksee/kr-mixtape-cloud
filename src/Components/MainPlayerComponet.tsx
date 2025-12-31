@@ -27,7 +27,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
 	reduxState = this.props.reduxResponce.musicPlayState;
 	reduxStateRecv = this.reduxState.send;
 	currIndex = this.reduxState.startIndex;
-	currItem = this.reduxState.queue[this.currIndex] || undefined;
+	currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 	volume = this.reduxState.volume; // 볼륨값
 
 	state: Readonly<MainPlayerState> = {
@@ -73,7 +73,7 @@ class MainPlayerComponet extends Component<MainPlayerProp, MainPlayerState> {
 		this.reduxState = this.props.reduxResponce.musicPlayState;
 		this.reduxStateRecv = this.reduxState.send;
 		this.currIndex = this.reduxState.startIndex;
-		this.currItem = this.reduxState.queue[this.currIndex] || undefined;
+		this.currItem = this.reduxState.queue[this.currIndex]?.loadAlbum;
 		this.volume = this.reduxState.volume; // 볼륨값
 
 		let progressPer = Utils.whatPercent(this.reduxStateRecv.nowProgress, this.reduxStateRecv.duration);

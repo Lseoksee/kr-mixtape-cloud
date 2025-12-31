@@ -55,6 +55,7 @@
 
 .subvolumeControl {
 	width: 35%;
+	min-width: 35px;
 	height: 100%;
 	display: flex;
 	align-items: center;
@@ -96,15 +97,16 @@
 
 .PlaylistItem {
 	cursor: pointer;
-	padding-left: 20px;
+	padding-left: 18px;
 }
 
 .PlaylistItemInfoDiv {
-    display: flex;
-    gap: 5px;
-    border-radius: var(--border-radius);
-    margin-top: 7px;
-    align-items: center;
+	display: flex;
+	gap: 5px;
+	border-radius: var(--border-radius);
+	align-items: center;
+	height: 70px;
+	padding: 0px 8px 0px 8px;
 }
 
 .PlaylistActive {
@@ -114,6 +116,8 @@
 .PlaylistAlbumName {
 	border-bottom: 1px solid var(--hint-color);
 	height: 25px;
+	margin-left: 18px;
+	margin-bottom: 5px;
 }
 
 .PlaylistAlbumArtDiv {

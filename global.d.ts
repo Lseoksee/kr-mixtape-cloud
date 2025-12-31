@@ -54,7 +54,10 @@ declare namespace ReduxType {
 			/** 대기열에서 현재 재생중인 곡 인덱스 */
 			startIndex: number;
 			/** 재생대기열 */
-			queue: AlbumCompType.loadMusicInfo[];
+			queue: {
+				loadAlbum: AlbumCompType.loadMusicInfo;
+				index: number;
+			}[];
 			/** 볼륨 값 */
 			volume: number;
 			/** MusicStateComponet 쪽에서 보내는 데이터 */
