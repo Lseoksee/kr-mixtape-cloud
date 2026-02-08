@@ -8,6 +8,9 @@ const constants = {
 
 	/** 로컬스토리지 버전 명시 (주요 변화점 있을시 업데이트 반드시 할것) */
 	STORAGE_VERSON: "1.1",
+
+	/** base 경로 (마지막에 슬래시 붙이지 말것) */
+	BASE_NAME: ""
 };
 
 export default constants;

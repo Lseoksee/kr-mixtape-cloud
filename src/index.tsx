@@ -58,7 +58,7 @@ const RoutePage = createBrowserRouter([
 			},
 		],
 	},
-]);
+], {basename: constants.BASE_NAME});
 
 /* 전역컴포넌트와 같이가는 */
 function GlobalPage() {
