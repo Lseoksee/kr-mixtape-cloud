@@ -31,14 +31,7 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 	playlistContentComp(): JSX.Element[] {
 		let prevAlbumName = "";
 
-		//TODO: 정렬 잘 바꿔야함
-		const cpyQueue = this.reduxState.queue.slice().sort((a, b) => {
-			if (a.index === this.currIndex) return -1;
-			if (a.index < this.currIndex) return 1;
-			return 0;
-		});
-
-		return cpyQueue.map((item) => {
+		return this.reduxState.queue.map((item) => {
 			const comp = (
 				<>
 				{prevAlbumName !== item.loadAlbum.albumName ? <p className="PlaylistAlbumName">{item.loadAlbum.albumName}</p> : <></>}
@@ -106,7 +99,6 @@ class ListSideBarComponet extends Component<ListSideBarProp, ListSideBarState> {
 	}
 
 	render(): ReactNode {
-		console.log(this.reduxState.queue);
 		this.reduxState = this.props.reduxResponce.musicPlayState;
 		this.reduxStateRecv = this.reduxState.send;
 		this.currIndex = this.reduxState.startIndex;
