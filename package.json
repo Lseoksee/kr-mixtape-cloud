@@ -27,7 +27,7 @@
 		"@mui/styled-engine-sc": "^7.2.0",
 		"@reduxjs/toolkit": "^2.8.2",
 		"buffer": "^6.0.3",
-		"music-metadata": "^11.7.3",
+		"music-metadata": "^11.12.3",
 		"process": "^0.11.10",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
